@@ -1,9 +1,9 @@
 package MODELS
 
 type BILL_DETAILS struct {
-	id         int
-	idBill     int
-	idService  int
-	amount     int
-	totalPrice float64
+	Id         int
+	IdBill     int
+	IdService  int
+	Amount     int
+	TotalPrice float64
 }

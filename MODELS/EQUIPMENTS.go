@@ -1,12 +1,12 @@
 package MODELS
 
 type EQUIPMENTS struct {
-	id          int
-	idRoom      int
-	name        string
-	price       float64
-	comPrice    float64
-	idUnit      int
-	description string
-	status      string
+	Id          int
+	IdRoom      int
+	Name        string
+	Price       float64
+	ComPrice    float64
+	IdUnit      int
+	Description string
+	Status      string
 }

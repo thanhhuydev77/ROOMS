@@ -1,6 +1,8 @@
 package MODELS
 
-import "time"
+import (
+	"time"
+)
 
 type USERS struct {
 	Id            int
@@ -16,4 +18,6 @@ type USERS struct {
 	Job           string
 	WorkPlace     string
 	TempReg       int
+	Province      string
+	Email         string
 }
