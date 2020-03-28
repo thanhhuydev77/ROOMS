@@ -1,9 +1,17 @@
 package CONTROLLERS
 
 import (
+<<<<<<< HEAD
 	"ROOMS/MODELS"
 	"ROOMS/STATICS"
 	"github.com/dgrijalva/jwt-go"
+=======
+	"ROOMS/MIDDLEWARE"
+	"ROOMS/MODELS"
+	"ROOMS/STATICS"
+	"github.com/dgrijalva/jwt-go"
+	"github.com/gorilla/mux"
+>>>>>>> origin/Huy
 	"io"
 	"log"
 	"net/http"
@@ -11,6 +19,14 @@ import (
 	"time"
 )
 
+<<<<<<< HEAD
+=======
+func InitUserController(r *mux.Router) {
+	r.HandleFunc("/User/login", TokenHandler).Methods("POST")
+	r.Handle("/user/getall", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(getalluser)))
+}
+
+>>>>>>> origin/Huy
 func TokenHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("Content-Type", "application/json")
