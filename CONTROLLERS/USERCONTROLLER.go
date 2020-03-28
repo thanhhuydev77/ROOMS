@@ -1,22 +1,15 @@
 package CONTROLLERS
 
 import (
-	"ROOMS/MIDDLEWARE"
 	"ROOMS/MODELS"
-	"ROOMS/STATICS"
+	. "ROOMS/STATICS"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/gorilla/mux"
 	"io"
 	"log"
 	"net/http"
 	"strconv"
 	"time"
 )
-
-func InitUserController(r *mux.Router) {
-	r.HandleFunc("/User/login", TokenHandler).Methods("POST")
-	r.Handle("/user/getall", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(getalluser)))
-}
 
 func TokenHandler(w http.ResponseWriter, r *http.Request) {
 
@@ -28,7 +21,7 @@ func TokenHandler(w http.ResponseWriter, r *http.Request) {
 	a.UserName = r.Form.Get("UserName")
 	tempPass := r.Form.Get("Pass")
 	//getuset from datebase
-	db, err := STATICS.Connectdatabase()
+	db, err := Connectdatabase()
 	// Query all users
 	if db == nil {
 		log.Print("can not connect to database!")
@@ -68,7 +61,7 @@ func TokenHandler(w http.ResponseWriter, r *http.Request) {
 		"exp":  time.Now().Add(time.Hour * time.Duration(15*24)).Unix(),
 		"iat":  time.Now().Unix(),
 	})
-	tokenString, err := token.SignedString([]byte(STATICS.APP_KEY))
+	tokenString, err := token.SignedString([]byte(APP_KEY))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		io.WriteString(w, `{"error":"token_generation_failed"}`)
