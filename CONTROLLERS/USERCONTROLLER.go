@@ -1,11 +1,11 @@
 package CONTROLLERS
 
 import (
+	"ROOMS/BUSINESS"
 	"ROOMS/MODELS"
 	. "ROOMS/STATICS"
 	"github.com/dgrijalva/jwt-go"
 	"io"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -14,43 +14,20 @@ import (
 func TokenHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("Content-Type", "application/json")
-	a := MODELS.USERS{}
-
 	r.ParseForm()
 
-	a.UserName = r.Form.Get("UserName")
-	tempPass := r.Form.Get("Pass")
-	//getuset from datebase
-	db, err := Connectdatabase()
-	// Query all users
-	if db == nil {
-		log.Print("can not connect to database!")
-		w.WriteHeader(http.StatusBadGateway)
-		return
-	}
-	defer db.Close()
+	UserName := r.Form.Get("userName")
+	Pass := r.Form.Get("pass")
 
-	exsist := false
-	rows, err := db.Query("select id,username,pass,fullname,role from USERS where username = ?", a.UserName)
-	if err != nil {
-		log.Fatal(err)
-	}
-	for rows.Next() {
-		err := rows.Scan(&a.Id, &a.UserName, &a.Pass, &a.FullName, &a.Role)
-		if err != nil {
-			log.Fatal(err)
-		}
-		exsist = true
-	}
-	defer rows.Close()
+	IsExsist, passok, a := BUSINESS.Login(UserName, Pass)
 
-	if !exsist {
+	if !IsExsist {
 		w.WriteHeader(http.StatusUnauthorized)
 		io.WriteString(w, `{"message": "Can't find user please sign in again!"}`)
 		return
 	}
 
-	if exsist && tempPass != a.Pass {
+	if !passok {
 		w.WriteHeader(http.StatusUnauthorized)
 		io.WriteString(w, `{"message": "Your password is wrong, please type again !"}`)
 		return
@@ -67,8 +44,6 @@ func TokenHandler(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, `{"error":"token_generation_failed"}`)
 		return
 	}
-	a.Role = 1
-	a.Id = 1
 	//w.Write([]byte(`{"hello": "world"}`))
 	stringresult := `{"message": "Login success","data":{"token":"` + tokenString + `","user":{ "id":` + strconv.Itoa(a.Id) + `,
 						"username":"` + a.UserName + `","fullname":"` + a.FullName + `","role":` + strconv.Itoa(a.Role) + `}}}`
@@ -76,7 +51,48 @@ func TokenHandler(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func getalluser(w http.ResponseWriter, r *http.Request) {
+func UserRegister(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
-	io.WriteString(w, `{"ok all user"}`)
+	User := MODELS.USERS{}
+	r.ParseForm()
+	// parse user information
+	User.UserName = r.Form.Get("userName")
+	User.Pass = r.Form.Get("pass")
+	User.FullName = r.Form.Get("fullName")
+	User.IdentifyFront = r.Form.Get("identifyFront")
+	User.IdentifyBack = r.Form.Get("identifyBack")
+	DateBirth, err := time.Parse("01-02-2006", r.Form.Get("dateBirth"))
+	if err != nil {
+		w.WriteHeader(http.StatusBadGateway)
+		io.WriteString(w, `{"message": "can not parse datebirth!"}`+err.Error())
+		return
+	}
+	User.DateBirth = DateBirth
+
+	User.Address = r.Form.Get("address")
+	Role, err := strconv.Atoi(r.Form.Get("role"))
+	if err != nil {
+		w.WriteHeader(http.StatusBadGateway)
+		io.WriteString(w, `{"message": "can not parse role!"}`)
+		return
+	}
+	User.Role = Role
+	User.Sex = r.Form.Get("sex")
+	User.Job = r.Form.Get("job")
+	TempReg, err := strconv.Atoi(r.Form.Get("tempReg"))
+	if err != nil {
+		w.WriteHeader(http.StatusBadGateway)
+		io.WriteString(w, `{"message": "can not parse Tempreg!"}`)
+		return
+	}
+	User.TempReg = TempReg
+	User.Province = r.Form.Get("province")
+	User.Email = r.Form.Get("email")
+
+	if BUSINESS.Register(User) {
+		io.WriteString(w, `{"message": "Register success"}`)
+	} else {
+		io.WriteString(w, `{"message": "Register unsuccess"}`)
+	}
+
 }
