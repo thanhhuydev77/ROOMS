@@ -63,3 +63,30 @@ func Register(user MODELS.USERS) bool {
 
 	return true
 }
+
+func GetAllUserName() []string {
+	var Allusername []string
+	db, err := STATICS.Connectdatabase()
+	// Query all users
+	if db == nil {
+
+		log.Print("can not connect to database!")
+		return nil
+	}
+	defer db.Close()
+
+	rows, err := db.Query("select username from USERS")
+	if err != nil {
+		log.Fatal(err)
+	}
+	for rows.Next() {
+		var username string
+		err := rows.Scan(&username)
+		if err != nil {
+			log.Fatal(err)
+		}
+		Allusername = append(Allusername, username)
+	}
+	defer rows.Close()
+	return Allusername
+}

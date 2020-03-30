@@ -61,7 +61,7 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 	User.FullName = r.Form.Get("fullName")
 	User.IdentifyFront = r.Form.Get("identifyFront")
 	User.IdentifyBack = r.Form.Get("identifyBack")
-	DateBirth, err := time.Parse("01-02-2006", r.Form.Get("dateBirth"))
+	DateBirth, err := time.Parse("01/02/2006", r.Form.Get("dateBirth"))
 	if err != nil {
 		w.WriteHeader(http.StatusBadGateway)
 		io.WriteString(w, `{"message": "can not parse datebirth!"}`+err.Error())
@@ -90,9 +90,28 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 	User.Email = r.Form.Get("email")
 
 	if BUSINESS.Register(User) {
+		w.WriteHeader(http.StatusCreated)
 		io.WriteString(w, `{"message": "Register success"}`)
 	} else {
+		w.WriteHeader(http.StatusBadRequest)
 		io.WriteString(w, `{"message": "Register unsuccess"}`)
 	}
 
+}
+
+func GetallUserName(w http.ResponseWriter, r *http.Request) {
+
+	allusername := BUSINESS.GetAllUserName()
+	w.Header().Add("Content-Type", "application/json")
+	if allusername == nil {
+		w.WriteHeader(http.StatusBadRequest)
+		io.WriteString(w, `{"message": "unsuccess"}`)
+		return
+	}
+	w.WriteHeader(200)
+	io.WriteString(w, `{"message": "success","data" :`)
+	for _, val := range allusername {
+		io.WriteString(w, "\""+val+"\",")
+	}
+	io.WriteString(w, "}")
 }
