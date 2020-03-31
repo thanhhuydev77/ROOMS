@@ -38,30 +38,25 @@ func Login(username string, pass string) (bool, bool, MODELS.USERS) {
 	return exsist, passOK, a
 }
 
-func Register(user MODELS.USERS) bool {
+func Register(user MODELS.USERS) (bool, error) {
 
 	//getuset from datebase
 	db, err := STATICS.Connectdatabase()
 	// Query all users
-	if db == nil {
+	if err != nil {
 
 		log.Print("can not connect to database!")
-		return false
+		return false, err
 	}
 	defer db.Close()
 
-	rows, err := db.Query(`insert into USERS(userName,Pass,FullName,IdentifyFront,IdentifyBack
-							  ,DateBirth,Address,Role,Sex,Job,WorkPlace,TempReg,Province,Email)
-							  values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, user.UserName, user.Pass, user.FullName, user.IdentifyFront, user.IdentifyBack,
-		user.DateBirth, user.Address, user.Role, user.Sex, user.Job,
-		user.WorkPlace, user.TempReg, user.Province, user.Email)
+	rows, err := db.Query(`insert into USERS(userName,Pass,FullName,Address,Role,Sex,Province,Email)
+							  values(?,?,?,?,?,?,?,?)`, user.UserName, user.Pass, user.FullName, user.Address, user.Role, user.Sex, user.Province, user.Email)
 	if err != nil {
-		return false
+		return false, err
 	}
-
 	defer rows.Close()
-
-	return true
+	return true, nil
 }
 
 func GetAllUserName() []string {

@@ -59,15 +59,15 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 	User.UserName = r.Form.Get("userName")
 	User.Pass = r.Form.Get("pass")
 	User.FullName = r.Form.Get("fullName")
-	User.IdentifyFront = r.Form.Get("identifyFront")
-	User.IdentifyBack = r.Form.Get("identifyBack")
-	DateBirth, err := time.Parse("01/02/2006", r.Form.Get("dateBirth"))
-	if err != nil {
-		w.WriteHeader(http.StatusBadGateway)
-		io.WriteString(w, `{"message": "can not parse datebirth!"}`+err.Error())
-		return
-	}
-	User.DateBirth = DateBirth
+	//User.IdentifyFront = r.Form.Get("identifyFront")
+	//User.IdentifyBack = r.Form.Get("identifyBack")
+	//DateBirth, err := time.Parse("01/02/2006", r.Form.Get("dateBirth"))
+	//if err != nil {
+	//	w.WriteHeader(http.StatusBadGateway)
+	//	io.WriteString(w, `{"message": "can not parse datebirth!"}`+err.Error())
+	//	return
+	//}
+	//User.DateBirth = DateBirth
 
 	User.Address = r.Form.Get("address")
 	Role, err := strconv.Atoi(r.Form.Get("role"))
@@ -78,25 +78,31 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 	}
 	User.Role = Role
 	User.Sex = r.Form.Get("sex")
-	User.Job = r.Form.Get("job")
-	TempReg, err := strconv.Atoi(r.Form.Get("tempReg"))
-	if err != nil {
-		w.WriteHeader(http.StatusBadGateway)
-		io.WriteString(w, `{"message": "can not parse Tempreg!"}`)
-		return
-	}
-	User.TempReg = TempReg
+	//User.Job = r.Form.Get("job")
+	//TempReg, err := strconv.Atoi(r.Form.Get("tempReg"))
+	//if err != nil {
+	//	w.WriteHeader(http.StatusBadGateway)
+	//	io.WriteString(w, `{"message": "can not parse Tempreg!"}`)
+	//	return
+	//}
+	//User.TempReg = TempReg
 	User.Province = r.Form.Get("province")
 	User.Email = r.Form.Get("email")
-
-	if BUSINESS.Register(User) {
-		w.WriteHeader(http.StatusCreated)
-		io.WriteString(w, `{"message": "Register success"}`)
-	} else {
+	confirm := r.Form.Get("confirm")
+	if confirm != User.Pass {
 		w.WriteHeader(http.StatusBadRequest)
-		io.WriteString(w, `{"message": "Register unsuccess"}`)
+		io.WriteString(w, `{"message": "pass and confirm must be same!"}`)
+		return
 	}
 
+	result, err := BUSINESS.Register(User)
+	if result {
+		w.WriteHeader(http.StatusOK)
+		io.WriteString(w, `{"message": "Register success","data": {"status": 1}}`)
+	} else {
+		w.WriteHeader(http.StatusBadRequest)
+		io.WriteString(w, `{"message":{"code":"`+err.Error()+`"}}`)
+	}
 }
 
 func GetallUserName(w http.ResponseWriter, r *http.Request) {
