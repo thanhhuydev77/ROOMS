@@ -10,8 +10,10 @@ func InitAllController(r *mux.Router) {
 
 	//UsersController
 	r.HandleFunc("/User/login", TokenHandler).Methods("POST")
-	r.Handle("/user/getall", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(getalluser)))
+	r.HandleFunc("/User/register", UserRegister).Methods("POST")
+	r.HandleFunc("/User/getallusername", GetallUserName).Methods("GET")
 
-	//others controller
+	//RoomsController
+	r.Handle("/Block/getblockbyowner/{idowner}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetBlockByOwner))).Methods("GET")
 	///
 }
