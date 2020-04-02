@@ -2,18 +2,20 @@ package CONTROLLERS
 
 import (
 	"ROOMS/MIDDLEWARE"
-	"github.com/gorilla/mux"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 func InitAllController(r *mux.Router) {
 
 	//UsersController
-	r.HandleFunc("/User/login", TokenHandler).Methods("POST")
-	r.HandleFunc("/User/register", UserRegister).Methods("POST")
-	r.HandleFunc("/User/getallusername", GetallUserName).Methods("GET")
-
+	r.HandleFunc("/user/login", TokenHandler).Methods("POST")
+	r.HandleFunc("/user/register", UserRegister).Methods("POST")
+	r.HandleFunc("/user/get-all-username", GetallUserName).Methods("GET")
+	r.Handle("/user/get-user", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetUser))).Methods("GET")
+	r.Handle("/user/get-user/{Id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetUser))).Methods("GET")
 	//RoomsController
-	r.Handle("/Block/getblockbyowner/{idowner}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetBlockByOwner))).Methods("GET")
+	r.Handle("/block/getblockbyowner/{idowner}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetBlockByOwner))).Methods("GET")
 	///
 }

@@ -3,7 +3,10 @@ package BUSINESS
 import (
 	"ROOMS/MODELS"
 	"ROOMS/STATICS"
+
+	"golang.org/x/crypto/bcrypt"
 	"log"
+	"strconv"
 )
 
 func Login(username string, pass string) (bool, bool, MODELS.USERS) {
@@ -32,7 +35,8 @@ func Login(username string, pass string) (bool, bool, MODELS.USERS) {
 		exsist = true
 	}
 	defer rows.Close()
-	if pass == a.Pass {
+	//hashpass,err := HashPassword(pass)
+	if CheckPasswordHash(pass, a.Pass) {
 		passOK = true
 	}
 	return exsist, passOK, a
@@ -49,9 +53,9 @@ func Register(user MODELS.USERS) (bool, error) {
 		return false, err
 	}
 	defer db.Close()
-
+	passhash, _ := HashPassword(user.Pass)
 	rows, err := db.Query(`insert into USERS(userName,Pass,FullName,Address,Role,Sex,Province,Email)
-							  values(?,?,?,?,?,?,?,?)`, user.UserName, user.Pass, user.FullName, user.Address, user.Role, user.Sex, user.Province, user.Email)
+							  values(?,?,?,?,?,?,?,?)`, user.UserName, passhash, user.FullName, user.Address, user.Role, user.Sex, user.Province, user.Email)
 	if err != nil {
 		return false, err
 	}
@@ -84,4 +88,49 @@ func GetAllUserName() []string {
 	}
 	defer rows.Close()
 	return Allusername
+}
+
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 5)
+	return string(bytes), err
+}
+
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
+}
+
+func GetUsers(Id int) []MODELS.USERS {
+
+	db, err := STATICS.Connectdatabase()
+	// Query all users
+	if db == nil {
+
+		log.Print("can not connect to database!")
+		return nil
+	}
+	defer db.Close()
+	query := ""
+	list := []MODELS.USERS{}
+
+	if Id == -1 {
+		query = "select * from USERS"
+	} else {
+		query = "select * from USERS where Id = " + strconv.Itoa(Id)
+	}
+
+	rows, err := db.Query(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for rows.Next() {
+		var user MODELS.USERS
+		err := rows.Scan(&user.Id, &user.UserName, &user.Pass, &user.FullName, &user.IdentifyFront, &user.IdentifyBack, &user.DateBirth, &user.Address,
+			&user.Role, &user.Sex, &user.Job, &user.WorkPlace, &user.TempReg, &user.Province, &user.Email)
+		if err != nil {
+			log.Fatal(err)
+		}
+		list = append(list, user)
+	}
+	return list
 }

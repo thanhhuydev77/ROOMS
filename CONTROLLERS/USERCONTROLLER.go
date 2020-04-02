@@ -5,6 +5,7 @@ import (
 	"ROOMS/MODELS"
 	. "ROOMS/STATICS"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gorilla/mux"
 	"io"
 	"net/http"
 	"strconv"
@@ -46,7 +47,7 @@ func TokenHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	//w.Write([]byte(`{"hello": "world"}`))
 	stringresult := `{"message": "Login success","data":{"token":"` + tokenString + `","user":{ "id":` + strconv.Itoa(a.Id) + `,
-						"username":"` + a.UserName + `","fullname":"` + a.FullName + `","role":` + strconv.Itoa(a.Role) + `}}}`
+						"username":"` + a.UserName + `","fullname":"` + a.FullName.String + `","role":` + strconv.Itoa(int(a.Role.Int32)) + `}}}`
 	io.WriteString(w, stringresult)
 	return
 }
@@ -58,7 +59,7 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 	// parse user information
 	User.UserName = r.Form.Get("userName")
 	User.Pass = r.Form.Get("pass")
-	User.FullName = r.Form.Get("fullName")
+	User.FullName.String = r.Form.Get("fullName")
 	//User.IdentifyFront = r.Form.Get("identifyFront")
 	//User.IdentifyBack = r.Form.Get("identifyBack")
 	//DateBirth, err := time.Parse("01/02/2006", r.Form.Get("dateBirth"))
@@ -69,15 +70,15 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 	//}
 	//User.DateBirth = DateBirth
 
-	User.Address = r.Form.Get("address")
+	User.Address.String = r.Form.Get("address")
 	Role, err := strconv.Atoi(r.Form.Get("role"))
 	if err != nil {
 		w.WriteHeader(http.StatusBadGateway)
 		io.WriteString(w, `{"message": "can not parse role!"}`)
 		return
 	}
-	User.Role = Role
-	User.Sex = r.Form.Get("sex")
+	User.Role.Int32 = int32(Role)
+	User.Sex.String = r.Form.Get("sex")
 	//User.Job = r.Form.Get("job")
 	//TempReg, err := strconv.Atoi(r.Form.Get("tempReg"))
 	//if err != nil {
@@ -86,8 +87,8 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 	//	return
 	//}
 	//User.TempReg = TempReg
-	User.Province = r.Form.Get("province")
-	User.Email = r.Form.Get("email")
+	User.Province.String = r.Form.Get("province")
+	User.Email.String = r.Form.Get("email")
 	confirm := r.Form.Get("confirm")
 	if confirm != User.Pass {
 		w.WriteHeader(http.StatusBadRequest)
@@ -107,6 +108,9 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 
 func GetallUserName(w http.ResponseWriter, r *http.Request) {
 
+	// Query()["key"] will return an array of items,
+	// we only want the single item.
+
 	allusername := BUSINESS.GetAllUserName()
 	w.Header().Add("Content-Type", "application/json")
 	if allusername == nil {
@@ -115,9 +119,26 @@ func GetallUserName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(200)
-	io.WriteString(w, `{"message": "success","data" :`)
+	io.WriteString(w, `{"message": "success","data":{`)
 	for _, val := range allusername {
 		io.WriteString(w, "\""+val+"\",")
 	}
-	io.WriteString(w, "}")
+	io.WriteString(w, "}}")
+}
+
+func GetUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+	vars := mux.Vars(r)
+	Id, err := strconv.Atoi(vars["Id"])
+	//have not id --> get all
+	if err != nil {
+		Id = -1
+	}
+	List := BUSINESS.GetUsers(Id)
+	stringresult := `{"message": "Get Users success","status": 200,"data":{`
+	for _, val := range List {
+		stringresult += val.String()
+	}
+	stringresult += "}}"
+	io.WriteString(w, stringresult)
 }
