@@ -137,7 +137,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	List := BUSINESS.GetUsers(Id)
 	stringresult := `{"message": "Get Users success","status": 200,"data":{`
 	for _, val := range List {
-		stringresult += val.String()
+		stringresult += val.String() + ","
 	}
 	stringresult += "}}"
 	io.WriteString(w, stringresult)
