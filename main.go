@@ -10,5 +10,5 @@ import (
 func main() {
 	r := mux.NewRouter()
 	CONTROLLERS.InitAllController(r)
-	http.ListenAndServe(":80", r)
+	http.ListenAndServe(":8080", r)
 }

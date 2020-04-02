@@ -3,6 +3,7 @@ package BUSINESS
 import (
 	"ROOMS/MODELS"
 	"ROOMS/STATICS"
+	"golang.org/x/crypto/bcrypt"
 	"log"
 )
 
@@ -32,7 +33,8 @@ func Login(username string, pass string) (bool, bool, MODELS.USERS) {
 		exsist = true
 	}
 	defer rows.Close()
-	if pass == a.Pass {
+	//hashpass,err := HashPassword(pass)
+	if CheckPasswordHash(pass, a.Pass) {
 		passOK = true
 	}
 	return exsist, passOK, a
@@ -49,9 +51,9 @@ func Register(user MODELS.USERS) (bool, error) {
 		return false, err
 	}
 	defer db.Close()
-
+	passhash, _ := HashPassword(user.Pass)
 	rows, err := db.Query(`insert into USERS(userName,Pass,FullName,Address,Role,Sex,Province,Email)
-							  values(?,?,?,?,?,?,?,?)`, user.UserName, user.Pass, user.FullName, user.Address, user.Role, user.Sex, user.Province, user.Email)
+							  values(?,?,?,?,?,?,?,?)`, user.UserName, passhash, user.FullName, user.Address, user.Role, user.Sex, user.Province, user.Email)
 	if err != nil {
 		return false, err
 	}
@@ -84,4 +86,14 @@ func GetAllUserName() []string {
 	}
 	defer rows.Close()
 	return Allusername
+}
+
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 5)
+	return string(bytes), err
+}
+
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }
