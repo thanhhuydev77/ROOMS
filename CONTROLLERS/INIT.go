@@ -10,7 +10,7 @@ import (
 func InitAllController(r *mux.Router) {
 
 	//UsersController
-	r.HandleFunc("/user/login", TokenHandler).Methods("POST")
+	r.HandleFunc("/user/login", TokenHandler).Methods("POST", "OPTIONS")
 	r.HandleFunc("/user/register", UserRegister).Methods("POST")
 	r.HandleFunc("/user/get-all-username", GetallUserName).Methods("GET")
 	r.Handle("/user/get-user", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetUser))).Methods("GET")
