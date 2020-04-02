@@ -3,8 +3,10 @@ package BUSINESS
 import (
 	"ROOMS/MODELS"
 	"ROOMS/STATICS"
+
 	"golang.org/x/crypto/bcrypt"
 	"log"
+	"strconv"
 )
 
 func Login(username string, pass string) (bool, bool, MODELS.USERS) {
@@ -96,4 +98,39 @@ func HashPassword(password string) (string, error) {
 func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
+}
+
+func GetUsers(Id int) []MODELS.USERS {
+
+	db, err := STATICS.Connectdatabase()
+	// Query all users
+	if db == nil {
+
+		log.Print("can not connect to database!")
+		return nil
+	}
+	defer db.Close()
+	query := ""
+	list := []MODELS.USERS{}
+
+	if Id == -1 {
+		query = "select * from USERS"
+	} else {
+		query = "select * from USERS where Id = " + strconv.Itoa(Id)
+	}
+
+	rows, err := db.Query(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for rows.Next() {
+		var user MODELS.USERS
+		err := rows.Scan(&user.Id, &user.UserName, &user.Pass, &user.FullName, &user.IdentifyFront, &user.IdentifyBack, &user.DateBirth, &user.Address,
+			&user.Role, &user.Sex, &user.Job, &user.WorkPlace, &user.TempReg, &user.Province, &user.Email)
+		if err != nil {
+			log.Fatal(err)
+		}
+		list = append(list, user)
+	}
+	return list
 }
