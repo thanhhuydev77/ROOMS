@@ -12,7 +12,7 @@ func GetBlockByOwner(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idowner, err := strconv.Atoi(vars["idowner"])
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		//w.WriteHeader(http.StatusBadRequest)
 		io.WriteString(w, `{"message":"can not convert idowner as int"}`)
 		return
 	}

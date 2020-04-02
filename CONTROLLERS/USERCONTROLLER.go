@@ -26,13 +26,13 @@ func TokenHandler(w http.ResponseWriter, r *http.Request) {
 	IsExsist, passok, a := BUSINESS.Login(UserName, Pass)
 
 	if !IsExsist {
-		w.WriteHeader(http.StatusUnauthorized)
+		//w.WriteHeader(http.StatusUnauthorized)
 		io.WriteString(w, `{"message": "Can't find user please sign in again!"}`)
 		return
 	}
 
 	if !passok {
-		w.WriteHeader(http.StatusUnauthorized)
+		//w.WriteHeader(http.StatusUnauthorized)
 		io.WriteString(w, `{"message": "Your password is wrong, please type again !"}`)
 		return
 	}
@@ -44,7 +44,7 @@ func TokenHandler(w http.ResponseWriter, r *http.Request) {
 	})
 	tokenString, err := token.SignedString([]byte(APP_KEY))
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		//w.WriteHeader(http.StatusInternalServerError)
 		io.WriteString(w, `{"error":"token_generation_failed"}`)
 		return
 	}
@@ -76,7 +76,7 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 	User.Address.String = r.Form.Get("address")
 	Role, err := strconv.Atoi(r.Form.Get("role"))
 	if err != nil {
-		w.WriteHeader(http.StatusBadGateway)
+		//w.WriteHeader(http.StatusBadGateway)
 		io.WriteString(w, `{"message": "can not parse role!"}`)
 		return
 	}
@@ -94,17 +94,17 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 	User.Email.String = r.Form.Get("email")
 	confirm := r.Form.Get("confirm")
 	if confirm != User.Pass {
-		w.WriteHeader(http.StatusBadRequest)
+		//w.WriteHeader(http.StatusBadRequest)
 		io.WriteString(w, `{"message": "pass and confirm must be same!"}`)
 		return
 	}
 
 	result, err := BUSINESS.Register(User)
 	if result {
-		w.WriteHeader(http.StatusOK)
+		//w.WriteHeader(http.StatusOK)
 		io.WriteString(w, `{"message": "Register success","data": {"status": 1}}`)
 	} else {
-		w.WriteHeader(http.StatusBadRequest)
+		//w.WriteHeader(http.StatusBadRequest)
 		io.WriteString(w, `{"message":{"code":"`+err.Error()+`"}}`)
 	}
 }
@@ -117,11 +117,11 @@ func GetallUserName(w http.ResponseWriter, r *http.Request) {
 	allusername := BUSINESS.GetAllUserName()
 	w.Header().Add("Content-Type", "application/json")
 	if allusername == nil {
-		w.WriteHeader(http.StatusBadRequest)
+		//w.WriteHeader(http.StatusBadRequest)
 		io.WriteString(w, `{"message": "unsuccess"}`)
 		return
 	}
-	w.WriteHeader(200)
+	//w.WriteHeader(200)
 	io.WriteString(w, `{"message": "success","data":{`)
 	for _, val := range allusername {
 		io.WriteString(w, "\""+val+"\",")
