@@ -12,5 +12,5 @@ func main() {
 	r := mux.NewRouter()
 	CONTROLLERS.InitAllController(r)
 	handler := cors.Default().Handler(r)
-	http.ListenAndServe(":8080", handler)
+	http.ListenAndServe(":8001", handler)
 }

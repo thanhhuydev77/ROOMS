@@ -43,3 +43,15 @@ func (user USERS) String() string {
 }`, user.Id, user.UserName, user.Pass, user.FullName.String, user.IdentifyFront.String, user.IdentifyBack.String, user.DateBirth.Time, user.Address.String,
 		user.Role.Int32, user.Sex.String, user.Job.String, user.WorkPlace.String, user.TempReg.Int32, user.Province.String, user.Email.String)
 }
+
+type RequestRegister struct {
+	UserName string
+	Pass     string
+	Confirm  string
+	FullName string
+	Sex      string
+	Email    string
+	Role     int
+	Province string
+	Address  string
+}

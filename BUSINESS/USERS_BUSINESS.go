@@ -42,7 +42,7 @@ func Login(username string, pass string) (bool, bool, MODELS.USERS) {
 	return exsist, passOK, a
 }
 
-func Register(user MODELS.USERS) (bool, error) {
+func Register(user MODELS.RequestRegister) (bool, error) {
 
 	//getuset from datebase
 	db, err := STATICS.Connectdatabase()
@@ -55,7 +55,7 @@ func Register(user MODELS.USERS) (bool, error) {
 	defer db.Close()
 	passhash, _ := HashPassword(user.Pass)
 	rows, err := db.Query(`insert into USERS(userName,Pass,FullName,Address,Role,Sex,Province,Email)
-							  values(?,?,?,?,?,?,?,?)`, user.UserName, passhash, user.FullName.String, user.Address.String, user.Role.Int32, user.Sex.String, user.Province.String, user.Email.String)
+							  values(?,?,?,?,?,?,?,?)`, user.UserName, passhash, user.FullName, user.Address, user.Role, user.Sex, user.Province, user.Email)
 	if err != nil {
 		return false, err
 	}
