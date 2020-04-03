@@ -4,6 +4,7 @@ import (
 	"ROOMS/BUSINESS"
 	"ROOMS/MODELS"
 	. "ROOMS/STATICS"
+	"encoding/json"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
 	"io"
@@ -12,18 +13,17 @@ import (
 	"time"
 )
 
-func TokenHandler(w http.ResponseWriter, r *http.Request) {
+func UserLogin(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	p := MODELS.USERS{}
+	err := json.NewDecoder(r.Body).Decode(&p)
+	if err != nil {
+		io.WriteString(w, `{"message": "wrong format!"}`)
+		return
+	}
 
-	r.ParseForm()
-
-	UserName := r.Form.Get("userName")
-	Pass := r.Form.Get("pass")
-
-	IsExsist, passok, a := BUSINESS.Login(UserName, Pass)
+	IsExsist, passok, a := BUSINESS.Login(p.UserName, p.Pass)
 
 	if !IsExsist {
 		//w.WriteHeader(http.StatusUnauthorized)
@@ -57,54 +57,39 @@ func TokenHandler(w http.ResponseWriter, r *http.Request) {
 
 func UserRegister(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
-	User := MODELS.USERS{}
-	r.ParseForm()
+	//User := MODELS.USERS{}
+	//r.ParseForm()
 	// parse user information
-	User.UserName = r.Form.Get("userName")
-	User.Pass = r.Form.Get("pass")
-	User.FullName.String = r.Form.Get("fullName")
-	//User.IdentifyFront = r.Form.Get("identifyFront")
-	//User.IdentifyBack = r.Form.Get("identifyBack")
-	//DateBirth, err := time.Parse("01/02/2006", r.Form.Get("dateBirth"))
+	//User.UserName = r.Form.Get("userName")
+	//User.Pass = r.Form.Get("pass")
+	//User.FullName.String = r.Form.Get("fullName")
+	//User.Address.String = r.Form.Get("address")
+	//Role, err := strconv.Atoi(r.Form.Get("role"))
 	//if err != nil {
-	//	w.WriteHeader(http.StatusBadGateway)
-	//	io.WriteString(w, `{"message": "can not parse datebirth!"}`+err.Error())
+	//	io.WriteString(w, `{"message": "can not parse role!"}`)
 	//	return
 	//}
-	//User.DateBirth = DateBirth
+	//User.Role.Int32 = int32(Role)
+	//User.Sex.String = r.Form.Get("sex")
+	//User.Province.String = r.Form.Get("province")
+	//User.Email.String = r.Form.Get("email")
+	//confirm := r.Form.Get("confirm")
+	//if confirm != User.Pass {
+	//	io.WriteString(w, `{"message": "pass and confirm must be same!"}`)
+	//	return
+	//}
 
-	User.Address.String = r.Form.Get("address")
-	Role, err := strconv.Atoi(r.Form.Get("role"))
-	if err != nil {
-		//w.WriteHeader(http.StatusBadGateway)
-		io.WriteString(w, `{"message": "can not parse role!"}`)
-		return
-	}
-	User.Role.Int32 = int32(Role)
-	User.Sex.String = r.Form.Get("sex")
-	//User.Job = r.Form.Get("job")
-	//TempReg, err := strconv.Atoi(r.Form.Get("tempReg"))
-	//if err != nil {
-	//	w.WriteHeader(http.StatusBadGateway)
-	//	io.WriteString(w, `{"message": "can not parse Tempreg!"}`)
-	//	return
-	//}
-	//User.TempReg = TempReg
-	User.Province.String = r.Form.Get("province")
-	User.Email.String = r.Form.Get("email")
-	confirm := r.Form.Get("confirm")
-	if confirm != User.Pass {
-		//w.WriteHeader(http.StatusBadRequest)
-		io.WriteString(w, `{"message": "pass and confirm must be same!"}`)
+	p := MODELS.RequestRegister{}
+	err1 := json.NewDecoder(r.Body).Decode(&p)
+	if err1 != nil {
+		io.WriteString(w, `{"message": "wrong format!"}`+err1.Error())
 		return
 	}
 
-	result, err := BUSINESS.Register(User)
+	result, err := BUSINESS.Register(p)
 	if result {
-		//w.WriteHeader(http.StatusOK)
 		io.WriteString(w, `{"message": "Register success","data": {"status": 1}}`)
 	} else {
-		//w.WriteHeader(http.StatusBadRequest)
 		io.WriteString(w, `{"message":{"code":"`+err.Error()+`"}}`)
 	}
 }

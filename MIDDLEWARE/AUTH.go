@@ -22,6 +22,3 @@ func AuthMiddleware(next http.Handler) http.Handler {
 	})
 	return jwtMiddleware.Handler(next)
 }
-func EnableCors(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-}
