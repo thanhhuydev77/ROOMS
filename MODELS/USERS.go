@@ -1,26 +1,27 @@
 package MODELS
 
 import (
-	"database/sql"
+	. "ROOMS/COMMON"
 	"fmt"
 )
 
+//this type use to save data requested from database
 type USERS struct {
 	Id            int
 	UserName      string
 	Pass          string
-	FullName      sql.NullString
-	IdentifyFront sql.NullString
-	IdentifyBack  sql.NullString
-	DateBirth     sql.NullTime
-	Address       sql.NullString
-	Role          sql.NullInt32
-	Sex           sql.NullString
-	Job           sql.NullString
-	WorkPlace     sql.NullString
-	TempReg       sql.NullInt32
-	Province      sql.NullString
-	Email         sql.NullString
+	FullName      MyNullString
+	IdentifyFront MyNullString
+	IdentifyBack  MyNullString
+	DateBirth     MyNullTime
+	Address       MyNullString
+	Role          MyNullInt
+	Sex           MyNullString
+	Job           MyNullString
+	WorkPlace     MyNullString
+	TempReg       MyNullInt
+	Province      MyNullString
+	Email         MyNullString
 }
 
 func (user USERS) String() string {
@@ -41,9 +42,10 @@ func (user USERS) String() string {
                 "province": %v,
                 "email": %v
 }`, user.Id, user.UserName, user.Pass, user.FullName.String, user.IdentifyFront.String, user.IdentifyBack.String, user.DateBirth.Time, user.Address.String,
-		user.Role.Int32, user.Sex.String, user.Job.String, user.WorkPlace.String, user.TempReg.Int32, user.Province.String, user.Email.String)
+		user.Role.Int64, user.Sex.String, user.Job.String, user.WorkPlace.String, user.TempReg.Int64, user.Province.String, user.Email.String)
 }
 
+//this type use to save request body of method register
 type RequestRegister struct {
 	UserName string
 	Pass     string
