@@ -21,5 +21,7 @@ func InitAllController(r *mux.Router) {
 	r.Handle("/block/get-block/{idowner}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetBlockByOwner))).Methods("GET")
 	r.Handle("/block/create", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(CreateBlock))).Methods("POST")
 	r.Handle("/block/update/{Idblock}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(UpdateBlock))).Methods("PUT")
+
+	r.Handle("/block/delete/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteBlock))).Methods("DELETE")
 	///
 }

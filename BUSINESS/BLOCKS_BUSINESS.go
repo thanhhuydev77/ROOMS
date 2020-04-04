@@ -75,3 +75,26 @@ func UpdateBlock(b MODELS.BLOCKS) (bool, error) {
 	}
 	return true, nil
 }
+
+func DeleteBlock(id int) (bool, error)  {
+	db, err := STATICS.Connectdatabase()
+
+	if err != nil{
+		log.Print("can not connect to database!")
+		return false, err
+	}
+	defer db.Close()
+
+	res, err := db.Exec(`delete from BLOCKS where id = ?`, id)
+
+	if err != nil {
+		panic(err)
+	}
+
+	num, err := res.RowsAffected()
+	m := int64(num)
+	if m == 0 {
+		return false, err
+	}
+	return true, nil
+}

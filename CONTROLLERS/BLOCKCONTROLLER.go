@@ -86,3 +86,29 @@ func UpdateBlock(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, stringresult)
 	return
 }
+
+func DeleteBlock(w http.ResponseWriter, r *http.Request)  {
+	w.Header().Add("Content-Type", "application/json")
+	vars := mux.Vars(r)
+	idblock, err := strconv.Atoi(vars["id"])
+
+	if err != nil {
+		//w.WriteHeader(http.StatusBadRequest)
+		io.WriteString(w, `{"message":"can not convert id as int"}`)
+		return
+	}
+
+	res, _ := BUSINESS.DeleteBlock(idblock)
+
+	if res{
+		io.WriteString(w, `{
+						"status": 200,
+						"message": "Delete Block success",
+						"data": {
+							"status": 1
+							}
+						}`)
+		return
+	}
+	io.WriteString(w, `{"message" : "Can’t  Delete Block"}`)
+}
