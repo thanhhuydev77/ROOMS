@@ -16,7 +16,10 @@ func InitAllController(r *mux.Router) {
 	r.Handle("/user/validate", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(MIDDLEWARE.ValidateToken))).Methods("GET")
 	r.Handle("/user/get-user", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetUser))).Methods("GET")
 	r.Handle("/user/get-user/{Id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetUser))).Methods("GET")
-	//RoomsController
-	r.Handle("/block/getblockbyowner/{idowner}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetBlockByOwner))).Methods("GET")
+
+	//BlocksController
+	r.Handle("/block/get-block/{idowner}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetBlockByOwner))).Methods("GET")
+	r.Handle("/block/create", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(CreateBlock))).Methods("POST")
+	r.Handle("/block/update/{Idblock}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(UpdateBlock))).Methods("PUT")
 	///
 }

@@ -58,28 +58,6 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 
 func UserRegister(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
-	//User := MODELS.USERS{}
-	//r.ParseForm()
-	// parse user information
-	//User.UserName = r.Form.Get("userName")
-	//User.Pass = r.Form.Get("pass")
-	//User.FullName.String = r.Form.Get("fullName")
-	//User.Address.String = r.Form.Get("address")
-	//Role, err := strconv.Atoi(r.Form.Get("role"))
-	//if err != nil {
-	//	io.WriteString(w, `{"message": "can not parse role!"}`)
-	//	return
-	//}
-	//User.Role.Int32 = int32(Role)
-	//User.Sex.String = r.Form.Get("sex")
-	//User.Province.String = r.Form.Get("province")
-	//User.Email.String = r.Form.Get("email")
-	//confirm := r.Form.Get("confirm")
-	//if confirm != User.Pass {
-	//	io.WriteString(w, `{"message": "pass and confirm must be same!"}`)
-	//	return
-	//}
-
 	p := MODELS.RequestRegister{}
 	err1 := json.NewDecoder(r.Body).Decode(&p)
 	if err1 != nil {
