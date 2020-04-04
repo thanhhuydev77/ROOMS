@@ -36,10 +36,10 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, `{"message": "Your password is wrong, please type again !"}`)
 		return
 	}
-	// expired after 15 dates
+	// expired after 1000 dates
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user": a.UserName,
-		"exp":  time.Now().Add(time.Hour * time.Duration(15*24)).Unix(),
+		"exp":  time.Now().Add(time.Hour * time.Duration(1000*24)).Unix(),
 		"iat":  time.Now().Unix(),
 	})
 	tokenString, err := token.SignedString([]byte(APP_KEY))
@@ -48,9 +48,10 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, `{"error":"token_generation_failed"}`)
 		return
 	}
+
 	//w.Write([]byte(`{"hello": "world"}`))
 	stringresult := `{"message": "Login success","data":{"token":"` + tokenString + `","user":{ "id":` + strconv.Itoa(a.Id) + `,
-						"username":"` + a.UserName + `","fullname":"` + a.FullName.String + `","role":` + strconv.Itoa(int(a.Role.Int32)) + `}}}`
+						"username":"` + a.UserName + `","fullname":"` + a.FullName.String + `","role":` + strconv.Itoa(int(a.Role.Int64)) + `}}}`
 	io.WriteString(w, stringresult)
 	return
 }
@@ -123,10 +124,19 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		Id = -1
 	}
 	List := BUSINESS.GetUsers(Id)
-	stringresult := `{"message": "Get Users success","status": 200,"data":{`
-	for _, val := range List {
-		stringresult += val.String() + ","
+	jsonlist, err1 := json.Marshal(List)
+	result := List[0]
+	if err1 != nil {
+		return
+	}
+	stringresult := `{"message": "Get Users success","status": 200,"data":{"user":`
+	if len(List) == 1 {
+		jsonresult, _ := json.Marshal(result)
+		stringresult += string(jsonresult)
+	} else {
+		stringresult += string(jsonlist)
 	}
 	stringresult += "}}"
+
 	io.WriteString(w, stringresult)
 }
