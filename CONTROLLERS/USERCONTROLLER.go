@@ -96,7 +96,6 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetallUserName(w http.ResponseWriter, r *http.Request) {
-
 	// Query()["key"] will return an array of items,
 	// we only want the single item.
 
