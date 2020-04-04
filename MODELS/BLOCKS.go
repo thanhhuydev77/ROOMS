@@ -7,3 +7,7 @@ type BLOCKS struct {
 	Description string
 	IdOwner     int
 }
+
+type IDBLOCKS struct {
+	BlocksId     []int
+}
