@@ -4,6 +4,7 @@ import (
 	"ROOMS/MODELS"
 	"ROOMS/STATICS"
 	"log"
+	"strings"
 )
 
 func GetBlockByIdOwner(IdOwner int) []MODELS.BLOCKS {
@@ -67,6 +68,54 @@ func UpdateBlock(b MODELS.BLOCKS) (bool, error) {
 	rows, err := db.Exec(`update BLOCKS
 								  set nameBlock = ? and address = ? and description = ?
 								  where id = ?`, b.NameBlock, b.Address, b.Description, b.Id)
+
+	num, err := rows.RowsAffected()
+	m := int64(num)
+	if m == 0 {
+		return false, err
+	}
+	return true, nil
+}
+
+func DeleteBlock(id int) (bool, error)  {
+	db, err := STATICS.Connectdatabase()
+
+	if err != nil{
+		log.Print("can not connect to database!")
+		return false, err
+	}
+	defer db.Close()
+
+	res, err := db.Exec(`delete from BLOCKS where id = ?`, id)
+
+	if err != nil {
+		panic(err)
+	}
+
+	num, err := res.RowsAffected()
+	m := int64(num)
+	if m == 0 {
+		return false, err
+	}
+	return true, nil
+}
+
+func DeleteBlocks(ids []int) (bool, error)  {
+	db, err := STATICS.Connectdatabase()
+
+	if err != nil{
+		log.Print("can not connect to database!")
+		return false, err
+	}
+	defer db.Close()
+
+
+	args := make([]interface{}, len(ids))
+	for i, id := range ids {
+		args[i] = id
+	}
+	stmt := `delete from BLOCKS where id in (?` + strings.Repeat(",?", len(args)-1) + `)`
+	rows, err := db.Exec(stmt, args...)
 
 	num, err := rows.RowsAffected()
 	m := int64(num)
