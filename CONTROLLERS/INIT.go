@@ -18,8 +18,8 @@ func InitAllController(r *mux.Router) {
 	r.Handle("/user/get-user/{Id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetUser))).Methods("GET")
 
 	//BlocksController
-	r.Handle("/block/get-block-by-id/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetBlockBYId))).Methods("GET")
-	r.Handle("/block/get-block-by-idowner/{idowner}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetBlockByOwner))).Methods("GET")
+	r.Handle("/block/get-block/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetBlockBYId))).Methods("GET")
+	r.Handle("/block/get-block", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetBlock))).Methods("GET")
 	r.Handle("/block/create", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(CreateBlock))).Methods("POST")
 	r.Handle("/block/update/{Idblock}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(UpdateBlock))).Methods("PUT")
 

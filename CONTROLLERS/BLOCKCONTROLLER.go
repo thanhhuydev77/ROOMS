@@ -10,15 +10,14 @@ import (
 	"strconv"
 )
 
-func GetBlockByOwner(w http.ResponseWriter, r *http.Request) {
+func GetBlock(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
-	vars := mux.Vars(r)
-	idowner, err := strconv.Atoi(vars["idowner"])
-	if err != nil {
-		//w.WriteHeader(http.StatusBadRequest)
-		io.WriteString(w, `{"message":"can not convert idowner as int"}`)
-		return
+	keys, ok := r.URL.Query()["userid"]
+	if !ok || len(keys[0]) < 1 {
+		//io.WriteString(w,"{Url Param 'key' is missing")
+		//return
 	}
+	idowner, _ := strconv.Atoi(keys[0])
 	listBlock := BUSINESS.GetBlockByIdOwner(idowner)
 	jsonlist, _ := json.Marshal(listBlock)
 	if len(listBlock) == 0 {
