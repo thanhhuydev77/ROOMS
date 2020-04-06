@@ -1,13 +1,13 @@
 package MODELS
 
 type BLOCKS struct {
-	Id          int
-	NameBlock   string
-	Address     string
-	Description string
-	IdOwner     int
+	id          int
+	nameBlock   string
+	address     string
+	description string
+	idOwner     int
 }
 
 type IDBLOCKS struct {
-	BlocksId     []int
+	BlocksId []int
 }
