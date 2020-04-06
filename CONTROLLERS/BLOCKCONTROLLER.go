@@ -4,16 +4,15 @@ import (
 	"ROOMS/BUSINESS"
 	"ROOMS/MODELS"
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"io"
 	"net/http"
 	"strconv"
-
-	"github.com/gorilla/mux"
 )
 
 func GetBlock(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
-	keys, ok := r.URL.Query()["userId"]
+	keys, ok := r.URL.Query()["userid"]
 	if !ok || len(keys[0]) < 1 {
 		//io.WriteString(w,"{Url Param 'key' is missing")
 		//return
