@@ -34,6 +34,30 @@ func GetBlockByOwner(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, stringresult)
 }
 
+func GetBlockBYId(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		//w.WriteHeader(http.StatusBadRequest)
+		io.WriteString(w, `{"message":"can not convert idowner as int"}`)
+		return
+	}
+	listBlock, OK := BUSINESS.GetBlockById(id)
+	jsonlist, _ := json.Marshal(listBlock)
+	if !OK {
+		io.WriteString(w, `{ "message": "Can’t get Blocks" }`)
+		return
+	}
+	stringresult := `{"status": 200,
+    				"message": "Get Blocks success",
+    				"data": {
+        			"blocks":`
+	stringresult += string(jsonlist)
+	stringresult += "}}"
+	io.WriteString(w, stringresult)
+}
+
 func CreateBlock(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	p := MODELS.BLOCKS{}
@@ -87,7 +111,7 @@ func UpdateBlock(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func DeleteBlock(w http.ResponseWriter, r *http.Request)  {
+func DeleteBlock(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
@@ -107,7 +131,7 @@ func DeleteBlock(w http.ResponseWriter, r *http.Request)  {
 
 	res, _ := BUSINESS.DeleteBlock(idblock)
 
-	if res{
+	if res {
 		io.WriteString(w, `{
 						"status": 200,
 						"message": "Delete Block success",
@@ -120,19 +144,19 @@ func DeleteBlock(w http.ResponseWriter, r *http.Request)  {
 	io.WriteString(w, `{"message" : "Can’t  Delete Block"}`)
 }
 
-func DeleteBlocks(w http.ResponseWriter, r *http.Request)  {
+func DeleteBlocks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
 	var p = MODELS.IDBLOCKS{}
 	err := json.NewDecoder(r.Body).Decode(&p)
 
-	if err != nil{
+	if err != nil {
 		io.WriteString(w, `{ "message": "Wrong format" }`)
 		return
 	}
 	res, _ := BUSINESS.DeleteBlocks(p.BlocksId)
 
-	if res{
+	if res {
 		io.WriteString(w, `{
 						"status": 200,
 						"message": "Delete Block success",

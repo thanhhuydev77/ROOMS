@@ -13,12 +13,13 @@ func InitAllController(r *mux.Router) {
 	r.HandleFunc("/user/login", UserLogin).Methods("POST")
 	r.HandleFunc("/user/register", UserRegister).Methods("POST")
 	r.HandleFunc("/user/get-all-username", GetallUserName).Methods("GET")
-	r.Handle("/user/validate", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(MIDDLEWARE.ValidateToken))).Methods("GET")
+	r.Handle("/user/validate", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(MIDDLEWARE.ValidateToken))).Methods("POST")
 	r.Handle("/user/get-user", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetUser))).Methods("GET")
 	r.Handle("/user/get-user/{Id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetUser))).Methods("GET")
 
 	//BlocksController
-	r.Handle("/block/get-block/{idowner}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetBlockByOwner))).Methods("GET")
+	r.Handle("/block/get-block-by-id/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetBlockBYId))).Methods("GET")
+	r.Handle("/block/get-block-by-idowner/{idowner}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetBlockByOwner))).Methods("GET")
 	r.Handle("/block/create", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(CreateBlock))).Methods("POST")
 	r.Handle("/block/update/{Idblock}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(UpdateBlock))).Methods("PUT")
 

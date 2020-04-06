@@ -7,6 +7,33 @@ import (
 	"strings"
 )
 
+func GetBlockById(Id int) (MODELS.BLOCKS, bool) {
+	var Block MODELS.BLOCKS
+	db, err := STATICS.Connectdatabase()
+	// Query all users
+	if db == nil {
+
+		log.Print("can not connect to database!")
+		return Block, false
+	}
+	defer db.Close()
+
+	rows, err := db.Query("select * from BLOCKS where id = ?", Id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for rows.Next() {
+		var block MODELS.BLOCKS
+		err := rows.Scan(&block.Id, &block.NameBlock, &block.Address, &block.Description, &block.IdOwner)
+		if err != nil {
+			log.Fatal(err)
+		}
+		Block = block
+	}
+	defer rows.Close()
+	return Block, true
+}
+
 func GetBlockByIdOwner(IdOwner int) []MODELS.BLOCKS {
 	var listBlock []MODELS.BLOCKS
 	db, err := STATICS.Connectdatabase()
@@ -77,10 +104,10 @@ func UpdateBlock(b MODELS.BLOCKS) (bool, error) {
 	return true, nil
 }
 
-func DeleteBlock(id int) (bool, error)  {
+func DeleteBlock(id int) (bool, error) {
 	db, err := STATICS.Connectdatabase()
 
-	if err != nil{
+	if err != nil {
 		log.Print("can not connect to database!")
 		return false, err
 	}
@@ -100,15 +127,14 @@ func DeleteBlock(id int) (bool, error)  {
 	return true, nil
 }
 
-func DeleteBlocks(ids []int) (bool, error)  {
+func DeleteBlocks(ids []int) (bool, error) {
 	db, err := STATICS.Connectdatabase()
 
-	if err != nil{
+	if err != nil {
 		log.Print("can not connect to database!")
 		return false, err
 	}
 	defer db.Close()
-
 
 	args := make([]interface{}, len(ids))
 	for i, id := range ids {
