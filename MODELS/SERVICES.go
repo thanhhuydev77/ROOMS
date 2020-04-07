@@ -1,9 +1,9 @@
 package MODELS
 
 type SERVICES struct {
-	Id          int
-	Name        string
-	Price       float64
-	IdUnit      int
-	Description string
+	Id          int     `json:"id"`
+	Name        string  `json:"name"`
+	Price       float64 `json:"price"`
+	IdUnit      int     `json:"idUnit"`
+	Description string  `json:"description"`
 }

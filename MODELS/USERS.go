@@ -7,21 +7,21 @@ import (
 
 //this type use to save data requested from database
 type USERS struct {
-	Id            int
-	UserName      string
-	Pass          string
-	FullName      MyNullString
-	IdentifyFront MyNullString
-	IdentifyBack  MyNullString
-	DateBirth     MyNullTime
-	Address       MyNullString
-	Role          MyNullInt
-	Sex           MyNullString
-	Job           MyNullString
-	WorkPlace     MyNullString
-	TempReg       MyNullInt
-	Province      MyNullString
-	Email         MyNullString
+	Id            int          `json:"id"`
+	UserName      string       `json:"userName"`
+	Pass          string       `json:"pass"`
+	FullName      MyNullString `json:"fullName"`
+	IdentifyFront MyNullString `json:"identifyFront"`
+	IdentifyBack  MyNullString `json:"identifyBack"`
+	DateBirth     MyNullTime   `json:"dateBirth"`
+	Address       MyNullString `json:"address"`
+	Role          MyNullInt    `json:"role"`
+	Sex           MyNullString `json:"sex"`
+	Job           MyNullString `json:"job"`
+	WorkPlace     MyNullString `json:"workPlace"`
+	TempReg       MyNullInt    `json:"tempReg"`
+	Province      MyNullString `json:"province"`
+	Email         MyNullString `json:"email"`
 }
 
 func (user USERS) String() string {

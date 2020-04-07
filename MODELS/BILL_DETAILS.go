@@ -1,9 +1,9 @@
 package MODELS
 
 type BILL_DETAILS struct {
-	Id         int
-	IdBill     int
-	IdService  int
-	Amount     int
-	TotalPrice float64
+	Id         int     `json:"id"`
+	IdBill     int     `json:"idBill"`
+	IdService  int     `json:"idService"`
+	Amount     int     `json:"amount"`
+	TotalPrice float64 `json:"totalPrice"`
 }

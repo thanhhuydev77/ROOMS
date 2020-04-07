@@ -1,12 +1,12 @@
 package MODELS
 
 type ROOMS struct {
-	Id          int
-	Name        string
-	Floor       int
-	Square      int
-	Price       float64
-	Description string
-	IdBlock     int
-	MaxPeople   int
+	Id          int     `json:"id"`
+	Name        string  `json:"name"`
+	Floor       int     `json:"floor"`
+	Square      int     `json:"square"`
+	Price       float64 `json:"price"`
+	Description string  `json:"description"`
+	IdBlock     int     `json:"idBlock"`
+	MaxPeople   int     `json:"maxPeople"`
 }
