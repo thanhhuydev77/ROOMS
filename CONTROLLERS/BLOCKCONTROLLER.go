@@ -15,8 +15,8 @@ func GetBlock(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	keys, ok := r.URL.Query()["userId"]
 	if !ok || len(keys[0]) < 1 {
-		//io.WriteString(w,"{Url Param 'key' is missing")
-		//return
+		io.WriteString(w, "{Url Param 'userid' is missing")
+		return
 	}
 	idowner, _ := strconv.Atoi(keys[0])
 	listBlock := BUSINESS.GetBlockByIdOwner(idowner)
