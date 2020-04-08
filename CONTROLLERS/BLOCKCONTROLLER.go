@@ -83,7 +83,7 @@ func CreateBlock(w http.ResponseWriter, r *http.Request) {
 func UpdateBlock(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	vars := mux.Vars(r)
-	idblock, err := strconv.Atoi(vars["Idblock"])
+	idblock, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		//w.WriteHeader(http.StatusBadRequest)
 		io.WriteString(w, `{"message":"can not convert id as int"}`)
