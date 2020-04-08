@@ -113,15 +113,13 @@ func UpdateBlock(w http.ResponseWriter, r *http.Request) {
 
 func DeleteBlock(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers",
+		"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 
 	vars := mux.Vars(r)
 	idblock, err := strconv.Atoi(vars["id"])
-
-	if err != nil {
-		//w.WriteHeader(http.StatusBadRequest)
-		io.WriteString(w, `{"message":"can not convert id as int"}`)
-		return
-	}
 
 	if err != nil {
 		//w.WriteHeader(http.StatusBadRequest)
