@@ -2,7 +2,7 @@ package MODELS
 
 type ROOMS struct {
 	Id          int     `json:"id"`
-	Name        string  `json:"name"`
+	Name        string  `json:"nameRoom"`
 	Floor       int     `json:"floor"`
 	Square      int     `json:"square"`
 	Price       float64 `json:"price"`

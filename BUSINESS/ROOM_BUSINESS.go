@@ -47,3 +47,25 @@ func DeleteRoom(id int) (bool , error) {
 
 	return true, nil
 }
+
+func UpdateRoom(id int, room MODELS.ROOMS) (bool, error)  {
+
+	db, err := STATICS.Connectdatabase()
+
+	if err != nil{
+		return false, err
+	}
+	defer db.Close()
+
+	row, err := db.Query(`UPDATE ROOMS 
+										SET nameRoom = ? , maxPeople = ?, floor = ?, square = ? , price = ?, description = ?
+										WHERE id = ?`,
+										room.Name, room.MaxPeople, room.Floor, room.Square, room.Price, room.Description, id)
+
+	if err != nil{
+		return false, err
+	}
+	defer row.Close()
+
+	return true, nil
+}

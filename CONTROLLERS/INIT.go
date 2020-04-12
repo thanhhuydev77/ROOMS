@@ -30,4 +30,5 @@ func InitAllController(r *mux.Router) {
 	r.Handle("/room/create", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(CreateRoom))).Methods("POST")
 	r.Handle("/room/create", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(CreateRoom))).Methods("POST")
 	r.Handle("/room/delete/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteRoom))).Methods("DELETE")
+	r.Handle("/room/update/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(UpdateRoom))).Methods("PUT")
 }

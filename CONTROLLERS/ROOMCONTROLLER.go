@@ -46,7 +46,8 @@ func DeleteRoom(w http.ResponseWriter, r *http.Request)  {
 	id, err := strconv.Atoi(vars["id"])
 
 	if err != nil{
-		io.WriteString(w , `"message": "Can’t delete room"`)
+		io.WriteString(w, `{"message": "Wrong format!"}`)
+		return
 	}
 
 	result, err := BUSINESS.DeleteRoom(id)
@@ -59,5 +60,32 @@ func DeleteRoom(w http.ResponseWriter, r *http.Request)  {
 								}`)
 	}else{
 		io.WriteString(w , `"message": "Can’t delete room"`)
+	}
+}
+
+func UpdateRoom(w http.ResponseWriter, r *http.Request)  {
+	w.Header().Add("Content-Type", "application/json")
+
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+
+	room := MODELS.ROOMS{}
+	arr2 := json.NewDecoder(r.Body).Decode(&room)
+
+	if err != nil || arr2 != nil{
+		io.WriteString(w, `{"message": "Wrong format!"}`)
+		return
+	}
+
+	result, err := BUSINESS.UpdateRoom(id, room)
+
+	if result{
+		io.WriteString(w, `  "status": 200,
+								"message": "Update room success",
+								"data": {
+								"status": 1
+								}`)
+	}else {
+		io.WriteString(w, `{"message": "Can’t update room"}`)
 	}
 }
