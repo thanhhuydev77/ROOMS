@@ -63,6 +63,32 @@ func DeleteRoom(w http.ResponseWriter, r *http.Request)  {
 	}
 }
 
+func DeleteRooms(w http.ResponseWriter, r *http.Request)  {
+	w.Header().Add("Content-Type", "application/json")
+
+	var ids = MODELS.ROOMIDS{}
+	err := json.NewDecoder(r.Body).Decode(&ids)
+
+	if err != nil{
+		io.WriteString(w,"Wrong format !")
+		return
+	}
+
+	result, _ := BUSINESS.DeleteRooms(ids.RoomsId)
+
+	if result{
+		io.WriteString(w, `{
+								"status": 200,
+								"message": "Delete rooms success",
+								"data": {
+									"status": 1
+								}
+							}`)
+	}else{
+		io.WriteString(w, `{"message": "Can’t delete rooms"}`)
+	}
+}
+
 func UpdateRoom(w http.ResponseWriter, r *http.Request)  {
 	w.Header().Add("Content-Type", "application/json")
 

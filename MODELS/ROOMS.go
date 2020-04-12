@@ -11,3 +11,7 @@ type ROOMS struct {
 	MaxPeople   int     `json:"maxPeople"`
 	Status 		int		`json:"status"`
 }
+
+type ROOMIDS struct {
+	RoomsId 	[]int
+}

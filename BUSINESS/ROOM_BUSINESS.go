@@ -4,6 +4,7 @@ import (
 	"ROOMS/MODELS"
 	"ROOMS/STATICS"
 	"log"
+	"strings"
 )
 
 func CreateRoom(room MODELS.ROOMS) (bool, error)  {
@@ -44,6 +45,33 @@ func DeleteRoom(id int) (bool , error) {
 		return false, err
 	}
 	defer row.Close()
+
+	return true, nil
+}
+
+func DeleteRooms(roomsId []int)(bool, error)  {
+
+	db, err := STATICS.Connectdatabase()
+
+	if err != nil{
+		return false, err
+	}
+	defer db.Close()
+
+	args := make([]interface{}, len(roomsId))
+	for i, id := range roomsId {
+		args[i] = id
+	}
+
+	stmt := `DELETE FROM ROOMS WHERE id IN (?` + strings.Repeat(",?", len(args)-1) + `)`
+	rows, err := db.Exec(stmt, args...)
+
+	num , err := rows.RowsAffected()
+	n := int64(num)
+
+	if n == 0{
+		return false, err
+	}
 
 	return true, nil
 }
