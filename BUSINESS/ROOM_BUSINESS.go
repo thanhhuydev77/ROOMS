@@ -28,3 +28,22 @@ func CreateRoom(room MODELS.ROOMS) (bool, error)  {
 
 	return true, nil
 }
+
+func DeleteRoom(id int) (bool , error) {
+
+	db, err := STATICS.Connectdatabase()
+
+	if err != nil{
+		log.Fatal("Can't connect to database")
+	}
+	defer db.Close()
+
+	row, err := db.Query(`DELETE FROM ROOMS WHERE id = ?`, id)
+
+	if err != nil{
+		return false, err
+	}
+	defer row.Close()
+
+	return true, nil
+}
