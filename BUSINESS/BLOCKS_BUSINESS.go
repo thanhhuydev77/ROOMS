@@ -92,9 +92,7 @@ func UpdateBlock(b MODELS.BLOCKS) (bool, error) {
 	}
 	defer db.Close()
 
-	rows, err := db.Exec(`update BLOCKS
-								  set nameBlock = ? and address = ? and description = ?
-								  where id = ?`, b.NameBlock, b.Address, b.Description, b.Id)
+	rows, err := db.Exec("update BLOCKS set nameBlock = ? , address = ? , description = ? where id = ?", b.NameBlock, b.Address, b.Description, b.Id)
 
 	num, err := rows.RowsAffected()
 	m := int64(num)
