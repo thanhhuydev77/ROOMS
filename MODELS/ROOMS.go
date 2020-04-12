@@ -9,4 +9,5 @@ type ROOMS struct {
 	Description string  `json:"description"`
 	IdBlock     int     `json:"idBlock"`
 	MaxPeople   int     `json:"maxPeople"`
+	Status 		int		`json:"status"`
 }
