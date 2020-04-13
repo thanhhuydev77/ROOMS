@@ -10,6 +10,34 @@ import (
 	"strconv"
 )
 
+func GetRoom(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+
+	vars := mux.Vars(r)
+	idBlock, err := strconv.Atoi(vars["idBlock"])
+
+	if err != nil {
+		io.WriteString(w, `{"message": "Wrong format!"}`)
+		return
+	}
+
+	result, bool, _ := BUSINESS.GetRoom(idBlock)
+	resultJson , err := json.Marshal(result)
+
+	data := `{		"status": 200,
+					"message": "Get rooms success",
+					"data":
+						{"rooms":`
+	if len(result) > 0{
+		data += string(resultJson)
+	}
+	data += `}}`
+
+	if bool{
+		io.WriteString(w, data)
+	}
+}
+
 func CreateRoom(w http.ResponseWriter, r *http.Request)  {
 	w.Header().Add("Content-Type", "application/json")
 
