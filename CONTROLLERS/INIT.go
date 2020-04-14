@@ -27,7 +27,7 @@ func InitAllController(r *mux.Router) {
 	r.Handle("/block/delete-all", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteBlocks))).Methods("POST")
 
 	//RoomController
-	r.Handle("/room/get-rooms/{idBlock}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetRoom))).Methods("GET")
+	r.Handle("/room/get-rooms", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetRoom))).Methods("GET")
 	r.Handle("/room/create", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(CreateRoom))).Methods("POST")
 	r.Handle("/room/delete/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteRoom))).Methods("DELETE")
 	r.Handle("/room/delete-all", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteRooms))).Methods("POST")
