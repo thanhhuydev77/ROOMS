@@ -25,5 +25,21 @@ func InitAllController(r *mux.Router) {
 
 	r.Handle("/block/delete/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteBlock))).Methods("DELETE")
 	r.Handle("/block/delete-all", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteBlocks))).Methods("POST")
-	///
+
+	//RoomController
+	r.Handle("/room/get-rooms", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetRoom))).Methods("GET")
+	r.Handle("/room/create", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(CreateRoom))).Methods("POST")
+	r.Handle("/room/delete/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteRoom))).Methods("DELETE")
+	r.Handle("/room/delete-all", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteRooms))).Methods("POST")
+	r.Handle("/room/update/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(UpdateRoom))).Methods("PUT")
+
+	//UnitController
+	r.Handle("/unit/get-units", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetAllUnit))).Methods("GET")
+
+	//DefaultServiceController
+	r.Handle("/default-service/get-default-services", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(Get_default_service))).Methods("GET")
+
+	//ServiceController
+	r.Handle("/service/get-services", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetService))).Methods("GET")
+	r.Handle("/service/delete/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteService))).Methods("DELETE")
 }
