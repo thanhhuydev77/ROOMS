@@ -42,4 +42,7 @@ func InitAllController(r *mux.Router) {
 	//ServiceController
 	r.Handle("/service/get-services", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetService))).Methods("GET")
 	r.Handle("/service/delete/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteService))).Methods("DELETE")
+
+	//uploadFile
+	r.HandleFunc("/file/upload", UploadPicture).Methods("POST")
 }
