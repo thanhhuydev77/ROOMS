@@ -120,6 +120,7 @@ func DeleteBlock(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		//w.WriteHeader(http.StatusBadRequest)
 		io.WriteString(w, `{"message":"can not convert id as int"}`)
+		
 		return
 	}
 
