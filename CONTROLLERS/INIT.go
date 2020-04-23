@@ -32,4 +32,16 @@ func InitAllController(r *mux.Router) {
 	r.Handle("/room/delete/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteRoom))).Methods("DELETE")
 	r.Handle("/room/delete-all", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteRooms))).Methods("POST")
 	r.Handle("/room/update/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(UpdateRoom))).Methods("PUT")
+
+	//UnitController
+	r.Handle("/unit/get-units", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetAllUnit))).Methods("GET")
+
+	//DefaultServiceController
+	r.Handle("/default-service/get-default-services", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(Get_default_service))).Methods("GET")
+
+	//ServiceController
+	r.Handle("/service/get-services", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetService))).Methods("GET")
+	r.Handle("/service/delete/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteService))).Methods("DELETE")
+	r.Handle("/service/create", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(CreateService))).Methods("POST")
+
 }
