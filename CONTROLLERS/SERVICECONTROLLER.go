@@ -2,7 +2,10 @@ package CONTROLLERS
 
 import (
 	"ROOMS/BUSINESS"
+<<<<<<< HEAD
 	"ROOMS/MODELS"
+=======
+>>>>>>> b0dbbb8da67ef6666354b3d9cdf0c471e7168bc4
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"io"
@@ -59,6 +62,7 @@ func DeleteService(w http.ResponseWriter, r *http.Request) {
 	}
 	io.WriteString(w, `{"message" : "Can’t  delete service"}`)
 }
+<<<<<<< HEAD
 
 func CreateService(w http.ResponseWriter, r *http.Request)  {
 	w.Header().Add("Content-Type", "application/json")
@@ -85,3 +89,5 @@ func CreateService(w http.ResponseWriter, r *http.Request)  {
 	}
 	io.WriteString(w, `{"message" : "Can’t create Services"}`)
 }
+=======
+>>>>>>> b0dbbb8da67ef6666354b3d9cdf0c471e7168bc4

@@ -43,5 +43,4 @@ func InitAllController(r *mux.Router) {
 	r.Handle("/service/get-services", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetService))).Methods("GET")
 	r.Handle("/service/delete/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteService))).Methods("DELETE")
 	r.Handle("/service/create", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(CreateService))).Methods("POST")
-
 }
