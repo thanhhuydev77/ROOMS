@@ -86,3 +86,29 @@ func CreateService(w http.ResponseWriter, r *http.Request)  {
 	io.WriteString(w, `{"message" : "Can’t create Services"}`)
 }
 
+func DeleteServices(w http.ResponseWriter, r *http.Request)  {
+	w.Header().Add("Content-Type", "application/json")
+
+	p := struct {
+		ServicesId  []int		`json:"servicesId"`
+	}{}
+	err := json.NewDecoder(r.Body).Decode(&p)
+
+	if err != nil {
+		io.WriteString(w, `{ "message": "Wrong format" }`)
+		return
+	}
+	res, _ := BUSINESS.DeleteServices(p.ServicesId)
+
+	if res {
+		io.WriteString(w, `{
+						"status": 200,
+						"message": "Delete Services success",
+						"data": {
+							"status": 1
+							}
+						}`)
+		return
+	}
+	io.WriteString(w, `{"message" : "Can’t delete services"}`)
+}

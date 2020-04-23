@@ -84,3 +84,29 @@ func CreateService(services []MODELS.SERVICE_INPUT)(bool, error)  {
 
 	return true, nil
 }
+
+func DeleteServices(servicesId []int)(bool, error)  {
+	db, err := STATICS.Connectdatabase()
+	if err != nil {
+		log.Print("can not connect to database!")
+		return false, err
+	}
+	defer db.Close()
+
+	args := make([]interface{}, len(servicesId))
+	for i, id := range servicesId {
+		args[i] = id
+	}
+
+	stmt := `delete from SERVICES where id in (?` + strings.Repeat(",?", len(args)-1) + `)`
+	rows, err := db.Exec(stmt, args...)
+
+	num, err := rows.RowsAffected()
+	m := int64(num)
+	if m == 0 {
+		return false, err
+	}
+	return true, nil
+
+	return true, nil
+}
