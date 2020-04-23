@@ -22,10 +22,11 @@ type GET_SERVICES_REQUEST struct {
 }
 
 type SERVICE_INPUT struct {
+	Id          int                 `json:"id"`
 	NameService string              `json:"nameService"`
 	Price       float64             `json:"price"`
 	IdUnit      int                 `json:"idUnit"`
-	Description string `json:"description"`
+	Description string 				`json:"description"`
 	IdBlock     int                 `json:"idBlock"`
 }
 

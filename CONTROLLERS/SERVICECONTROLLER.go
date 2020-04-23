@@ -112,3 +112,33 @@ func DeleteServices(w http.ResponseWriter, r *http.Request)  {
 	}
 	io.WriteString(w, `{"message" : "Can’t delete services"}`)
 }
+
+func UpdateService(w http.ResponseWriter, r *http.Request)  {
+	w.Header().Add("Content-Type", "application/json")
+
+	vars := mux.Vars(r)
+	idService, _ := strconv.Atoi(vars["id"])
+
+	var p = MODELS.SERVICE_INPUT{}
+
+	err := json.NewDecoder(r.Body).Decode(&p)
+	if err != nil{
+		io.WriteString(w, `{ "message": "Wrong format" }`)
+		return
+	}
+
+	p.Id = idService
+	res, _ := BUSINESS.UpdateService(p)
+
+	if res {
+		io.WriteString(w, `{
+						"status": 200,
+						"message": "Update service success",
+						"data": {
+							"status": 1
+							}
+						}`)
+		return
+	}
+	io.WriteString(w, `{"message" : "Can’t update services"}`)
+}

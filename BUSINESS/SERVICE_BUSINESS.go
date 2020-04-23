@@ -110,3 +110,24 @@ func DeleteServices(servicesId []int)(bool, error)  {
 
 	return true, nil
 }
+
+func UpdateService(service MODELS.SERVICE_INPUT)(bool,error)  {
+	db, err := STATICS.Connectdatabase()
+	if err != nil {
+		log.Print("can not connect to database!")
+		return false, err
+	}
+	defer db.Close()
+
+	rows, err := db.Exec("UPDATE SERVICES SET price = ?, idUnit = ?, description = ? WHERE id = ?",
+					service.Price, service.IdUnit, service.Description, service.Id)
+
+	num, err := rows.RowsAffected()
+	m := int64(num)
+	if m == 0 {
+		return false, err
+	}
+	return true, nil
+
+	return true, nil
+}

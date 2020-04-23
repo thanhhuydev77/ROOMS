@@ -44,4 +44,5 @@ func InitAllController(r *mux.Router) {
 	r.Handle("/service/delete/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteService))).Methods("DELETE")
 	r.Handle("/service/create", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(CreateService))).Methods("POST")
 	r.Handle("/service/delete-all", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteServices))).Methods("POST")
+	r.Handle("/service/update/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(UpdateService))).Methods("PUT")
 }
