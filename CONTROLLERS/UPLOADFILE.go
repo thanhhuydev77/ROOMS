@@ -8,7 +8,7 @@ import (
 )
 
 func UploadPicture(w http.ResponseWriter, r *http.Request) {
-	file, handler, err := r.FormFile("uploadfile")
+	file, handler, err := r.FormFile("file")
 	if err != nil {
 		fmt.Println(err)
 		return
