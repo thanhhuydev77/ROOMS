@@ -16,7 +16,7 @@ func UploadPicture(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	f, err := os.OpenFile("./ASSET/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+	f, err := os.OpenFile("./public/images/avatars/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		io.WriteString(w, `{"message":"Can’t upload avatar"}`)
 		return
@@ -28,10 +28,10 @@ func UploadPicture(w http.ResponseWriter, r *http.Request) {
     "data": {
         "fieldname": "file",
         "originalname": "`+handler.Filename+`",
-        "destination": "ASSET",
+        "destination": "public",
 		 "mimetype": "`+handler.Header.Get("Content-Type")+`",
         "filename": "`+handler.Filename+`",
-        "path": "ASSET\\`+handler.Filename+`",
+        "path": "public\\`+handler.Filename+`",
         "size": `+strconv.Itoa(int(handler.Size))+`
     }
 }`)
