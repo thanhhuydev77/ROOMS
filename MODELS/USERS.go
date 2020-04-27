@@ -22,6 +22,8 @@ type USERS struct {
 	TempReg       MyNullInt    `json:"tempReg"`
 	Province      MyNullString `json:"province"`
 	Email         MyNullString `json:"email"`
+	Avatar        MyNullString `json:"avatar"`
+	PhoneNumber   MyNullString `json:"phoneNumber"`
 }
 
 func (user USERS) String() string {

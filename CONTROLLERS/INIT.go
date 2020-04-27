@@ -45,4 +45,5 @@ func InitAllController(r *mux.Router) {
 
 	//uploadFile
 	r.HandleFunc("/upload/userAvatar", UploadPicture).Methods("POST")
+
 }

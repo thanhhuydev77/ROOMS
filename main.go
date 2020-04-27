@@ -9,8 +9,17 @@ import (
 )
 
 func main() {
-	r := mux.NewRouter()
+	r := NewRouter()
 	CONTROLLERS.InitAllController(r)
 	handler := cors.AllowAll().Handler(r)
 	http.ListenAndServe(":8001", handler)
+}
+func NewRouter() *mux.Router {
+	router := mux.NewRouter().StrictSlash(true)
+
+	// Server CSS, JS & Images Statically.
+	router.
+		PathPrefix("/public/").
+		Handler(http.StripPrefix("/public/", http.FileServer(http.Dir("."+"/public/"))))
+	return router
 }
