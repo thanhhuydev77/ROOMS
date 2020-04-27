@@ -44,5 +44,5 @@ func InitAllController(r *mux.Router) {
 	r.Handle("/service/delete/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteService))).Methods("DELETE")
 
 	//uploadFile
-	r.HandleFunc("/file/upload", UploadPicture).Methods("POST")
+	r.HandleFunc("/upload/userAvatar", UploadPicture).Methods("POST")
 }
