@@ -125,7 +125,7 @@ func GetUsers(Id int) []MODELS.USERS {
 	for rows.Next() {
 		var user MODELS.USERS
 		err := rows.Scan(&user.Id, &user.UserName, &user.Pass, &user.FullName, &user.IdentifyFront, &user.IdentifyBack, &user.DateBirth, &user.Address,
-			&user.Role, &user.Sex, &user.Job, &user.WorkPlace, &user.TempReg, &user.Province, &user.Email)
+			&user.Role, &user.Sex, &user.Job, &user.WorkPlace, &user.TempReg, &user.Province, &user.Email, &user.Avatar, &user.PhoneNumber)
 		if err != nil {
 			log.Fatal(err)
 		}
