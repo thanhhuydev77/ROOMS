@@ -31,7 +31,7 @@ func UploadPicture(w http.ResponseWriter, r *http.Request) {
         "destination": "public",
 		 "mimetype": "`+handler.Header.Get("Content-Type")+`",
         "filename": "`+handler.Filename+`",
-        "path": "public\\`+handler.Filename+`",
+        "path": "public\\images\\avatars\\`+handler.Filename+`",
         "size": `+strconv.Itoa(int(handler.Size))+`
     }
 }`)
