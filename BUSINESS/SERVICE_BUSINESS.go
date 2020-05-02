@@ -4,6 +4,7 @@ import (
 	"ROOMS/MODELS"
 	"ROOMS/STATICS"
 	"log"
+	"strings"
 )
 
 func GetServiceById(Id int) ([]MODELS.GET_SERVICES_REQUEST, bool) {
@@ -52,5 +53,81 @@ func DeleteService(id int) (bool, error) {
 	if m == 0 {
 		return false, err
 	}
+	return true, nil
+}
+
+func CreateService(services []MODELS.SERVICE_INPUT)(bool, error)  {
+
+	db, err := STATICS.Connectdatabase()
+	if err != nil {
+		log.Print("can not connect to database!")
+		return false, err
+	}
+	defer db.Close()
+
+	sqlStr := "insert into SERVICES(nameService, price, idUnit, description, idBlock) values "
+	vals := []interface{}{}
+
+	for _, row := range services{
+		sqlStr += "(?, ?, ?, ?, ?),"
+		vals = append(vals, row.NameService, row.Price, row.IdUnit, row.Description, row.IdBlock)
+	}
+
+	sqlStr = strings.TrimSuffix(sqlStr, ",")
+
+	stmt, _ := db.Prepare(sqlStr)
+	res, err := stmt.Exec(vals...)
+
+	if err != nil || res == nil{
+		return false, err
+	}
+
+	return true, nil
+}
+
+func DeleteServices(servicesId []int)(bool, error)  {
+	db, err := STATICS.Connectdatabase()
+	if err != nil {
+		log.Print("can not connect to database!")
+		return false, err
+	}
+	defer db.Close()
+
+	args := make([]interface{}, len(servicesId))
+	for i, id := range servicesId {
+		args[i] = id
+	}
+
+	stmt := `delete from SERVICES where id in (?` + strings.Repeat(",?", len(args)-1) + `)`
+	rows, err := db.Exec(stmt, args...)
+
+	num, err := rows.RowsAffected()
+	m := int64(num)
+	if m == 0 {
+		return false, err
+	}
+	return true, nil
+
+	return true, nil
+}
+
+func UpdateService(service MODELS.SERVICE_INPUT)(bool,error)  {
+	db, err := STATICS.Connectdatabase()
+	if err != nil {
+		log.Print("can not connect to database!")
+		return false, err
+	}
+	defer db.Close()
+
+	rows, err := db.Exec("UPDATE SERVICES SET price = ?, idUnit = ?, description = ? WHERE id = ?",
+					service.Price, service.IdUnit, service.Description, service.Id)
+
+	num, err := rows.RowsAffected()
+	m := int64(num)
+	if m == 0 {
+		return false, err
+	}
+	return true, nil
+
 	return true, nil
 }
