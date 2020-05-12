@@ -48,4 +48,7 @@ func InitAllController(r *mux.Router) {
 
   //uploadFile
 	r.HandleFunc("/upload/userAvatar", UploadPicture).Methods("POST")
+
+	//CustomerController
+	r.Handle("/customer/get-customers", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetCustomersByUserId))).Methods("GET")
 }
