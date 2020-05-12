@@ -2,9 +2,8 @@ package CONTROLLERS
 
 import (
 	"ROOMS/MIDDLEWARE"
-	"net/http"
-
 	"github.com/gorilla/mux"
+	"net/http"
 )
 
 func InitAllController(r *mux.Router) {
@@ -46,6 +45,9 @@ func InitAllController(r *mux.Router) {
 	r.Handle("/service/delete-all", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteServices))).Methods("POST")
 	r.Handle("/service/update/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(UpdateService))).Methods("PUT")
 
-  //uploadFile
+	//uploadFile
 	r.HandleFunc("/upload/userAvatar", UploadPicture).Methods("POST")
+
+	//ContractControllers
+	r.Handle("/contract/create", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(CreateContract))).Methods("POST")
 }
