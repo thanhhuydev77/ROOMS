@@ -66,7 +66,7 @@ func CreateContract(w http.ResponseWriter, r *http.Request) {
 
 	result := BUSINESS.CreateContract(p)
 	if result {
-		io.WriteString(w, `   "status": 200,
+		io.WriteString(w, `  { "status": 200,
     "message": "Create contract success",
     "data": {
         "status": 1
