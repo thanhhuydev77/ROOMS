@@ -15,7 +15,7 @@ func GetBlock(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	keys, ok := r.URL.Query()["userId"]
 	if !ok || len(keys[0]) < 1 {
-		io.WriteString(w, "{Url Param 'userid' is missing")
+		io.WriteString(w, `{ "message": "Url Param 'userid' is missing"}`)
 		return
 	}
 	idowner, _ := strconv.Atoi(keys[0])
@@ -34,7 +34,7 @@ func GetBlock(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, stringresult)
 }
 
-func GetBlockBYId(w http.ResponseWriter, r *http.Request) {
+func GetBlockById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])

@@ -8,6 +8,7 @@ const (
 	APP_KEY           = "thisissecreckeyyesitisreallyofcourcetrustmeitiskeyofthisapphahaha"
 	CONNECTION_STRING = "root:tjmwjm824594@(104.197.241.11:3306)/ROOM_SCHEMA?parseTime=true"
 	DRIVER_NAME       = "mysql"
+	REDISURL          = "redis://localhost:6379"
 )
 
 func Connectdatabase() (*sql.DB, error) {
