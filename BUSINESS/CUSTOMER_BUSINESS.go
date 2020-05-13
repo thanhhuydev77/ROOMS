@@ -42,7 +42,6 @@ func GetCustomersByUserId(userId int)([]MODELS.CUSTOMER,bool, error)  {
 
 func CreateCustomer(c MODELS.CUSTOMER_INPUT)(bool, error)  {
 	db, err := STATICS.Connectdatabase()
-
 	if err != nil{
 		log.Fatalln(err)
 		return false, err
@@ -54,6 +53,25 @@ func CreateCustomer(c MODELS.CUSTOMER_INPUT)(bool, error)  {
 		c.CodeUser, c.FullName, c.IdentifyFront, c.IdentifyBack, c.DateBirth, c.Sex, c.Job,
 		c.WorkPlace, c.TempReg, c.Email, c.Avatar, c.PhoneNumber, c.IdOwner, c.Note)
 
+
+	if err != nil{
+		log.Fatalln(err)
+		return false, err
+	}
+	defer rs.Close()
+
+	return true, nil
+}
+
+func DeleteCustomer(idCustomer int)(bool, error)  {
+	db, err := STATICS.Connectdatabase()
+	if err != nil{
+		log.Fatalln(err)
+		return false, err
+	}
+	defer db.Close()
+
+	rs, err := db.Query(`DELETE FROM CUSTOMERS WHERE id = ?`, idCustomer)
 
 	if err != nil{
 		log.Fatalln(err)

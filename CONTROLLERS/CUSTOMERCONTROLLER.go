@@ -4,6 +4,7 @@ import (
 	"ROOMS/BUSINESS"
 	"ROOMS/MODELS"
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"io"
 	"net/http"
 	"strconv"
@@ -57,4 +58,36 @@ func CreateCustomer(w http.ResponseWriter, r *http.Request)  {
 	} else {
 		io.WriteString(w, `{ "message": "Can’t create customer "}`)
 	}
+}
+
+func DeleteCustomer(w http.ResponseWriter, r *http.Request)  {
+	w.Header().Add("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers",
+		"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+
+	vars := mux.Vars(r)
+	idCustomer, err := strconv.Atoi(vars["id"])
+
+	if err != nil {
+		//w.WriteHeader(http.StatusBadRequest)
+		io.WriteString(w, `{"message":"can not convert id as int"}`)
+
+		return
+	}
+
+	res, _ := BUSINESS.DeleteCustomer(idCustomer)
+
+	if res {
+		io.WriteString(w, `{
+						"status": 200,
+						"message": "Delete customer success",
+						"data": {
+							"status": 1
+							}
+						}`)
+		return
+	}
+	io.WriteString(w, `{"message" : "Can’t  customer Block"}`)
 }
