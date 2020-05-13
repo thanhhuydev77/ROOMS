@@ -46,3 +46,7 @@ type CUSTOMER_INPUT struct {
 	CodeUser string		`json:"codeUser"`
 	IdOwner int 		`json:"idOwner"`
 }
+
+type CUSTOMERIDS struct {
+	CustomersId []int 		`json:"customersId"`
+}

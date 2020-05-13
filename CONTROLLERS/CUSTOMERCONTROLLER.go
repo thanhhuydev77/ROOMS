@@ -89,5 +89,30 @@ func DeleteCustomer(w http.ResponseWriter, r *http.Request)  {
 						}`)
 		return
 	}
-	io.WriteString(w, `{"message" : "Can’t  customer Block"}`)
+	io.WriteString(w, `{"message" : "Can’t delete customer"}`)
+}
+
+func DeleteManyCustomers(w http.ResponseWriter, r *http.Request)  {
+	w.Header().Add("Content-Type", "application/json")
+
+	var p = MODELS.CUSTOMERIDS{}
+	err := json.NewDecoder(r.Body).Decode(&p)
+
+	if err != nil {
+		io.WriteString(w, `{ "message": "Wrong format" }`)
+		return
+	}
+	res, _ := BUSINESS.DeleteManyCustomers(p.CustomersId)
+
+	if res {
+		io.WriteString(w, `{
+						"status": 200,
+						"message": "Delete customers success",
+						"data": {
+							"status": 1
+							}
+						}`)
+		return
+	}
+	io.WriteString(w, `{"message" : "Can’t  delete customers"}`)
 }

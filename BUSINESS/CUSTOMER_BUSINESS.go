@@ -4,6 +4,7 @@ import (
 	"ROOMS/MODELS"
 	"ROOMS/STATICS"
 	"log"
+	"strings"
 )
 
 func GetCustomersByUserId(userId int)([]MODELS.CUSTOMER,bool, error)  {
@@ -79,5 +80,28 @@ func DeleteCustomer(idCustomer int)(bool, error)  {
 	}
 	defer rs.Close()
 
+	return true, nil
+}
+
+func DeleteManyCustomers(ids []int)(bool, error){
+	db, err := STATICS.Connectdatabase()
+	if err != nil{
+		log.Fatalln(err)
+		return false, err
+	}
+	defer db.Close()
+
+	args := make([]interface{}, len(ids))
+	for i, id := range ids {
+		args[i] = id
+	}
+	stmt := `DELETE FROM CUSTOMERS WHERE id IN(?` + strings.Repeat(",?", len(args)-1) + `)`
+	rows, err := db.Exec(stmt, args...)
+
+	num, err := rows.RowsAffected()
+	m := int64(num)
+	if m == 0 {
+		return false, err
+	}
 	return true, nil
 }
