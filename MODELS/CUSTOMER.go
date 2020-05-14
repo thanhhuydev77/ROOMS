@@ -47,6 +47,23 @@ type CUSTOMER_INPUT struct {
 	IdOwner int 		`json:"idOwner"`
 }
 
+type CUSTOMER_UPDATE struct {
+	Id	int       	`json:"id"`
+	FullName string `json:"fullName"`
+	PhoneNumber string `json:"phoneNumber"`
+	DateBirth string `json:"dateBirth"`
+	Address string `json:"address"`
+	Email string `json:"email"`
+	Job string `json:"job"`
+	WorkPlace string `json:"workPlace"`
+	Sex string `json:"sex"`
+	TempReg int `json:"tempReg"`
+	Note string `json:"note"`
+	Avatar string `json:"avatar"`
+	IdentifyBack string `json:"identifyBack"`
+	IdentifyFront string `json:"identifyFront"`
+}
+
 type CUSTOMERIDS struct {
 	CustomersId []int 		`json:"customersId"`
 }

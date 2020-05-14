@@ -116,3 +116,35 @@ func DeleteManyCustomers(w http.ResponseWriter, r *http.Request)  {
 	}
 	io.WriteString(w, `{"message" : "Can’t  delete customers"}`)
 }
+
+func UpdateCustomer(w http.ResponseWriter, r *http.Request)  {
+	w.Header().Add("Content-Type", "application/json")
+
+	vars := mux.Vars(r)
+	idCustomer, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		io.WriteString(w, `{"message":"can not convert id as int"}`)
+		return
+	}
+
+	p := MODELS.CUSTOMER_UPDATE{}
+	err1 := json.NewDecoder(r.Body).Decode(&p)
+	if err1 != nil {
+		io.WriteString(w, `{"message": "wrong format!"}`+err1.Error())
+		return
+	}
+	p.Id = idCustomer
+	hasroweffected, _ := BUSINESS.UpdateCustomer(p)
+	if hasroweffected == false {
+		io.WriteString(w, `{ "message": "Can’t update customer" }`)
+		return
+	}
+	stringresult := `{  "status": 200,
+    					"message": "Update customer Success",
+						"data": {
+        						"status": 1
+    							}
+						}`
+	io.WriteString(w, stringresult)
+	return
+}

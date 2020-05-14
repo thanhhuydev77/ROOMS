@@ -105,3 +105,26 @@ func DeleteManyCustomers(ids []int)(bool, error){
 	}
 	return true, nil
 }
+
+func UpdateCustomer(c MODELS.CUSTOMER_UPDATE)(bool, error)  {
+	db, err := STATICS.Connectdatabase()
+
+	if err != nil {
+
+		log.Print("can not connect to database!")
+		return false, err
+	}
+	defer db.Close()
+
+	rows, err := db.Exec(`UPDATE CUSTOMERS SET fullName = ?, identifyFront = ?, identifyBack = ?, dateBirth = ?, 
+address = ?, sex = ?, job = ?, workPlace = ?, tempReg = ?, email = ?, avatar = ?, phoneNumber = ?, note = ? WHERE id = ?`,
+					c.FullName, c.IdentifyFront, c.IdentifyBack, c.DateBirth, c.Address, c.Sex, c.Job,
+					c.WorkPlace, c.TempReg, c.Email, c.Avatar, c.PhoneNumber, c.Note, c.Id)
+
+	num, err := rows.RowsAffected()
+	m := int64(num)
+	if m == 0 {
+		return false, err
+	}
+	return true, nil
+}
