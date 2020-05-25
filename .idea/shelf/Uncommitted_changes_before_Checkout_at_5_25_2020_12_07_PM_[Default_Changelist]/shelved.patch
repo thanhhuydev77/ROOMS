@@ -1,0 +1,180 @@
+Index: CONTROLLERS/INIT.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package CONTROLLERS\r\n\r\nimport (\r\n\t\"ROOMS/MIDDLEWARE\"\r\n\t\"net/http\"\r\n\r\n\t\"github.com/gorilla/mux\"\r\n)\r\n\r\nfunc InitAllController(r *mux.Router) {\r\n\r\n\t//UsersController\r\n\tr.HandleFunc(\"/user/login\", UserLogin).Methods(\"POST\")\r\n\tr.HandleFunc(\"/user/register\", UserRegister).Methods(\"POST\")\r\n\tr.HandleFunc(\"/user/get-all-username\", GetallUserName).Methods(\"GET\")\r\n\tr.Handle(\"/user/validate\", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(MIDDLEWARE.ValidateToken))).Methods(\"POST\")\r\n\tr.Handle(\"/user/get-user\", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetUser))).Methods(\"GET\")\r\n\tr.Handle(\"/user/get-user/{Id}\", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetUser))).Methods(\"GET\")\r\n\r\n\t//BlocksController\r\n\tr.Handle(\"/block/get-block/{id}\", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetBlockBYId))).Methods(\"GET\")\r\n\tr.Handle(\"/block/get-block\", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetBlock))).Methods(\"GET\")\r\n\tr.Handle(\"/block/create\", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(CreateBlock))).Methods(\"POST\")\r\n\tr.Handle(\"/block/update/{id}\", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(UpdateBlock))).Methods(\"PUT\")\r\n\r\n\tr.Handle(\"/block/delete/{id}\", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteBlock))).Methods(\"DELETE\")\r\n\tr.Handle(\"/block/delete-all\", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteBlocks))).Methods(\"POST\")\r\n\r\n\t//RoomController\r\n\tr.Handle(\"/room/get-rooms\", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetRoom))).Methods(\"GET\")\r\n\tr.Handle(\"/room/create\", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(CreateRoom))).Methods(\"POST\")\r\n\tr.Handle(\"/room/delete/{id}\", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteRoom))).Methods(\"DELETE\")\r\n\tr.Handle(\"/room/delete-all\", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteRooms))).Methods(\"POST\")\r\n\tr.Handle(\"/room/update/{id}\", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(UpdateRoom))).Methods(\"PUT\")\r\n\r\n\t//UnitController\r\n\tr.Handle(\"/unit/get-units\", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetAllUnit))).Methods(\"GET\")\r\n\r\n\t//DefaultServiceController\r\n\tr.Handle(\"/default-service/get-default-services\", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(Get_default_service))).Methods(\"GET\")\r\n\r\n\t//ServiceController\r\n\tr.Handle(\"/service/get-services\", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetService))).Methods(\"GET\")\r\n\tr.Handle(\"/service/delete/{id}\", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteService))).Methods(\"DELETE\")\r\n\tr.Handle(\"/service/create\", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(CreateService))).Methods(\"POST\")\r\n\tr.Handle(\"/service/delete-all\", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteServices))).Methods(\"POST\")\r\n\tr.Handle(\"/service/update/{id}\", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(UpdateService))).Methods(\"PUT\")\r\n\r\n  //uploadFile\r\n\tr.HandleFunc(\"/upload/userAvatar\", UploadPicture).Methods(\"POST\")\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- CONTROLLERS/INIT.go	(revision c877c306a361e01ed568ca33cba716879e50e636)
++++ CONTROLLERS/INIT.go	(date 1590383169746)
+@@ -48,4 +48,11 @@
+ 
+   //uploadFile
+ 	r.HandleFunc("/upload/userAvatar", UploadPicture).Methods("POST")
++
++	//CustomerController
++	r.Handle("/customer/get-customers", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetCustomersByUserId))).Methods("GET")
++	r.Handle("/customer/create", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(CreateCustomer))).Methods("POST")
++	r.Handle("/customer/delete/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteCustomer))).Methods("DELETE")
++	r.Handle("/customer/delete-all", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteManyCustomers))).Methods("POST")
++	r.Handle("/customer/update/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(UpdateCustomer))).Methods("PUT")
+ }
+Index: CONTROLLERS/CUSTOMERCONTROLLER.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- CONTROLLERS/CUSTOMERCONTROLLER.go	(date 1590383169744)
++++ CONTROLLERS/CUSTOMERCONTROLLER.go	(date 1590383169744)
+@@ -0,0 +1,150 @@
++package CONTROLLERS
++
++import (
++	"ROOMS/BUSINESS"
++	"ROOMS/MODELS"
++	"encoding/json"
++	"github.com/gorilla/mux"
++	"io"
++	"net/http"
++	"strconv"
++)
++
++func GetCustomersByUserId(w http.ResponseWriter, r *http.Request)  {
++	w.Header().Add("Content-Type","application/json")
++	keys, ok := r.URL.Query()["userId"]
++	if !ok || len(keys[0]) < 1 {
++		io.WriteString(w, `{"message":"can not convert idowner as int"}`)
++		return
++	}
++	userId, _ := strconv.Atoi(keys[0])
++	listCustomer, _, err := BUSINESS.GetCustomersByUserId(userId)
++	jsonCustomers, _ := json.Marshal(listCustomer)
++
++	if err != nil{
++		io.WriteString(w, `{ "message": "Can’t get customers" }`)
++		return
++	}
++
++	stringresult := `{"status": 200,
++    				"message": "Get customers success",
++    				"data": {
++        			"customers":`
++	stringresult += string(jsonCustomers)
++	stringresult += "}}"
++	io.WriteString(w, stringresult)
++}
++
++func CreateCustomer(w http.ResponseWriter, r *http.Request)  {
++	w.Header().Add("Content-Type","application/json")
++
++	p := MODELS.CUSTOMER_INPUT{}
++	err := json.NewDecoder(r.Body).Decode(&p)
++
++	if err != nil{
++		io.WriteString(w, `{"message": "wrong format!"}` + err.Error())
++		return
++	}
++
++	rs, _ := BUSINESS.CreateCustomer(p)
++
++	if rs {
++		io.WriteString(w, `{ "status": 200,
++    						"message": "Create customer success",
++    							"data": {
++        						"status": 1
++    									}
++								}`)
++	} else {
++		io.WriteString(w, `{ "message": "Can’t create customer "}`)
++	}
++}
++
++func DeleteCustomer(w http.ResponseWriter, r *http.Request)  {
++	w.Header().Add("Content-Type", "application/json")
++	w.Header().Set("Access-Control-Allow-Origin", "*")
++	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
++	w.Header().Set("Access-Control-Allow-Headers",
++		"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
++
++	vars := mux.Vars(r)
++	idCustomer, err := strconv.Atoi(vars["id"])
++
++	if err != nil {
++		//w.WriteHeader(http.StatusBadRequest)
++		io.WriteString(w, `{"message":"can not convert id as int"}`)
++
++		return
++	}
++
++	res, _ := BUSINESS.DeleteCustomer(idCustomer)
++
++	if res {
++		io.WriteString(w, `{
++						"status": 200,
++						"message": "Delete customer success",
++						"data": {
++							"status": 1
++							}
++						}`)
++		return
++	}
++	io.WriteString(w, `{"message" : "Can’t delete customer"}`)
++}
++
++func DeleteManyCustomers(w http.ResponseWriter, r *http.Request)  {
++	w.Header().Add("Content-Type", "application/json")
++
++	var p = MODELS.CUSTOMERIDS{}
++	err := json.NewDecoder(r.Body).Decode(&p)
++
++	if err != nil {
++		io.WriteString(w, `{ "message": "Wrong format" }`)
++		return
++	}
++	res, _ := BUSINESS.DeleteManyCustomers(p.CustomersId)
++
++	if res {
++		io.WriteString(w, `{
++						"status": 200,
++						"message": "Delete customers success",
++						"data": {
++							"status": 1
++							}
++						}`)
++		return
++	}
++	io.WriteString(w, `{"message" : "Can’t  delete customers"}`)
++}
++
++func UpdateCustomer(w http.ResponseWriter, r *http.Request)  {
++	w.Header().Add("Content-Type", "application/json")
++
++	vars := mux.Vars(r)
++	idCustomer, err := strconv.Atoi(vars["id"])
++	if err != nil {
++		io.WriteString(w, `{"message":"can not convert id as int"}`)
++		return
++	}
++
++	p := MODELS.CUSTOMER_UPDATE{}
++	err1 := json.NewDecoder(r.Body).Decode(&p)
++	if err1 != nil {
++		io.WriteString(w, `{"message": "wrong format!"}`+err1.Error())
++		return
++	}
++	p.Id = idCustomer
++	hasroweffected, _ := BUSINESS.UpdateCustomer(p)
++	if hasroweffected == false {
++		io.WriteString(w, `{ "message": "Can’t update customer" }`)
++		return
++	}
++	stringresult := `{  "status": 200,
++    					"message": "Update customer Success",
++						"data": {
++        						"status": 1
++    							}
++						}`
++	io.WriteString(w, stringresult)
++	return
++}
+\ No newline at end of file
