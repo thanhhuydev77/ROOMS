@@ -3,8 +3,9 @@ package CONTROLLERS
 import (
 	M "ROOMS/MIDDLEWARE"
 
-	"github.com/gorilla/mux"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 func InitAllController(r *mux.Router, storage *M.Storage) {
@@ -50,9 +51,9 @@ func InitAllController(r *mux.Router, storage *M.Storage) {
 	r.HandleFunc("/upload/userAvatar", UploadPicture).Methods("POST")
 
 	//CustomerController
-	r.Handle("/customer/get-customers", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(GetCustomersByUserId))).Methods("GET")
-	r.Handle("/customer/create", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(CreateCustomer))).Methods("POST")
-	r.Handle("/customer/delete/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteCustomer))).Methods("DELETE")
-	r.Handle("/customer/delete-all", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(DeleteManyCustomers))).Methods("POST")
-	r.Handle("/customer/update/{id}", MIDDLEWARE.AuthMiddleware(http.HandlerFunc(UpdateCustomer))).Methods("PUT")
+	r.Handle("/customer/get-customers", M.AuthMiddleware(http.HandlerFunc(GetCustomersByUserId))).Methods("GET")
+	r.Handle("/customer/create", M.AuthMiddleware(http.HandlerFunc(CreateCustomer))).Methods("POST")
+	r.Handle("/customer/delete/{id}", M.AuthMiddleware(http.HandlerFunc(DeleteCustomer))).Methods("DELETE")
+	r.Handle("/customer/delete-all", M.AuthMiddleware(http.HandlerFunc(DeleteManyCustomers))).Methods("POST")
+	r.Handle("/customer/update/{id}", M.AuthMiddleware(http.HandlerFunc(UpdateCustomer))).Methods("PUT")
 }
