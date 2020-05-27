@@ -5,6 +5,7 @@ import (
 	"ROOMS/MODELS"
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -13,33 +14,54 @@ import (
 
 func GetRoom(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
-	keys, ok := r.URL.Query()["idBlock"]
-	if !ok || len(keys[0]) < 1 {
+	idBlockP, ok := r.URL.Query()["idBlock"]
+	if !ok || len(idBlockP[0]) < 1 {
 		io.WriteString(w, `{ "message": "Url Param 'idBlock' is missing"}`)
 		return
 	}
-
-	idBlock, err := strconv.Atoi(keys[0])
-
+	idBlock, err := strconv.Atoi(idBlockP[0])
 	if err != nil {
 		io.WriteString(w, `{"message": "Wrong format!"}`)
 		return
 	}
+	if err := r.ParseForm(); err != nil {
+		log.Printf("Error parsing form: %s", err)
+		return
+	}
+	isMatchP, err := strconv.ParseBool(r.Form.Get("isMatch"))
 
-	result, bool, _ := BUSINESS.GetRoom(idBlock)
-	resultJson, err := json.Marshal(result)
+	if isMatchP{
+		result, bool, _ := BUSINESS.UpdateGetRoom(idBlock)
+		resultJson, _ := json.Marshal(result)
 
-	data := `{		"status": 200,
+		data := `{		"status": 200,
 					"message": "Get rooms success",
 					"data":
 						{"rooms":`
-	if len(result) > 0 {
-		data += string(resultJson)
-	}
-	data += `}}`
+		if len(result) > 0 {
+			data += string(resultJson)
+		}
+		data += `}}`
 
-	if bool {
-		io.WriteString(w, data)
+		if bool {
+			io.WriteString(w, data)
+		}
+	}else{
+		result, bool, _ := BUSINESS.GetRoom(idBlock)
+		resultJson, _ := json.Marshal(result)
+
+		data := `{		"status": 200,
+					"message": "Get rooms success",
+					"data":
+						{"rooms":`
+		if len(result) > 0 {
+			data += string(resultJson)
+		}
+		data += `}}`
+
+		if bool {
+			io.WriteString(w, data)
+		}
 	}
 }
 
