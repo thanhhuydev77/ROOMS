@@ -60,7 +60,7 @@ func InitAllController(r *mux.Router, storage *M.Storage) {
 	//ContractController
 	r.Handle("/contract/get-contracts", M.AuthMiddleware(http.HandlerFunc(GetContract))).Methods("GET")
 	r.Handle("/contract/create", M.AuthMiddleware(http.HandlerFunc(CreateContract))).Methods("POST")
-	r.Handle("/contract/delete/{id}", M.AuthMiddleware(http.HandlerFunc(DeleteContract))).Methods("PUT")
+	r.Handle("/contract/delete/{id}", M.AuthMiddleware(http.HandlerFunc(DeleteContract))).Methods("DELETE")
 	r.Handle("/contract/delete-all", M.AuthMiddleware(http.HandlerFunc(DeleteAllContract))).Methods("POST")
 	r.Handle("/contract/update/{id}", M.AuthMiddleware(http.HandlerFunc(UpdateContract))).Methods("PUT")
 }
