@@ -157,17 +157,13 @@ func UpdateContract(c MODELS.CREATE_UPDATE_CONTRACT_REQUEST) (bool, error) {
 	if err1 != nil {
 		log.Fatal(err)
 	}
-	rows, err := db.Exec("UPDATE CONTRACTS SET idSlave = ?, startDate = ?, endDate = ?, circlePay = ?, deposit = ?, dayPay = ?, note = ? WHERE id = ?", c.IdSlave, c.StartDate, c.EndDate, c.CirclePay, c.Deposit, c.DayPay, c.Note, c.Id)
+	_, err = db.Exec("UPDATE CONTRACTS SET idSlave = ?, startDate = ?, endDate = ?, circlePay = ?, deposit = ?, dayPay = ?, note = ? WHERE id = ?", c.IdSlave, c.StartDate, c.EndDate, c.CirclePay, c.Deposit, c.DayPay, c.Note, c.Id)
 	if err != nil {
 		// Incase we find any error in the query execution, rollback the transaction
 		tx.Rollback()
 		return false, err
 	}
-	num, err := rows.RowsAffected()
-	m := int64(num)
-	if m == 0 {
-		return false, err
-	}
+
 	_, err2 := db.Exec("DELETE FROM USER_ROOM WHERE idRoom = ?", c.IdRoom)
 	if err2 != nil {
 		// Incase we find any error in the query execution, rollback the transaction

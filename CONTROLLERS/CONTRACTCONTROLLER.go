@@ -140,12 +140,12 @@ func UpdateContract(w http.ResponseWriter, r *http.Request) {
 	if res {
 		io.WriteString(w, `{
 						"status": 200,
-						"message": "Update service success",
+						"message": "Update contracts success",
 						"data": {
 							"status": 1
 							}
 						}`)
 		return
 	}
-	io.WriteString(w, `{"message" : "Can’t update services"}`)
+	io.WriteString(w, `{"message" : "Can’t update contracts"}`)
 }
