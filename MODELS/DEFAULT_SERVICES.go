@@ -9,6 +9,7 @@ type DEFAULT_SERVICES struct {
 	IdUnit      int     `json:"idUnit"`
 	Description string  `json:"description"`
 }
+
 type GET_DEFAULT_SERVICES_REQUEST struct {
 	Id          int                 `json:"id"`
 	NameService string              `json:"nameService"`
