@@ -51,6 +51,7 @@ func CreateContract(w http.ResponseWriter, r *http.Request) {
     "data": {
         "status": 1
     }
+}
 `)
 	} else {
 		io.WriteString(w, `{ "message": "Can’t create contract"}`)
