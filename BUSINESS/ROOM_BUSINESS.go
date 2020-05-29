@@ -3,6 +3,7 @@ package BUSINESS
 import (
 	"ROOMS/MODELS"
 	"ROOMS/STATICS"
+	"database/sql"
 	"log"
 	"strings"
 )
@@ -132,7 +133,7 @@ func UpdateGetRoom(idBlock int) ([]MODELS.ROOMS, bool, error) {
 	db, err := STATICS.Connectdatabase()
 
 	if err != nil {
-		log.Fatal("Can't connet to database")
+		log.Fatal("Can't connect to database")
 		return nil, false, err
 	}
 	defer db.Close()
@@ -149,6 +150,77 @@ FROM ROOMS R LEFT JOIN USER_ROOM UR ON R.id = UR.idRoom WHERE UR.idRoom IS NULL 
 	for rows.Next() {
 		var room MODELS.ROOMS
 		err := rows.Scan(&room.Id, &room.Name, &room.Floor, &room.Square, &room.Price, &room.Description, &room.IdBlock, &room.MaxPeople, &room.Status, &room.CodeRoom)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+		rooms = append(rooms, room)
+	}
+	return rooms, true, nil
+}
+
+func GetRoomDB(idBlock int, status int, userid int) ([]MODELS.GET_ROOMDB_REQUEST, error) {
+	db, err := STATICS.Connectdatabase()
+
+	if err != nil {
+		log.Fatal("Can't connect to database")
+		return nil, err
+	}
+	defer db.Close()
+	var rows *sql.Rows
+	var err1 error
+	if idBlock == -1 && status == -1 {
+		rows, err1 = db.Query(`SELECT R.*, B.nameBlock, C.startDate FROM ROOMS R INNER JOIN BLOCKS B ON R.idBlock = B.id LEFT JOIN CONTRACTS C ON R.id = C.idRoom WHERE B.idOwner = ?`, userid)
+	} else if idBlock == -1 && status != -1 {
+		rows, err1 = db.Query(`SELECT R.*, B.nameBlock, C.startDate FROM ROOMS R INNER JOIN BLOCKS B ON R.idBlock = B.id LEFT JOIN CONTRACTS C ON R.id = C.idRoom WHERE B.idOwner = ? AND R.status = ?`, userid, status)
+	} else {
+		if status == -1 {
+			rows, err1 = db.Query(`SELECT R.*, B.nameBlock, C.startDate FROM ROOMS R INNER JOIN BLOCKS B ON R.idBlock = B.id LEFT JOIN CONTRACTS C ON R.id = C.idRoom WHERE R.idBlock = ?`, idBlock)
+		} else {
+			rows, err1 = db.Query(`SELECT R.*, B.nameBlock, C.startDate FROM ROOMS R INNER JOIN BLOCKS B ON R.idBlock = B.id LEFT JOIN CONTRACTS C ON R.id = C.idRoom WHERE status = ? AND R.idBlock = ?`, status, idBlock)
+		}
+	}
+
+	if err1 != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+
+	var rooms []MODELS.GET_ROOMDB_REQUEST
+
+	for rows.Next() {
+		var room MODELS.GET_ROOMDB_REQUEST
+		err := rows.Scan(&room.Id, &room.Name, &room.Floor, &room.Square, &room.Price, &room.Description, &room.IdBlock, &room.MaxPeople, &room.Status, &room.CodeRoom, &room.NameBlock, &room.StartDate)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+		rooms = append(rooms, room)
+	}
+	return rooms, nil
+}
+
+func GetRoomImage(codeRoom string) ([]MODELS.ROOM_IMAGE, bool, error) {
+
+	db, err := STATICS.Connectdatabase()
+
+	if err != nil {
+		log.Fatal("Can't connet to database")
+		return nil, false, err
+	}
+	defer db.Close()
+
+	rows, err := db.Query(`SELECT * FROM ROOM_IMAGES WHERE codeRoom = ?`, codeRoom)
+	if err != nil {
+		log.Fatal(err)
+		return nil, false, err
+	}
+
+	var rooms []MODELS.ROOM_IMAGE
+
+	for rows.Next() {
+		var room MODELS.ROOM_IMAGE
+		err := rows.Scan(&room.Id, &room.Name, &room.Status, &room.Url, &room.CodeRoom)
 
 		if err != nil {
 			log.Fatal(err)

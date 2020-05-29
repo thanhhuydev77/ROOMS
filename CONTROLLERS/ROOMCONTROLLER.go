@@ -30,7 +30,7 @@ func GetRoom(w http.ResponseWriter, r *http.Request) {
 	}
 	isMatchP, err := strconv.ParseBool(r.Form.Get("isMatch"))
 
-	if isMatchP{
+	if isMatchP {
 		result, bool, _ := BUSINESS.UpdateGetRoom(idBlock)
 		resultJson, _ := json.Marshal(result)
 
@@ -46,7 +46,7 @@ func GetRoom(w http.ResponseWriter, r *http.Request) {
 		if bool {
 			io.WriteString(w, data)
 		}
-	}else{
+	} else {
 		result, bool, _ := BUSINESS.GetRoom(idBlock)
 		resultJson, _ := json.Marshal(result)
 
@@ -170,4 +170,75 @@ func UpdateRoom(w http.ResponseWriter, r *http.Request) {
 	} else {
 		io.WriteString(w, `{"message": "Can’t update room"}`)
 	}
+}
+
+func GetRoomDB(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+	status, ok := r.URL.Query()["status"]
+	idBlock, ok1 := r.URL.Query()["idBlock"]
+	userId, ok2 := r.URL.Query()["userId"]
+	if !ok1 || len(idBlock[0]) < 1 {
+		io.WriteString(w, `{ "message": "Url Param 'idBlock' is missing"}`)
+		return
+	}
+	if !ok || len(status[0]) < 1 {
+		io.WriteString(w, `{ "message": "Url Param 'status' is missing"}`)
+		return
+	}
+	if !ok2 || len(userId[0]) < 1 {
+		io.WriteString(w, `{ "message": "Url Param 'userId' is missing"}`)
+		return
+	}
+
+	IdBlock, err := strconv.Atoi(idBlock[0])
+	Status, err1 := strconv.Atoi(status[0])
+	UserId, err2 := strconv.Atoi(userId[0])
+
+	if err != nil || err1 != nil || err2 != nil {
+		io.WriteString(w, `{"message": "Wrong format!"}`)
+		return
+	}
+
+	result, err := BUSINESS.GetRoomDB(IdBlock, Status, UserId)
+	resultJson, _ := json.Marshal(result)
+	if err != nil {
+		io.WriteString(w, `{"message": "Can’t get rooms"}`)
+	}
+	data := `{		"status": 200,
+					"message": "Get rooms success",
+					"data":
+						{"rooms":`
+	data += string(resultJson)
+	data += `}}`
+	io.WriteString(w, data)
+
+}
+
+func GetRoomImage(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+	codeRoom, ok := r.URL.Query()["codeRoom"]
+	if !ok || len(codeRoom[0]) < 1 {
+		io.WriteString(w, `{ "message": "Url Param 'idBlock' is missing"}`)
+		return
+	}
+
+	result, bool, _ := BUSINESS.GetRoomImage(codeRoom[0])
+	resultJson, _ := json.Marshal(result)
+	var data string
+	if bool {
+		data = `{		"status": 200,
+					"message": "Get images success",
+					"data":
+						{"rooms":`
+		if len(result) > 0 {
+			data += string(resultJson)
+		}
+		data += `}}`
+
+	} else {
+		data = `{    "message": "Can’t get images",}`
+
+	}
+	io.WriteString(w, data)
+
 }

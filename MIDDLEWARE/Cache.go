@@ -49,7 +49,7 @@ func Cached(storage *Storage, duration string, handler func(w http.ResponseWrite
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
 
-		re := regexp.MustCompile(`\?token=(\w*)\.(\w*).(\w*)`)
+		re := regexp.MustCompile(`token=(\w*)\.(\w*).(\w*)`)
 		negString := string(re.Find([]byte(r.RequestURI)))
 		Key := strings.Replace(r.RequestURI, negString, "", 1)
 
