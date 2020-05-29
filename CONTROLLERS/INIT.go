@@ -51,9 +51,16 @@ func InitAllController(r *mux.Router, storage *M.Storage) {
 	r.HandleFunc("/upload/userAvatar", UploadPicture).Methods("POST")
 
 	//CustomerController
-	r.Handle("/customer/get-customers", M.AuthMiddleware(http.HandlerFunc(GetCustomersByUserId))).Methods("GET")
+		r.Handle("/customer/get-customers", M.AuthMiddleware(http.HandlerFunc(GetCustomersByUserId))).Methods("GET")
 	r.Handle("/customer/create", M.AuthMiddleware(http.HandlerFunc(CreateCustomer))).Methods("POST")
 	r.Handle("/customer/delete/{id}", M.AuthMiddleware(http.HandlerFunc(DeleteCustomer))).Methods("DELETE")
 	r.Handle("/customer/delete-all", M.AuthMiddleware(http.HandlerFunc(DeleteManyCustomers))).Methods("POST")
 	r.Handle("/customer/update/{id}", M.AuthMiddleware(http.HandlerFunc(UpdateCustomer))).Methods("PUT")
+
+	//ContractController
+	r.Handle("/contract/get-contracts", M.AuthMiddleware(http.HandlerFunc(GetContract))).Methods("GET")
+	r.Handle("/contract/create", M.AuthMiddleware(http.HandlerFunc(CreateContract))).Methods("POST")
+	r.Handle("/contract/delete/{id}", M.AuthMiddleware(http.HandlerFunc(DeleteContract))).Methods("DELETE")
+	r.Handle("/contract/delete-all", M.AuthMiddleware(http.HandlerFunc(DeleteAllContract))).Methods("POST")
+	r.Handle("/contract/update/{id}", M.AuthMiddleware(http.HandlerFunc(UpdateContract))).Methods("PUT")
 }

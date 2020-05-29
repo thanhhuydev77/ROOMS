@@ -127,3 +127,33 @@ func UpdateRoom(id int, room MODELS.ROOMS) (bool, error) {
 
 	return true, nil
 }
+
+func UpdateGetRoom(idBlock int) ([]MODELS.ROOMS, bool, error) {
+	db, err := STATICS.Connectdatabase()
+
+	if err != nil {
+		log.Fatal("Can't connet to database")
+		return nil, false, err
+	}
+	defer db.Close()
+
+	rows, err := db.Query(`SELECT R.id, R.nameRoom, R.floor, R.square, R.price, R.description, R.idBlock, R.maxPeople	, R.status, R.codeRoom
+FROM ROOMS R LEFT JOIN USER_ROOM UR ON R.id = UR.idRoom WHERE UR.idRoom IS NULL AND idBlock = ?`, idBlock)
+	if err != nil {
+		log.Fatal(err)
+		return nil, false, err
+	}
+
+	var rooms []MODELS.ROOMS
+
+	for rows.Next() {
+		var room MODELS.ROOMS
+		err := rows.Scan(&room.Id, &room.Name, &room.Floor, &room.Square, &room.Price, &room.Description, &room.IdBlock, &room.MaxPeople, &room.Status, &room.CodeRoom)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+		rooms = append(rooms, room)
+	}
+	return rooms, true, nil
+}
