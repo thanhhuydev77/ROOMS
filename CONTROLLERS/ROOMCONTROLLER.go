@@ -253,7 +253,7 @@ func GetRoomImage(w http.ResponseWriter, r *http.Request) {
 		data = `{		"status": 200,
 					"message": "Get images success",
 					"data":
-						{"rooms":`
+						{"images":`
 		if len(result) > 0 {
 			data += string(resultJson)
 		} else {
