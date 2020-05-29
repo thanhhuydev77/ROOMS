@@ -229,3 +229,61 @@ func GetRoomImage(codeRoom string) ([]MODELS.ROOM_IMAGE, bool, error) {
 	}
 	return rooms, true, nil
 }
+
+func GetUserRenting(codeRoom int) ([]MODELS.ROOM_USER_RENTING_NAME, bool, error) {
+
+	db, err := STATICS.Connectdatabase()
+
+	if err != nil {
+		log.Fatal("Can't connet to database")
+		return nil, false, err
+	}
+	defer db.Close()
+
+	rows, err := db.Query(`SELECT C.fullName FROM USER_ROOM UR INNER JOIN CUSTOMERS C ON UR.idUser = C.id  WHERE UR.idRoom = ?`, codeRoom)
+	if err != nil {
+		log.Fatal(err)
+		return nil, false, err
+	}
+
+	var rooms []MODELS.ROOM_USER_RENTING_NAME
+
+	for rows.Next() {
+		var room MODELS.ROOM_USER_RENTING_NAME
+		err := rows.Scan(&room.Name)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+		rooms = append(rooms, room)
+	}
+	return rooms, true, nil
+}
+
+func GetRoomById(id int) (*MODELS.ROOMS, error) {
+	db, err := STATICS.Connectdatabase()
+
+	if err != nil {
+		log.Fatal("Can't connect to database")
+		return nil, err
+	}
+	defer db.Close()
+	var rows *sql.Rows
+	var err1 error
+
+	rows, err1 = db.Query(`SELECT * FROM ROOMS WHERE id = ?`, id)
+
+	if err1 != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		var room MODELS.ROOMS
+		err := rows.Scan(&room.Id, &room.Name, &room.Floor, &room.Square, &room.Price, &room.Description, &room.IdBlock, &room.MaxPeople, &room.Status, &room.CodeRoom)
+
+		if err != nil {
+			return nil, err
+		}
+		return &room, nil
+	}
+	return nil, nil
+}

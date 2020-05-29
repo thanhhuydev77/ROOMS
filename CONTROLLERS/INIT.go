@@ -29,8 +29,10 @@ func InitAllController(r *mux.Router, storage *M.Storage) {
 
 	//RoomController
 	r.Handle("/room/get-rooms", M.AuthMiddleware(M.Cached(storage, "10s", GetRoom))).Methods("GET")
+	r.Handle("/room/get-rooms/{id}", M.AuthMiddleware(M.Cached(storage, "10s", GetRoom))).Methods("GET")
 	r.Handle("/room/get-rooms-dashboard", M.AuthMiddleware(M.Cached(storage, "10s", GetRoomDB))).Methods("GET")
 	r.Handle("/room/get-images", M.AuthMiddleware(M.Cached(storage, "10s", GetRoomImage))).Methods("GET")
+	r.Handle("/room/get-user-rent", M.AuthMiddleware(M.Cached(storage, "10s", GetRoomUser))).Methods("GET")
 	r.Handle("/room/create", M.AuthMiddleware(http.HandlerFunc(CreateRoom))).Methods("POST")
 	r.Handle("/room/delete/{id}", M.AuthMiddleware(http.HandlerFunc(DeleteRoom))).Methods("DELETE")
 	r.Handle("/room/delete-all", M.AuthMiddleware(http.HandlerFunc(DeleteRooms))).Methods("POST")

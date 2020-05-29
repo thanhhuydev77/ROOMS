@@ -41,3 +41,6 @@ type ROOM_IMAGE struct {
 	Url      COMMON.MyNullString `json:"url"`
 	CodeRoom COMMON.MyNullString `json:"codeRoom"`
 }
+type ROOM_USER_RENTING_NAME struct {
+	Name COMMON.MyNullString `json:"fullName"`
+}
