@@ -1,4 +1,4 @@
-package MIDDLEWARE
+package CONTROLLERS
 
 import (
 	"fmt"

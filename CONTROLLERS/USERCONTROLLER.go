@@ -2,8 +2,8 @@ package CONTROLLERS
 
 import (
 	"ROOMS/BUSINESS"
+	"ROOMS/DATABASE"
 	"ROOMS/MODELS"
-	. "ROOMS/STATICS"
 	"encoding/json"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
@@ -42,7 +42,7 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 		"exp":  time.Now().Add(time.Hour * time.Duration(1000*24)).Unix(),
 		"iat":  time.Now().Unix(),
 	})
-	tokenString, err := token.SignedString([]byte(APP_KEY))
+	tokenString, err := token.SignedString([]byte(DATABASE.APP_KEY))
 	if err != nil {
 		//w.WriteHeader(http.StatusInternalServerError)
 		io.WriteString(w, `{"error":"token_generation_failed"}`)

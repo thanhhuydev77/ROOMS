@@ -1,4 +1,4 @@
-package STATICS
+package DATABASE
 
 import (
 	"database/sql"
@@ -11,7 +11,7 @@ const (
 	REDISURL          = "redis://localhost:6379"
 )
 
-func Connectdatabase() (*sql.DB, error) {
+func connectdatabase() (*sql.DB, error) {
 	db, err := sql.Open(DRIVER_NAME, CONNECTION_STRING)
 	if err != nil {
 		return nil, nil
