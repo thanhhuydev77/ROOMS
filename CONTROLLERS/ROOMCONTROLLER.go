@@ -26,7 +26,11 @@ func GetRoom(w http.ResponseWriter, r *http.Request) {
 					"data":
 						{"room":`
 
-			data += string(resultJson)
+			if len(resultJson) > 0 {
+				data += string(resultJson)
+			} else {
+				data += "[]"
+			}
 
 			data += `}}`
 		} else {
@@ -79,6 +83,8 @@ func GetRoom(w http.ResponseWriter, r *http.Request) {
 						{"rooms":`
 			if len(result) > 0 {
 				data += string(resultJson)
+			} else  {
+				data += "[]"
 			}
 			data += `}}`
 
