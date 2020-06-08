@@ -127,6 +127,4 @@ func UpdateService(service MODELS.SERVICE_INPUT) (bool, error) {
 		return false, err
 	}
 	return true, nil
-
-	return true, nil
 }
