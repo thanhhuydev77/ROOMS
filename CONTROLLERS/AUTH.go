@@ -1,7 +1,7 @@
-package MIDDLEWARE
+package CONTROLLERS
 
 import (
-	"ROOMS/STATICS"
+	"ROOMS/DATABASE"
 	jwtmiddleware "github.com/auth0/go-jwt-middleware"
 	"github.com/dgrijalva/jwt-go"
 	"io"
@@ -10,14 +10,14 @@ import (
 )
 
 func AuthMiddleware(next http.Handler) http.Handler {
-	if len(STATICS.APP_KEY) == 0 {
+	if len(DATABASE.APP_KEY) == 0 {
 		log.Fatal("HTTP server unable to start, expected an APP_KEY for JWT auth")
 	}
 	jwtMiddleware := jwtmiddleware.New(jwtmiddleware.Options{
 		Extractor: jwtmiddleware.FromFirst(jwtmiddleware.FromAuthHeader,
 			jwtmiddleware.FromParameter("token")),
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
-			return []byte(STATICS.APP_KEY), nil
+			return []byte(DATABASE.APP_KEY), nil
 		},
 		SigningMethod: jwt.SigningMethodHS256,
 	})

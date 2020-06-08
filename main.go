@@ -2,8 +2,7 @@ package main
 
 import (
 	"ROOMS/CONTROLLERS"
-	"ROOMS/MIDDLEWARE"
-	"ROOMS/STATICS"
+	"ROOMS/DATABASE"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -12,7 +11,7 @@ import (
 
 func main() {
 	r := NewRouter()
-	Redis, _ := MIDDLEWARE.NewStorage(STATICS.REDISURL)
+	Redis, _ := CONTROLLERS.NewStorage(DATABASE.REDISURL)
 	CONTROLLERS.InitAllController(r, Redis)
 	handler := cors.AllowAll().Handler(r)
 	http.ListenAndServe(":8001", handler)
