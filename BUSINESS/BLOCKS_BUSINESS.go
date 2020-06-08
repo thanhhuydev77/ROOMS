@@ -18,7 +18,7 @@ func CreateBlock(b MODELS.BLOCKS) (bool, error) {
 }
 
 func UpdateBlock(b MODELS.BLOCKS) (bool, error) {
-	return DATABASE.CreateBlock(b)
+	return DATABASE.UpdateBlock(b)
 }
 
 func DeleteBlock(id int) (bool, error) {
