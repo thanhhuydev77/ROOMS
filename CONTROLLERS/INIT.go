@@ -65,4 +65,6 @@ func InitAllController(r *mux.Router, storage *Storage) {
 	r.Handle("/contract/delete-all", AuthMiddleware(http.HandlerFunc(DeleteAllContract))).Methods("POST")
 	r.Handle("/contract/update/{id}", AuthMiddleware(http.HandlerFunc(UpdateContract))).Methods("PUT")
 
+	// UserRoomController
+	r.Handle("/user-room/delete-all", AuthMiddleware(http.HandlerFunc(DeleteManyUserRoom))).Methods("POST")
 }

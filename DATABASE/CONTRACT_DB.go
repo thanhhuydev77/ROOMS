@@ -156,7 +156,8 @@ func UpdateContract(c MODELS.CREATE_UPDATE_CONTRACT_REQUEST) (bool, error) {
 	if err1 != nil {
 		log.Fatal(err)
 	}
-	_, err = db.Exec("UPDATE CONTRACTS SET idSlave = ?, startDate = ?, endDate = ?, circlePay = ?, deposit = ?, dayPay = ?, note = ? WHERE id = ?", c.IdSlave, c.StartDate, c.EndDate, c.CirclePay, c.Deposit, c.DayPay, c.Note, c.Id)
+	_, err = db.Exec("UPDATE CONTRACTS SET idSlave = ?, startDate = ?, endDate = ?, circlePay = ?, deposit = ?, dayPay = ?, note = ? WHERE id = ?",
+									c.IdSlave, c.StartDate, c.EndDate, c.CirclePay, c.Deposit, c.DayPay, c.Note, c.Id)
 	if err != nil {
 		// Incase we find any error in the query execution, rollback the transaction
 		tx.Rollback()

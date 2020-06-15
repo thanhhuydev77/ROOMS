@@ -19,8 +19,6 @@ func GetContract(w http.ResponseWriter, r *http.Request) {
 	}
 	BlockId, _ := strconv.Atoi(keys[0])
 	listCustomer, _, err := BUSINESS.GetContractByBlockId(BlockId)
-	jsonCustomers, _ := json.Marshal(listCustomer)
-
 	if err != nil {
 		io.WriteString(w, `{ "message": "Can’t get contracts" }`)
 		return
@@ -30,7 +28,13 @@ func GetContract(w http.ResponseWriter, r *http.Request) {
     				"message": "Get contracts success redis",
     				"data": {
         			"contracts":`
-	stringresult += string(jsonCustomers)
+	if len(listCustomer) > 0{
+		jsonCustomers, _ := json.Marshal(listCustomer)
+		stringresult += string(jsonCustomers)
+	} else {
+		stringresult += "[]"
+	}
+
 	stringresult += "}}"
 	io.WriteString(w, stringresult)
 }
@@ -47,12 +51,12 @@ func CreateContract(w http.ResponseWriter, r *http.Request) {
 	result := BUSINESS.CreateContract(p)
 	if result {
 		io.WriteString(w, `  { "status": 200,
-    "message": "Create contract success",
-    "data": {
-        "status": 1
-    }
-}
-`)
+								"message": "Create contract success",
+								"data": {
+									"status": 1
+								}
+							}
+							`)
 	} else {
 		io.WriteString(w, `{ "message": "Can’t create contract"}`)
 	}

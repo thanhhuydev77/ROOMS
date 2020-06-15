@@ -6,7 +6,8 @@ import (
 
 const (
 	APP_KEY           = "thisissecreckeyyesitisreallyofcourcetrustmeitiskeyofthisapphahaha"
-	CONNECTION_STRING = "sql12346166:B8rpnnyqRw@tcp(sql12.freemysqlhosting.net:3306)/sql12346166?parseTime=true"
+	//CONNECTION_STRING = "thanhhuydz123:_doan123@tcp(db4free.net:3306)/rooms_con?parseTime=true"
+	CONNECTION_STRING = "root:s2hautjeuthu@tcp(127.0.0.1:3306)/room_schema?parseTime=true"
 	DRIVER_NAME       = "mysql"
 	REDISURL          = "redis://localhost:6379"
 )
