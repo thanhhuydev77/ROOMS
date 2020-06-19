@@ -22,7 +22,10 @@ func GetBlock(w http.ResponseWriter, r *http.Request) {
 	listBlock := BUSINESS.GetBlockByIdOwner(idowner)
 	jsonlist, _ := json.Marshal(listBlock)
 	if len(listBlock) == 0 {
-		io.WriteString(w, `{ "message": "Can’t get Blocks" }`)
+		io.WriteString(w, `{"status": 200,
+    				"message": "Get Blocks success",
+    				"data": {
+        			"blocks": [] }}`)
 		return
 	}
 	stringresult := `{"status": 200,
@@ -124,7 +127,7 @@ func DeleteBlock(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		//w.WriteHeader(http.StatusBadRequest)
 		io.WriteString(w, `{"message":"can not convert id as int"}`)
-		
+
 		return
 	}
 
