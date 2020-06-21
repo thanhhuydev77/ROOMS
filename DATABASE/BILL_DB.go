@@ -2,6 +2,7 @@ package DATABASE
 
 import (
 	"ROOMS/MODELS"
+	"context"
 	"log"
 )
 
@@ -29,11 +30,10 @@ func GetallBills() ([]MODELS.BILLS, error) {
 	return bills, nil
 }
 
-func GetBillById(id int) ([]MODELS.BILLS, error) {
-	bills := []MODELS.BILLS{}
+func GetBillById(id int) (MODELS.BILLS, bool, error) {
 	db, err := connectdatabase()
 	if db == nil {
-		return nil, err
+		return MODELS.BILLS{}, false, err
 	}
 
 	// Query all bills with id = id
@@ -45,28 +45,85 @@ func GetBillById(id int) ([]MODELS.BILLS, error) {
 	defer rows.Close()
 	for rows.Next() {
 		u := MODELS.BILLS{}
-
 		err := rows.Scan(&u.Id, &u.IdRoom, &u.DateCheckOut, &u.TotalPrice, &u.IsCheckedOut)
 		if err != nil {
 			log.Fatal(err)
 		}
-		bills = append(bills, u)
+		return u, true, nil
 	}
-	return bills, nil
+	return MODELS.BILLS{}, false, nil
 }
 
-func CreateBill(bill MODELS.BILLS) (int, error) {
+func GetBillDetailById(id int) ([]MODELS.BILL_DETAILS, bool, error) {
+	listbilldt := []MODELS.BILL_DETAILS{}
+
+	db, err := connectdatabase()
+	if db == nil {
+		return nil, false, err
+	}
+
+	// Query all bills with id = id
+	query := "SELECT * FROM BILL_DETAILS where idBill = ?"
+	rows, err := db.Query(query, id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		u := MODELS.BILL_DETAILS{}
+		err := rows.Scan(&u.Id, &u.IdBill, &u.IdService, &u.Amount, &u.TotalPrice)
+		if err != nil {
+			log.Fatal(err)
+		}
+		listbilldt = append(listbilldt, u)
+	}
+	return listbilldt, true, nil
+}
+
+func CreateBill(bill MODELS.CREATE_UPDATE_BILL_REQUEST) (int, error) {
 	db, err := connectdatabase()
 	if db == nil {
 		return 0, err
 	}
-
+	ctx := context.Background()
+	tx, err1 := db.BeginTx(ctx, nil)
+	if err1 != nil {
+		log.Fatal(err)
+	}
 	query := "insert into BILLS(idRoom,dateCheckOut,totalPrice,isCheckedOut) VALUES(?,?,?,?)"
-	rows, err := db.Query(query, bill.IdRoom, bill.DateCheckOut, bill.TotalPrice, bill.IsCheckedOut)
-	if err != nil {
+	_, errinsert := db.Query(query, bill.IdRoom, bill.DateCheckOut, bill.TotalPrice, bill.IsCheckedOut)
+	if errinsert != nil {
+		// Incase we find any error in the query execution, rollback the transaction
+		tx.Rollback()
 		return 0, err
 	}
-	panic(err)
-	defer rows.Close()
+	queryid := "select id from BILLS where idRoom = ? and dateCheckOut = ?"
+	rowsid, errid := db.Query(queryid, bill.IdRoom, bill.DateCheckOut)
+	defer rowsid.Close()
+	if errid != nil {
+		tx.Rollback()
+		return 0, errid
+	}
+	id := 0
+	for rowsid.Next() {
+		errscan := rowsid.Scan(&id)
+		if errscan != nil || id == 0 {
+			tx.Rollback()
+			return 0, errid
+		}
+	}
+	for _, val := range bill.BillDetail {
+		query := "INSERT INTO BILL_DETAILS(IdBill,IdService,Amount,TotalPrice) VALUES (?,?,?,?)"
+		_, errinsert := db.Query(query, id, val.IdService, val.Amount, val.TotalPrice)
+		if errinsert != nil {
+			tx.Rollback()
+			return 0, err
+		}
+	}
+	errcmt := tx.Commit()
+	if errcmt != nil {
+		log.Printf("err while commit :", errcmt.Error())
+		return 0, nil
+	}
 	return 1, nil
 }
