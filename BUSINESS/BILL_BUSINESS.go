@@ -18,12 +18,16 @@ func GetBillDetailById(id int) ([]MODELS.BILL_DETAILS, bool, error) {
 	return billDetail, ok, err
 }
 
-//func CreateBill(bill MODELS.BILLS) int {
-//	result, _ := DATABASE.CreateBill(bill)
-//	return result
-//}
+//update a bill with its id
+func UpdateBill(c MODELS.CREATE_UPDATE_BILL_REQUEST) (bool, error) {
+	return DATABASE.UpdateBill(c)
+}
 
 //create a new bill and bill detail
 func CreateBill(CCR MODELS.CREATE_UPDATE_BILL_REQUEST) (int, error) {
 	return DATABASE.CreateBill(CCR)
+}
+
+func DeleteBill(idbill int) (bool, error) {
+	return DATABASE.DeleteBill(idbill)
 }

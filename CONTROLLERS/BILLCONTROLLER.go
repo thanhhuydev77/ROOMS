@@ -78,3 +78,61 @@ func CreateBill(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, `{ "message": "Can’t create bill"}`)
 	}
 }
+
+func UpdateBill(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+
+	vars := mux.Vars(r)
+	idContract, _ := strconv.Atoi(vars["id"])
+
+	var p = MODELS.CREATE_UPDATE_BILL_REQUEST{}
+
+	err := json.NewDecoder(r.Body).Decode(&p)
+	if err != nil {
+		io.WriteString(w, `{ "message": "Wrong format" }`)
+		return
+	}
+
+	p.Id = idContract
+	res, _ := BUSINESS.UpdateBill(p)
+
+	if res {
+		io.WriteString(w, `{
+						"status": 200,
+						"message": "Update bill success",
+						"data": {
+							"status": 1
+							}
+						}`)
+		return
+	}
+	io.WriteString(w, `{"message" : "Can’t update bill"}`)
+}
+
+func DeleteBill(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+
+	vars := mux.Vars(r)
+	idbill, err := strconv.Atoi(vars["id"])
+
+	if err != nil {
+		//w.WriteHeader(http.StatusBadRequest)
+		io.WriteString(w, `{"message":"can not convert id as int"}`)
+
+		return
+	}
+
+	res, _ := BUSINESS.DeleteBill(idbill)
+
+	if res {
+		io.WriteString(w, `{
+						"status": 200,
+						"message": "Delete bill success",
+						"data": {
+							"status": 1
+							}
+						}`)
+		return
+	}
+	io.WriteString(w, `{"message" : "Can’t delete bill"}`)
+}

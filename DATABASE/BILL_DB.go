@@ -127,3 +127,64 @@ func CreateBill(bill MODELS.CREATE_UPDATE_BILL_REQUEST) (int, error) {
 	}
 	return 1, nil
 }
+
+func UpdateBill(c MODELS.CREATE_UPDATE_BILL_REQUEST) (bool, error) {
+	db, err := connectdatabase()
+	if err != nil {
+		log.Print("can not connect to database!")
+		return false, err
+	}
+	defer db.Close()
+	ctx := context.Background()
+	tx, err1 := db.BeginTx(ctx, nil)
+	if err1 != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Exec("UPDATE BILLS SET dateCheckOut = ?, totalPrice = ?, isCheckedOut = ? WHERE id = ?", c.DateCheckOut, c.TotalPrice, c.IsCheckedOut, c.Id)
+	if err != nil {
+		// Incase we find any error in the query execution, rollback the transaction
+		tx.Rollback()
+		return false, err
+	}
+
+	_, err2 := db.Exec("DELETE FROM BILL_DETAILS WHERE idBill = ?", c.Id)
+	if err2 != nil {
+		// Incase we find any error in the query execution, rollback the transaction
+		tx.Rollback()
+		return false, err
+	}
+	for _, vals := range c.BillDetail {
+		_, err4 := tx.ExecContext(ctx, `INSERT INTO BILL_DETAILS(idBill, idService,amount,totalPrice) VALUES(?,?,?,?)`, c.Id, vals.IdService, vals.Amount, vals.TotalPrice)
+		if err4 != nil {
+			// Incase we find any error in the query execution, rollback the transaction
+			tx.Rollback()
+			return false, err
+		}
+	}
+	err = nil
+	err = tx.Commit()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return true, nil
+}
+
+func DeleteBill(idbill int) (bool, error) {
+	db, err := connectdatabase()
+	if err != nil {
+		log.Fatalln(err)
+		return false, err
+	}
+	defer db.Close()
+
+	rs, err := db.Query(`DELETE FROM BILLS WHERE id = ?`, idbill)
+
+	if err != nil {
+		log.Fatalln(err)
+		return false, err
+	}
+	defer rs.Close()
+
+	return true, nil
+}

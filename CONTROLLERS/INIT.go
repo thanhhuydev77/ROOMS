@@ -67,7 +67,7 @@ func InitAllController(r *mux.Router, storage *Storage) {
 	//BillControllers
 	r.Handle("/bill/get-bill-by-id/{id}", AuthMiddleware(http.HandlerFunc(GetBills))).Methods("GET")
 	r.Handle("/bill/create", AuthMiddleware(http.HandlerFunc(CreateBill))).Methods("POST")
-	//r.Handle("/contract/delete/{id}", AuthMiddleware(http.HandlerFunc(DeleteContract))).Methods("DELETE")
+	r.Handle("/bill/delete/{id}", AuthMiddleware(http.HandlerFunc(DeleteBill))).Methods("DELETE")
 	//r.Handle("/contract/delete-all", AuthMiddleware(http.HandlerFunc(DeleteAllContract))).Methods("POST")
-	//r.Handle("/contract/update/{id}", AuthMiddleware(http.HandlerFunc(UpdateContract))).Methods("PUT")
+	r.Handle("/bill/update/{id}", AuthMiddleware(http.HandlerFunc(UpdateBill))).Methods("PUT")
 }
