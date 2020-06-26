@@ -20,7 +20,6 @@ func InitAllController(r *mux.Router, storage *Storage) {
 	r.Handle("/block/get-block", AuthMiddleware(Cached(storage, "10s", GetBlock))).Methods("GET")
 	r.Handle("/block/create", AuthMiddleware(http.HandlerFunc(CreateBlock))).Methods("POST")
 	r.Handle("/block/update/{id}", AuthMiddleware(http.HandlerFunc(UpdateBlock))).Methods("PUT")
-
 	r.Handle("/block/delete/{id}", AuthMiddleware(http.HandlerFunc(DeleteBlock))).Methods("DELETE")
 	r.Handle("/block/delete-all", AuthMiddleware(http.HandlerFunc(DeleteBlocks))).Methods("POST")
 
@@ -65,4 +64,10 @@ func InitAllController(r *mux.Router, storage *Storage) {
 	r.Handle("/contract/delete-all", AuthMiddleware(http.HandlerFunc(DeleteAllContract))).Methods("POST")
 	r.Handle("/contract/update/{id}", AuthMiddleware(http.HandlerFunc(UpdateContract))).Methods("PUT")
 
+	//BillControllers
+	r.Handle("/bill/get-bill-by-id/{id}", AuthMiddleware(http.HandlerFunc(GetBills))).Methods("GET")
+	r.Handle("/bill/create", AuthMiddleware(http.HandlerFunc(CreateBill))).Methods("POST")
+	r.Handle("/bill/delete/{id}", AuthMiddleware(http.HandlerFunc(DeleteBill))).Methods("DELETE")
+	//r.Handle("/contract/delete-all", AuthMiddleware(http.HandlerFunc(DeleteAllContract))).Methods("POST")
+	r.Handle("/bill/update/{id}", AuthMiddleware(http.HandlerFunc(UpdateBill))).Methods("PUT")
 }
