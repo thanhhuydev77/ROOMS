@@ -3,44 +3,45 @@ package BUSINESS
 import (
 	"ROOMS/DATABASE"
 	"ROOMS/MODELS"
+	"database/sql"
 )
 
-func GetRoom(idBlock int) ([]MODELS.ROOMS, bool, error) {
-	return DATABASE.GetRoom(idBlock)
+func GetRoom(db *sql.DB, idBlock int) ([]MODELS.ROOMS, bool, error) {
+	return DATABASE.GetRoom(db, idBlock)
 }
 
-func CreateRoom(room MODELS.ROOMS) (bool, error) {
-	return DATABASE.CreateRoom(room)
+func CreateRoom(db *sql.DB, room MODELS.ROOMS) (bool, error) {
+	return DATABASE.CreateRoom(db, room)
 }
 
-func DeleteRoom(id int) (bool, error) {
-	return DATABASE.DeleteRoom(id)
+func DeleteRoom(db *sql.DB, id int) (bool, error) {
+	return DATABASE.DeleteRoom(db, id)
 }
 
-func DeleteRooms(roomsId []int) (bool, error) {
-	return DATABASE.DeleteRooms(roomsId)
+func DeleteRooms(db *sql.DB, roomsId []int) (bool, error) {
+	return DATABASE.DeleteRooms(db, roomsId)
 }
 
-func UpdateRoom(id int, room MODELS.ROOMS) (bool, error) {
-	return DATABASE.UpdateRoom(id, room)
+func UpdateRoom(db *sql.DB, id int, room MODELS.ROOMS) (bool, error) {
+	return DATABASE.UpdateRoom(db, id, room)
 }
 
-func UpdateGetRoom(idBlock int) ([]MODELS.ROOMS, bool, error) {
-	return DATABASE.UpdateGetRoom(idBlock)
+func UpdateGetRoom(db *sql.DB, idBlock int) ([]MODELS.ROOMS, bool, error) {
+	return DATABASE.UpdateGetRoom(db, idBlock)
 }
 
-func GetRoomDB(idBlock int, status int, userid int) ([]MODELS.GET_ROOMDB_REQUEST, error) {
-	return DATABASE.GetRoomDB(idBlock, status, userid)
+func GetRoomDB(db *sql.DB, idBlock int, status int, userid int) ([]MODELS.GET_ROOMDB_REQUEST, error) {
+	return DATABASE.GetRoomDB(db, idBlock, status, userid)
 }
 
-func GetRoomImage(codeRoom string) ([]MODELS.ROOM_IMAGE, bool, error) {
-	return DATABASE.GetRoomImage(codeRoom)
+func GetRoomImage(db *sql.DB, codeRoom string) ([]MODELS.ROOM_IMAGE, bool, error) {
+	return DATABASE.GetRoomImage(db, codeRoom)
 }
 
-func GetUserRenting(codeRoom int) ([]MODELS.ROOM_USER_RENTING_NAME, bool, error) {
-	return DATABASE.GetUserRenting(codeRoom)
+func GetUserRenting(db *sql.DB, codeRoom int) ([]MODELS.ROOM_USER_RENTING_NAME, bool, error) {
+	return DATABASE.GetUserRenting(db, codeRoom)
 }
 
-func GetRoomById(id int) (*MODELS.ROOMS, error) {
-	return DATABASE.GetRoomById(id)
+func GetRoomById(db *sql.DB, id int) (*MODELS.ROOMS, error) {
+	return DATABASE.GetRoomById(db, id)
 }

@@ -12,12 +12,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func GetRoom(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) GetRoom(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err == nil && id > 0 {
-		result, bool := BUSINESS.GetRoomById(id)
+		result, bool := BUSINESS.GetRoomById(a.Db, id)
 		resultJson, _ := json.Marshal(result)
 		var data string
 		if bool == nil && result != nil {
@@ -56,7 +56,7 @@ func GetRoom(w http.ResponseWriter, r *http.Request) {
 		isMatchP, err := strconv.ParseBool(r.Form.Get("isMatch"))
 
 		if isMatchP {
-			result, bool, _ := BUSINESS.UpdateGetRoom(idBlock)
+			result, bool, _ := BUSINESS.UpdateGetRoom(a.Db, idBlock)
 			resultJson, _ := json.Marshal(result)
 
 			data := `{		"status": 200,
@@ -74,7 +74,7 @@ func GetRoom(w http.ResponseWriter, r *http.Request) {
 				io.WriteString(w, data)
 			}
 		} else {
-			result, bool, _ := BUSINESS.GetRoom(idBlock)
+			result, bool, _ := BUSINESS.GetRoom(a.Db, idBlock)
 			resultJson, _ := json.Marshal(result)
 
 			data := `{		"status": 200,
@@ -95,7 +95,7 @@ func GetRoom(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func CreateRoom(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) CreateRoom(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
 	room := MODELS.ROOMS{}
@@ -106,7 +106,7 @@ func CreateRoom(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := BUSINESS.CreateRoom(room)
+	result, err := BUSINESS.CreateRoom(a.Db, room)
 	if result {
 		io.WriteString(w, `{
 						"status": 200,
@@ -120,7 +120,7 @@ func CreateRoom(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func DeleteRoom(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) DeleteRoom(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
@@ -135,7 +135,7 @@ func DeleteRoom(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := BUSINESS.DeleteRoom(id)
+	result, err := BUSINESS.DeleteRoom(a.Db, id)
 
 	if result {
 		io.WriteString(w, `{ 
@@ -149,7 +149,7 @@ func DeleteRoom(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func DeleteRooms(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) DeleteRooms(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
 	var ids = MODELS.ROOMIDS{}
@@ -160,7 +160,7 @@ func DeleteRooms(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, _ := BUSINESS.DeleteRooms(ids.RoomsId)
+	result, _ := BUSINESS.DeleteRooms(a.Db, ids.RoomsId)
 
 	if result {
 		io.WriteString(w, `{
@@ -175,7 +175,7 @@ func DeleteRooms(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func UpdateRoom(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) UpdateRoom(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
@@ -189,7 +189,7 @@ func UpdateRoom(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := BUSINESS.UpdateRoom(id, room)
+	result, err := BUSINESS.UpdateRoom(a.Db, id, room)
 
 	if result {
 		io.WriteString(w, `{  "status": 200,
@@ -202,7 +202,7 @@ func UpdateRoom(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetRoomDB(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) GetRoomDB(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	status, ok := r.URL.Query()["status"]
 	idBlock, ok1 := r.URL.Query()["idBlock"]
@@ -229,7 +229,7 @@ func GetRoomDB(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := BUSINESS.GetRoomDB(IdBlock, Status, UserId)
+	result, err := BUSINESS.GetRoomDB(a.Db, IdBlock, Status, UserId)
 	resultJson, _ := json.Marshal(result)
 	if err != nil {
 		io.WriteString(w, `{"message": "Can’t get rooms"}`)
@@ -249,7 +249,7 @@ func GetRoomDB(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func GetRoomImage(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) GetRoomImage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	codeRoom, ok := r.URL.Query()["codeRoom"]
 	if !ok || len(codeRoom[0]) < 1 {
@@ -257,7 +257,7 @@ func GetRoomImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, bool, _ := BUSINESS.GetRoomImage(codeRoom[0])
+	result, bool, _ := BUSINESS.GetRoomImage(a.Db, codeRoom[0])
 	resultJson, _ := json.Marshal(result)
 	var data string
 	if bool {
@@ -281,7 +281,7 @@ func GetRoomImage(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func GetRoomUser(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) GetRoomUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	idRooms, ok := r.URL.Query()["idRoom"]
 	if !ok || len(idRooms[0]) < 1 {
@@ -293,7 +293,7 @@ func GetRoomUser(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, `{ "message": "can not parse idRoom as int"}`)
 		return
 	}
-	result, bool, _ := BUSINESS.GetUserRenting(IdRoom)
+	result, bool, _ := BUSINESS.GetUserRenting(a.Db, IdRoom)
 	resultJson, _ := json.Marshal(result)
 	var data string
 	if bool {

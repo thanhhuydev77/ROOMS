@@ -7,10 +7,10 @@ import (
 	"net/http"
 )
 
-func GetAllUnit(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) GetAllUnit(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
-	listUnit, Ok := BUSINESS.GetAllUnits()
+	listUnit, Ok := BUSINESS.GetAllUnits(a.Db)
 	jsonlist, _ := json.Marshal(listUnit)
 	if !Ok {
 		io.WriteString(w, `{ "message": "Can’t get units" }`)

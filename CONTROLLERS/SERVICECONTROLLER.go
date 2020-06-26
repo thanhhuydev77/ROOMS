@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func GetService(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) GetService(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	keys, ok := r.URL.Query()["idBlock"]
 	if !ok || len(keys[0]) < 1 {
@@ -18,7 +18,7 @@ func GetService(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	idBlock, _ := strconv.Atoi(keys[0])
-	listBlock, Ok := BUSINESS.GetServiceById(idBlock)
+	listBlock, Ok := BUSINESS.GetServiceById(a.Db, idBlock)
 	jsonlist, _ := json.Marshal(listBlock)
 	if !Ok {
 		io.WriteString(w, `{ "message": "Can’t get services" }`)
@@ -33,7 +33,7 @@ func GetService(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, stringresult)
 }
 
-func DeleteService(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) DeleteService(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
@@ -45,7 +45,7 @@ func DeleteService(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, _ := BUSINESS.DeleteService(idservice)
+	res, _ := BUSINESS.DeleteService(a.Db, idservice)
 
 	if res {
 		io.WriteString(w, `{
@@ -60,7 +60,7 @@ func DeleteService(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, `{"message" : "Can’t  delete service"}`)
 }
 
-func CreateService(w http.ResponseWriter, r *http.Request)  {
+func (a *ApiDB) CreateService(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
 	var p = MODELS.SERVICES_INPUT{}
@@ -72,7 +72,7 @@ func CreateService(w http.ResponseWriter, r *http.Request)  {
 		return
 	}
 
-	res, _ := BUSINESS.CreateService(p.Services)
+	res, _ := BUSINESS.CreateService(a.Db, p.Services)
 	if res {
 		io.WriteString(w, `{
 						"status": 200,
@@ -86,11 +86,11 @@ func CreateService(w http.ResponseWriter, r *http.Request)  {
 	io.WriteString(w, `{"message" : "Can’t create Services"}`)
 }
 
-func DeleteServices(w http.ResponseWriter, r *http.Request)  {
+func (a *ApiDB) DeleteServices(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
 	p := struct {
-		ServicesId  []int		`json:"servicesId"`
+		ServicesId []int `json:"servicesId"`
 	}{}
 	err := json.NewDecoder(r.Body).Decode(&p)
 
@@ -98,7 +98,7 @@ func DeleteServices(w http.ResponseWriter, r *http.Request)  {
 		io.WriteString(w, `{ "message": "Wrong format" }`)
 		return
 	}
-	res, _ := BUSINESS.DeleteServices(p.ServicesId)
+	res, _ := BUSINESS.DeleteServices(a.Db, p.ServicesId)
 
 	if res {
 		io.WriteString(w, `{
@@ -113,7 +113,7 @@ func DeleteServices(w http.ResponseWriter, r *http.Request)  {
 	io.WriteString(w, `{"message" : "Can’t delete services"}`)
 }
 
-func UpdateService(w http.ResponseWriter, r *http.Request)  {
+func (a *ApiDB) UpdateService(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
@@ -122,13 +122,13 @@ func UpdateService(w http.ResponseWriter, r *http.Request)  {
 	var p = MODELS.SERVICE_INPUT{}
 
 	err := json.NewDecoder(r.Body).Decode(&p)
-	if err != nil{
+	if err != nil {
 		io.WriteString(w, `{ "message": "Wrong format" }`)
 		return
 	}
 
 	p.Id = idService
-	res, _ := BUSINESS.UpdateService(p)
+	res, _ := BUSINESS.UpdateService(a.Db, p)
 
 	if res {
 		io.WriteString(w, `{
