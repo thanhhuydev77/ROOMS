@@ -106,8 +106,6 @@ func DeleteServices(servicesId []int) (bool, error) {
 		return false, err
 	}
 	return true, nil
-
-	return true, nil
 }
 
 func UpdateService(service MODELS.SERVICE_INPUT) (bool, error) {
