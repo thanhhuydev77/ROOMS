@@ -178,13 +178,15 @@ func DeleteBill(idbill int) (bool, error) {
 	}
 	defer db.Close()
 
-	rs, err := db.Query(`DELETE FROM BILLS WHERE id = ?`, idbill)
+	rs, err := db.Exec(`DELETE FROM BILLS WHERE id = ?`, idbill)
 
 	if err != nil {
 		log.Fatalln(err)
 		return false, err
 	}
-	defer rs.Close()
-
+	num, err := rs.RowsAffected()
+	if num == 0 {
+		return false, err
+	}
 	return true, nil
 }

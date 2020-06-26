@@ -2,24 +2,23 @@ package DATABASE
 
 import (
 	"ROOMS/MODELS"
+	"database/sql"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"strconv"
 )
 
-func Login(username string, pass string) (bool, bool, MODELS.USERS) {
+func Login(db *sql.DB, username string, pass string) (bool, bool, MODELS.USERS) {
 	exsist := false
 	passOK := false
 	a := MODELS.USERS{}
 	//getuset from datebase
-	db, err := connectdatabase()
+	//db, err := connectdatabase()
 	// Query all users
 	if db == nil {
-
 		log.Print("can not connect to database!")
 		return exsist, false, a
 	}
-	defer db.Close()
 
 	rows, err := db.Query("select id,username,pass,fullname,role from USERS where username = ?", username)
 	if err != nil {
@@ -40,17 +39,17 @@ func Login(username string, pass string) (bool, bool, MODELS.USERS) {
 	return exsist, passOK, a
 }
 
-func Register(user MODELS.RequestRegister) (bool, error) {
+func Register(db *sql.DB, user MODELS.RequestRegister) (bool, error) {
 
 	//getuset from datebase
-	db, err := connectdatabase()
+	//db, err := connectdatabase()
 	// Query all users
-	if err != nil {
-
-		log.Print("can not connect to database!")
-		return false, err
-	}
-	defer db.Close()
+	//if err != nil {
+	//
+	//	log.Print("can not connect to database!")
+	//	return false, err
+	//}
+	//defer db.Close()
 	passhash, _ := hashPassword(user.Pass)
 	rows, err := db.Query(`insert into USERS(userName,Pass,FullName,Address,Role,Sex,Province,Email)
 							  values(?,?,?,?,?,?,?,?)`, user.UserName, passhash, user.FullName, user.Address, user.Role, user.Sex, user.Province, user.Email)
@@ -61,16 +60,16 @@ func Register(user MODELS.RequestRegister) (bool, error) {
 	return true, nil
 }
 
-func GetAllUserName() []string {
+func GetAllUserName(db *sql.DB) []string {
 	var Allusername []string
-	db, err := connectdatabase()
+	//db, err := connectdatabase()
 	// Query all users
-	if db == nil {
-
-		log.Print("can not connect to database!")
-		return nil
-	}
-	defer db.Close()
+	//if db == nil {
+	//
+	//	log.Print("can not connect to database!")
+	//	return nil
+	//}
+	//defer db.Close()
 
 	rows, err := db.Query("select username from USERS")
 	if err != nil {
@@ -98,16 +97,16 @@ func checkPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-func GetUsers(Id int) []MODELS.USERS {
+func GetUsers(db *sql.DB, Id int) []MODELS.USERS {
 
-	db, err := connectdatabase()
-	// Query all users
-	if db == nil {
-
-		log.Print("can not connect to database!")
-		return nil
-	}
-	defer db.Close()
+	//db, err := connectdatabase()
+	//// Query all users
+	//if db == nil {
+	//
+	//	log.Print("can not connect to database!")
+	//	return nil
+	//}
+	//defer db.Close()
 	query := ""
 	list := []MODELS.USERS{}
 

@@ -7,10 +7,10 @@ import (
 	"net/http"
 )
 
-func Get_default_service(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) Get_default_service(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
-	listUnit, Ok := BUSINESS.Get_all_default_service()
+	listUnit, Ok := BUSINESS.Get_all_default_service(a.Db)
 	jsonlist, _ := json.Marshal(listUnit)
 	if !Ok {
 		io.WriteString(w, `{ "message": "Can’t get units" }`)

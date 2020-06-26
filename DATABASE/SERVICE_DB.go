@@ -2,20 +2,21 @@ package DATABASE
 
 import (
 	"ROOMS/MODELS"
+	"database/sql"
 	"log"
 	"strings"
 )
 
-func GetServiceById(Id int) ([]MODELS.GET_SERVICES_REQUEST, bool) {
+func GetServiceById(db *sql.DB, Id int) ([]MODELS.GET_SERVICES_REQUEST, bool) {
 	var Services []MODELS.GET_SERVICES_REQUEST
-	db, err := connectdatabase()
-	// Query all users
-	if db == nil {
-
-		log.Print("can not connect to database!")
-		return Services, false
-	}
-	defer db.Close()
+	//db, err := connectdatabase()
+	//// Query all users
+	//if db == nil {
+	//
+	//	log.Print("can not connect to database!")
+	//	return Services, false
+	//}
+	//defer db.Close()
 
 	rows, err := db.Query("SELECT S.*, U.name nameUnit FROM SERVICES S INNER JOIN UNITS U ON S.idUnit = U.id WHERE idBlock = ?", Id)
 	if err != nil {
@@ -32,14 +33,15 @@ func GetServiceById(Id int) ([]MODELS.GET_SERVICES_REQUEST, bool) {
 	defer rows.Close()
 	return Services, true
 }
-func DeleteService(id int) (bool, error) {
-	db, err := connectdatabase()
 
-	if err != nil {
-		log.Print("can not connect to database!")
-		return false, err
-	}
-	defer db.Close()
+func DeleteService(db *sql.DB, id int) (bool, error) {
+	//db, err := connectdatabase()
+	//
+	//if err != nil {
+	//	log.Print("can not connect to database!")
+	//	return false, err
+	//}
+	//defer db.Close()
 
 	res, err := db.Exec(`delete from SERVICES where id = ?`, id)
 
@@ -55,14 +57,14 @@ func DeleteService(id int) (bool, error) {
 	return true, nil
 }
 
-func CreateService(services []MODELS.SERVICE_INPUT) (bool, error) {
+func CreateService(db *sql.DB, services []MODELS.SERVICE_INPUT) (bool, error) {
 
-	db, err := connectdatabase()
-	if err != nil {
-		log.Print("can not connect to database!")
-		return false, err
-	}
-	defer db.Close()
+	//db, err := connectdatabase()
+	//if err != nil {
+	//	log.Print("can not connect to database!")
+	//	return false, err
+	//}
+	//defer db.Close()
 
 	sqlStr := "insert into SERVICES(nameService, price, idUnit, description, idBlock) values "
 	vals := []interface{}{}
@@ -84,13 +86,13 @@ func CreateService(services []MODELS.SERVICE_INPUT) (bool, error) {
 	return true, nil
 }
 
-func DeleteServices(servicesId []int) (bool, error) {
-	db, err := connectdatabase()
-	if err != nil {
-		log.Print("can not connect to database!")
-		return false, err
-	}
-	defer db.Close()
+func DeleteServices(db *sql.DB, servicesId []int) (bool, error) {
+	//db, err := connectdatabase()
+	//if err != nil {
+	//	log.Print("can not connect to database!")
+	//	return false, err
+	//}
+	//defer db.Close()
 
 	args := make([]interface{}, len(servicesId))
 	for i, id := range servicesId {
@@ -110,13 +112,13 @@ func DeleteServices(servicesId []int) (bool, error) {
 	return true, nil
 }
 
-func UpdateService(service MODELS.SERVICE_INPUT) (bool, error) {
-	db, err := connectdatabase()
-	if err != nil {
-		log.Print("can not connect to database!")
-		return false, err
-	}
-	defer db.Close()
+func UpdateService(db *sql.DB, service MODELS.SERVICE_INPUT) (bool, error) {
+	//db, err := connectdatabase()
+	//if err != nil {
+	//	log.Print("can not connect to database!")
+	//	return false, err
+	//}
+	//defer db.Close()
 
 	rows, err := db.Exec("UPDATE SERVICES SET price = ?, idUnit = ?, description = ? WHERE id = ?",
 		service.Price, service.IdUnit, service.Description, service.Id)

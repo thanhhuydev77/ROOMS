@@ -108,14 +108,16 @@ func DeleteCustomer(idCustomer int) (bool, error) {
 	}
 	defer db.Close()
 
-	rs, err := db.Query(`DELETE FROM CUSTOMERS WHERE id = ?`, idCustomer)
+	rs, err := db.Exec(`DELETE FROM CUSTOMERS WHERE id = ?`, idCustomer)
 
 	if err != nil {
 		log.Fatalln(err)
 		return false, err
 	}
-	defer rs.Close()
-
+	num, err := rs.RowsAffected()
+	if num == 0 {
+		return false, err
+	}
 	return true, nil
 }
 

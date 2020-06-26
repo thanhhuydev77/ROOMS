@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func UserLogin(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) UserLogin(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("Content-Type", "application/json")
 	p := MODELS.USERS{}
@@ -23,7 +23,7 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	IsExsist, passok, a := BUSINESS.Login(p.UserName, p.Pass)
+	IsExsist, passok, user := BUSINESS.Login(a.Db, p.UserName, p.Pass)
 
 	if !IsExsist {
 		//w.WriteHeader(http.StatusUnauthorized)
@@ -38,7 +38,7 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 	}
 	// expired after 1000 dates
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user": a.UserName,
+		"user": user.UserName,
 		"exp":  time.Now().Add(time.Hour * time.Duration(1000*24)).Unix(),
 		"iat":  time.Now().Unix(),
 	})
@@ -50,13 +50,13 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//w.Write([]byte(`{"hello": "world"}`))
-	stringresult := `{"message": "Login success","data":{"token":"` + tokenString + `","user":{ "id":` + strconv.Itoa(a.Id) + `,
-						"username":"` + a.UserName + `","fullname":"` + a.FullName.String + `","role":` + strconv.Itoa(int(a.Role.Int64)) + `}}}`
+	stringresult := `{"message": "Login success","data":{"token":"` + tokenString + `","user":{ "id":` + strconv.Itoa(user.Id) + `,
+						"username":"` + user.UserName + `","fullname":"` + user.FullName.String + `","role":` + strconv.Itoa(int(user.Role.Int64)) + `}}}`
 	io.WriteString(w, stringresult)
 	return
 }
 
-func UserRegister(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) UserRegister(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	p := MODELS.RequestRegister{}
 	err1 := json.NewDecoder(r.Body).Decode(&p)
@@ -65,7 +65,7 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := BUSINESS.Register(p)
+	result, err := BUSINESS.Register(a.Db, p)
 	if result {
 		io.WriteString(w, `{"message": "Register success","data": {"status": 1}}`)
 	} else {
@@ -73,11 +73,11 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetallUserName(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) GetallUserName(w http.ResponseWriter, r *http.Request) {
 	// Query()["key"] will return an array of items,
 	// we only want the single item.
 
-	allusername := BUSINESS.GetAllUserName()
+	allusername := BUSINESS.GetAllUserName(a.Db)
 	w.Header().Add("Content-Type", "application/json")
 	if allusername == nil {
 		//w.WriteHeader(http.StatusBadRequest)
@@ -92,7 +92,7 @@ func GetallUserName(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "}}")
 }
 
-func GetUser(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) GetUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	vars := mux.Vars(r)
 	Id, err := strconv.Atoi(vars["Id"])
@@ -100,7 +100,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		Id = -1
 	}
-	List := BUSINESS.GetUsers(Id)
+	List := BUSINESS.GetUsers(a.Db, Id)
 	jsonlist, err1 := json.Marshal(List)
 	result := List[0]
 	if err1 != nil {

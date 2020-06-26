@@ -7,15 +7,15 @@ import (
 	"strings"
 )
 
-func GetRoom(idBlock int) ([]MODELS.ROOMS, bool, error) {
+func GetRoom(db *sql.DB, idBlock int) ([]MODELS.ROOMS, bool, error) {
 
-	db, err := connectdatabase()
-
-	if err != nil {
-		log.Fatal("Can't connet to database")
-		return nil, false, err
-	}
-	defer db.Close()
+	//db, err := connectdatabase()
+	//
+	//if err != nil {
+	//	log.Fatal("Can't connet to database")
+	//	return nil, false, err
+	//}
+	//defer db.Close()
 
 	rows, err := db.Query(`SELECT * FROM ROOMS WHERE idBlock = ?`, idBlock)
 	if err != nil {
@@ -37,15 +37,15 @@ func GetRoom(idBlock int) ([]MODELS.ROOMS, bool, error) {
 	return rooms, true, nil
 }
 
-func CreateRoom(room MODELS.ROOMS) (bool, error) {
-
-	db, err := connectdatabase()
-
-	if err != nil {
-		log.Fatal("Cannot connect to database")
-		return false, err
-	}
-	defer db.Close()
+func CreateRoom(db *sql.DB, room MODELS.ROOMS) (bool, error) {
+	//
+	//db, err := connectdatabase()
+	//
+	//if err != nil {
+	//	log.Fatal("Cannot connect to database")
+	//	return false, err
+	//}
+	//defer db.Close()
 
 	row, err := db.Query(`INSERT INTO ROOMS(nameRoom, maxPeople,floor, square, price, description, idBlock, status) 
 													VALUES(?,?,?,?,?,?,?,?)`,
@@ -60,14 +60,14 @@ func CreateRoom(room MODELS.ROOMS) (bool, error) {
 	return true, nil
 }
 
-func DeleteRoom(id int) (bool, error) {
+func DeleteRoom(db *sql.DB, id int) (bool, error) {
 
-	db, err := connectdatabase()
-
-	if err != nil {
-		log.Fatal("Can't connect to database")
-	}
-	defer db.Close()
+	//db, err := connectdatabase()
+	//
+	//if err != nil {
+	//	log.Fatal("Can't connect to database")
+	//}
+	//defer db.Close()
 
 	row, err := db.Query(`DELETE FROM ROOMS WHERE id = ?`, id)
 
@@ -79,14 +79,14 @@ func DeleteRoom(id int) (bool, error) {
 	return true, nil
 }
 
-func DeleteRooms(roomsId []int) (bool, error) {
+func DeleteRooms(db *sql.DB, roomsId []int) (bool, error) {
 
-	db, err := connectdatabase()
-
-	if err != nil {
-		return false, err
-	}
-	defer db.Close()
+	//db, err := connectdatabase()
+	//
+	//if err != nil {
+	//	return false, err
+	//}
+	//defer db.Close()
 
 	args := make([]interface{}, len(roomsId))
 	for i, id := range roomsId {
@@ -106,14 +106,14 @@ func DeleteRooms(roomsId []int) (bool, error) {
 	return true, nil
 }
 
-func UpdateRoom(id int, room MODELS.ROOMS) (bool, error) {
+func UpdateRoom(db *sql.DB, id int, room MODELS.ROOMS) (bool, error) {
 
-	db, err := connectdatabase()
-
-	if err != nil {
-		return false, err
-	}
-	defer db.Close()
+	//db, err := connectdatabase()
+	//
+	//if err != nil {
+	//	return false, err
+	//}
+	//defer db.Close()
 
 	row, err := db.Query(`UPDATE ROOMS 
 										SET nameRoom = ? , maxPeople = ?, floor = ?, square = ? , price = ?, description = ?
@@ -128,14 +128,14 @@ func UpdateRoom(id int, room MODELS.ROOMS) (bool, error) {
 	return true, nil
 }
 
-func UpdateGetRoom(idBlock int) ([]MODELS.ROOMS, bool, error) {
-	db, err := connectdatabase()
-
-	if err != nil {
-		log.Fatal("Can't connect to database")
-		return nil, false, err
-	}
-	defer db.Close()
+func UpdateGetRoom(db *sql.DB, idBlock int) ([]MODELS.ROOMS, bool, error) {
+	//db, err := connectdatabase()
+	//
+	//if err != nil {
+	//	log.Fatal("Can't connect to database")
+	//	return nil, false, err
+	//}
+	//defer db.Close()
 
 	rows, err := db.Query(`SELECT R.id, R.nameRoom, R.floor, R.square, R.price, R.description, R.idBlock, R.maxPeople	, R.status, R.codeRoom
 FROM ROOMS R LEFT JOIN USER_ROOM UR ON R.id = UR.idRoom WHERE UR.idRoom IS NULL AND idBlock = ?`, idBlock)
@@ -158,14 +158,14 @@ FROM ROOMS R LEFT JOIN USER_ROOM UR ON R.id = UR.idRoom WHERE UR.idRoom IS NULL 
 	return rooms, true, nil
 }
 
-func GetRoomDB(idBlock int, status int, userid int) ([]MODELS.GET_ROOMDB_REQUEST, error) {
-	db, err := connectdatabase()
-
-	if err != nil {
-		log.Fatal("Can't connect to database")
-		return nil, err
-	}
-	defer db.Close()
+func GetRoomDB(db *sql.DB, idBlock int, status int, userid int) ([]MODELS.GET_ROOMDB_REQUEST, error) {
+	//db, err := connectdatabase()
+	//
+	//if err != nil {
+	//	log.Fatal("Can't connect to database")
+	//	return nil, err
+	//}
+	//defer db.Close()
 	var rows *sql.Rows
 	var err1 error
 	if idBlock == -1 && status == -1 {
@@ -181,8 +181,8 @@ func GetRoomDB(idBlock int, status int, userid int) ([]MODELS.GET_ROOMDB_REQUEST
 	}
 
 	if err1 != nil {
-		log.Fatal(err)
-		return nil, err
+		log.Fatal(err1)
+		return nil, err1
 	}
 
 	var rooms []MODELS.GET_ROOMDB_REQUEST
@@ -199,15 +199,15 @@ func GetRoomDB(idBlock int, status int, userid int) ([]MODELS.GET_ROOMDB_REQUEST
 	return rooms, nil
 }
 
-func GetRoomImage(codeRoom string) ([]MODELS.ROOM_IMAGE, bool, error) {
+func GetRoomImage(db *sql.DB, codeRoom string) ([]MODELS.ROOM_IMAGE, bool, error) {
 
-	db, err := connectdatabase()
-
-	if err != nil {
-		log.Fatal("Can't connet to database")
-		return nil, false, err
-	}
-	defer db.Close()
+	//db, err := connectdatabase()
+	//
+	//if err != nil {
+	//	log.Fatal("Can't connet to database")
+	//	return nil, false, err
+	//}
+	//defer db.Close()
 
 	rows, err := db.Query(`SELECT * FROM ROOM_IMAGES WHERE codeRoom = ?`, codeRoom)
 	if err != nil {
@@ -229,15 +229,15 @@ func GetRoomImage(codeRoom string) ([]MODELS.ROOM_IMAGE, bool, error) {
 	return rooms, true, nil
 }
 
-func GetUserRenting(codeRoom int) ([]MODELS.ROOM_USER_RENTING_NAME, bool, error) {
+func GetUserRenting(db *sql.DB, codeRoom int) ([]MODELS.ROOM_USER_RENTING_NAME, bool, error) {
 
-	db, err := connectdatabase()
-
-	if err != nil {
-		log.Fatal("Can't connet to database")
-		return nil, false, err
-	}
-	defer db.Close()
+	//db, err := connectdatabase()
+	//
+	//if err != nil {
+	//	log.Fatal("Can't connet to database")
+	//	return nil, false, err
+	//}
+	//defer db.Close()
 
 	rows, err := db.Query(`SELECT C.fullName FROM USER_ROOM UR INNER JOIN CUSTOMERS C ON UR.idUser = C.id  WHERE UR.idRoom = ?`, codeRoom)
 	if err != nil {
@@ -259,21 +259,21 @@ func GetUserRenting(codeRoom int) ([]MODELS.ROOM_USER_RENTING_NAME, bool, error)
 	return rooms, true, nil
 }
 
-func GetRoomById(id int) (*MODELS.ROOMS, error) {
-	db, err := connectdatabase()
-
-	if err != nil {
-		log.Fatal("Can't connect to database")
-		return nil, err
-	}
-	defer db.Close()
+func GetRoomById(db *sql.DB, id int) (*MODELS.ROOMS, error) {
+	//db, err := connectdatabase()
+	//
+	//if err != nil {
+	//	log.Fatal("Can't connect to database")
+	//	return nil, err
+	//}
+	//defer db.Close()
 	var rows *sql.Rows
 	var err1 error
 
 	rows, err1 = db.Query(`SELECT * FROM ROOMS WHERE id = ?`, id)
 
 	if err1 != nil {
-		return nil, err
+		return nil, err1
 	}
 	for rows.Next() {
 		var room MODELS.ROOMS
