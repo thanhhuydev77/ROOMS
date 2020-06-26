@@ -11,6 +11,14 @@ const (
 	REDISURL          = "redis://localhost:6379"
 )
 
+var Db *sql.DB = nil
+
+func GetDbInstance() *sql.DB {
+	if Db == nil {
+		Db, _ = connectdatabase()
+	}
+	return Db
+}
 func connectdatabase() (*sql.DB, error) {
 	db, err := sql.Open(DRIVER_NAME, CONNECTION_STRING)
 	if err != nil {

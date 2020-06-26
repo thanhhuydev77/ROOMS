@@ -1,11 +1,16 @@
 package CONTROLLERS
 
 import (
+	"database/sql"
 	"github.com/gorilla/mux"
 	"net/http"
 )
 
-func InitAllController(r *mux.Router, storage *Storage) {
+type ApiDB struct {
+	Db *sql.DB
+}
+
+func InitAllController(a ApiDB, r *mux.Router, storage *Storage) {
 
 	//UsersController
 	r.HandleFunc("/user/login", UserLogin).Methods("POST")
@@ -35,7 +40,7 @@ func InitAllController(r *mux.Router, storage *Storage) {
 	r.Handle("/room/update/{id}", AuthMiddleware(http.HandlerFunc(UpdateRoom))).Methods("PUT")
 
 	//UnitController
-	r.Handle("/unit/get-units", AuthMiddleware(Cached(storage, "10s", GetAllUnit))).Methods("GET")
+	r.Handle("/unit/get-units", AuthMiddleware(Cached(storage, "10s", a.GetAllUnit))).Methods("GET")
 
 	//DefaultServiceController
 	r.Handle("/default-service/get-default-services", AuthMiddleware(Cached(storage, "10s", Get_default_service))).Methods("GET")

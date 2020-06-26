@@ -1,6 +1,8 @@
 package MODELS
 
-import "ROOMS/COMMON"
+import (
+	"ROOMS/COMMON"
+)
 
 type UNIT struct {
 	Id          int                 `json:"id"`

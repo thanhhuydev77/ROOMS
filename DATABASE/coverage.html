@@ -1,0 +1,1509 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">ROOMS/DATABASE/BILL_DB.go (0.0%)</option>
+				
+				<option value="file1">ROOMS/DATABASE/BLOCK_DB.go (0.0%)</option>
+				
+				<option value="file2">ROOMS/DATABASE/CONST.go (0.0%)</option>
+				
+				<option value="file3">ROOMS/DATABASE/CONTRACT_DB.go (0.0%)</option>
+				
+				<option value="file4">ROOMS/DATABASE/CUSTOMER_DB.go (0.0%)</option>
+				
+				<option value="file5">ROOMS/DATABASE/DEFAULT_SERVICE_DB.go (0.0%)</option>
+				
+				<option value="file6">ROOMS/DATABASE/ROOM_DB.go (0.0%)</option>
+				
+				<option value="file7">ROOMS/DATABASE/SERVICE_DB.go (0.0%)</option>
+				
+				<option value="file8">ROOMS/DATABASE/UNIT_DB.go (75.0%)</option>
+				
+				<option value="file9">ROOMS/DATABASE/USERS_DB.go (0.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package DATABASE
+
+import (
+        "ROOMS/MODELS"
+        "context"
+        "log"
+)
+
+func GetallBills() ([]MODELS.BILLS, error) <span class="cov0" title="0">{
+        bills := []MODELS.BILLS{}
+        db, err := connectdatabase()
+
+        if db == nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">rows, err := db.Query(`SELECT * FROM BILLS`)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+        }</span>
+        <span class="cov0" title="0">defer rows.Close()
+        for rows.Next() </span><span class="cov0" title="0">{
+                u := MODELS.BILLS{}
+
+                err := rows.Scan(&amp;u.Id, &amp;u.IdRoom, &amp;u.DateCheckOut, &amp;u.TotalPrice, &amp;u.IsCheckedOut)
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                }</span>
+                <span class="cov0" title="0">bills = append(bills, u)</span>
+        }
+        <span class="cov0" title="0">return bills, nil</span>
+}
+
+func GetBillById(id int) (MODELS.BILLS, bool, error) <span class="cov0" title="0">{
+        db, err := connectdatabase()
+        if db == nil </span><span class="cov0" title="0">{
+                return MODELS.BILLS{}, false, err
+        }</span>
+
+        // Query all bills with id = id
+        <span class="cov0" title="0">query := "SELECT * FROM BILLS where id = ?"
+        rows, err := db.Query(query, id)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+        }</span>
+        <span class="cov0" title="0">defer rows.Close()
+        for rows.Next() </span><span class="cov0" title="0">{
+                u := MODELS.BILLS{}
+                err := rows.Scan(&amp;u.Id, &amp;u.IdRoom, &amp;u.DateCheckOut, &amp;u.TotalPrice, &amp;u.IsCheckedOut)
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                }</span>
+                <span class="cov0" title="0">return u, true, nil</span>
+        }
+        <span class="cov0" title="0">return MODELS.BILLS{}, false, nil</span>
+}
+
+func GetBillDetailById(id int) ([]MODELS.BILL_DETAILS, bool, error) <span class="cov0" title="0">{
+        listbilldt := []MODELS.BILL_DETAILS{}
+
+        db, err := connectdatabase()
+        if db == nil </span><span class="cov0" title="0">{
+                return nil, false, err
+        }</span>
+
+        // Query all bills with id = id
+        <span class="cov0" title="0">query := "SELECT * FROM BILL_DETAILS where idBill = ?"
+        rows, err := db.Query(query, id)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+        }</span>
+        <span class="cov0" title="0">defer rows.Close()
+        for rows.Next() </span><span class="cov0" title="0">{
+                u := MODELS.BILL_DETAILS{}
+                err := rows.Scan(&amp;u.Id, &amp;u.IdBill, &amp;u.IdService, &amp;u.Amount, &amp;u.TotalPrice)
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                }</span>
+                <span class="cov0" title="0">listbilldt = append(listbilldt, u)</span>
+        }
+        <span class="cov0" title="0">return listbilldt, true, nil</span>
+}
+
+func CreateBill(bill MODELS.CREATE_UPDATE_BILL_REQUEST) (int, error) <span class="cov0" title="0">{
+        db, err := connectdatabase()
+        if db == nil </span><span class="cov0" title="0">{
+                return 0, err
+        }</span>
+        <span class="cov0" title="0">ctx := context.Background()
+        tx, err1 := db.BeginTx(ctx, nil)
+        if err1 != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+        }</span>
+        <span class="cov0" title="0">query := "insert into BILLS(idRoom,dateCheckOut,totalPrice,isCheckedOut) VALUES(?,?,?,?)"
+        _, errinsert := db.Query(query, bill.IdRoom, bill.DateCheckOut, bill.TotalPrice, bill.IsCheckedOut)
+        if errinsert != nil </span><span class="cov0" title="0">{
+                // Incase we find any error in the query execution, rollback the transaction
+                tx.Rollback()
+                return 0, err
+        }</span>
+        <span class="cov0" title="0">queryid := "select id from BILLS where idRoom = ? and dateCheckOut = ?"
+        rowsid, errid := db.Query(queryid, bill.IdRoom, bill.DateCheckOut)
+        defer rowsid.Close()
+        if errid != nil </span><span class="cov0" title="0">{
+                tx.Rollback()
+                return 0, errid
+        }</span>
+        <span class="cov0" title="0">id := 0
+        for rowsid.Next() </span><span class="cov0" title="0">{
+                errscan := rowsid.Scan(&amp;id)
+                if errscan != nil || id == 0 </span><span class="cov0" title="0">{
+                        tx.Rollback()
+                        return 0, errid
+                }</span>
+        }
+        <span class="cov0" title="0">for _, val := range bill.BillDetail </span><span class="cov0" title="0">{
+                query := "INSERT INTO BILL_DETAILS(IdBill,IdService,Amount,TotalPrice) VALUES (?,?,?,?)"
+                _, errinsert := db.Query(query, id, val.IdService, val.Amount, val.TotalPrice)
+                if errinsert != nil </span><span class="cov0" title="0">{
+                        tx.Rollback()
+                        return 0, err
+                }</span>
+        }
+        <span class="cov0" title="0">errcmt := tx.Commit()
+        if errcmt != nil </span><span class="cov0" title="0">{
+                log.Printf("err while commit :%v", errcmt.Error())
+                return 0, nil
+        }</span>
+        <span class="cov0" title="0">return 1, nil</span>
+}
+
+func UpdateBill(c MODELS.CREATE_UPDATE_BILL_REQUEST) (bool, error) <span class="cov0" title="0">{
+        db, err := connectdatabase()
+        if err != nil </span><span class="cov0" title="0">{
+                log.Print("can not connect to database!")
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+        ctx := context.Background()
+        tx, err1 := db.BeginTx(ctx, nil)
+        if err1 != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+        }</span>
+        <span class="cov0" title="0">_, err = db.Exec("UPDATE BILLS SET dateCheckOut = ?, totalPrice = ?, isCheckedOut = ? WHERE id = ?", c.DateCheckOut, c.TotalPrice, c.IsCheckedOut, c.Id)
+        if err != nil </span><span class="cov0" title="0">{
+                // Incase we find any error in the query execution, rollback the transaction
+                tx.Rollback()
+                return false, err
+        }</span>
+
+        <span class="cov0" title="0">_, err2 := db.Exec("DELETE FROM BILL_DETAILS WHERE idBill = ?", c.Id)
+        if err2 != nil </span><span class="cov0" title="0">{
+                // Incase we find any error in the query execution, rollback the transaction
+                tx.Rollback()
+                return false, err
+        }</span>
+        <span class="cov0" title="0">for _, vals := range c.BillDetail </span><span class="cov0" title="0">{
+                _, err4 := tx.ExecContext(ctx, `INSERT INTO BILL_DETAILS(idBill, idService,amount,totalPrice) VALUES(?,?,?,?)`, c.Id, vals.IdService, vals.Amount, vals.TotalPrice)
+                if err4 != nil </span><span class="cov0" title="0">{
+                        // Incase we find any error in the query execution, rollback the transaction
+                        tx.Rollback()
+                        return false, err
+                }</span>
+        }
+        <span class="cov0" title="0">err = nil
+        err = tx.Commit()
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+        }</span>
+
+        <span class="cov0" title="0">return true, nil</span>
+}
+
+func DeleteBill(idbill int) (bool, error) <span class="cov0" title="0">{
+        db, err := connectdatabase()
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalln(err)
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        rs, err := db.Query(`DELETE FROM BILLS WHERE id = ?`, idbill)
+
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalln(err)
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer rs.Close()
+
+        return true, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package DATABASE
+
+import (
+        "ROOMS/MODELS"
+        "log"
+        "strings"
+)
+
+func GetBlockById(Id int) (MODELS.BLOCKS, bool) <span class="cov0" title="0">{
+        var Block MODELS.BLOCKS
+        db, err := connectdatabase()
+        // Query all users
+        if db == nil </span><span class="cov0" title="0">{
+
+                log.Print("can not connect to database!")
+                return Block, false
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        rows, err := db.Query("select * from BLOCKS where id = ?", Id)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+        }</span>
+        <span class="cov0" title="0">for rows.Next() </span><span class="cov0" title="0">{
+                var block MODELS.BLOCKS
+                err := rows.Scan(&amp;block.Id, &amp;block.NameBlock, &amp;block.Address, &amp;block.Description, &amp;block.IdOwner)
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                }</span>
+                <span class="cov0" title="0">Block = block</span>
+        }
+        <span class="cov0" title="0">defer rows.Close()
+        return Block, true</span>
+}
+
+func GetBlockByIdOwner(IdOwner int) []MODELS.BLOCKS <span class="cov0" title="0">{
+        var listBlock []MODELS.BLOCKS
+        db, err := connectdatabase()
+        // Query all users
+        if db == nil </span><span class="cov0" title="0">{
+
+                log.Print("can not connect to database!")
+                return nil
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        rows, err := db.Query("select * from BLOCKS where idowner = ?", IdOwner)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+        }</span>
+        <span class="cov0" title="0">for rows.Next() </span><span class="cov0" title="0">{
+                var block MODELS.BLOCKS
+                err := rows.Scan(&amp;block.Id, &amp;block.NameBlock, &amp;block.Address, &amp;block.Description, &amp;block.IdOwner)
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                }</span>
+                <span class="cov0" title="0">listBlock = append(listBlock, block)</span>
+        }
+        <span class="cov0" title="0">defer rows.Close()
+        return listBlock</span>
+}
+
+func CreateBlock(b MODELS.BLOCKS) (bool, error) <span class="cov0" title="0">{
+
+        db, err := connectdatabase()
+        // Query all users
+        if err != nil </span><span class="cov0" title="0">{
+
+                log.Print("can not connect to database!")
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        rows, err := db.Query(`insert into BLOCKS(nameBlock,address,description,idOwner)
+                                                          values(?,?,?,?)`, b.NameBlock, b.Address, b.Description, b.IdOwner)
+        if err != nil </span><span class="cov0" title="0">{
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer rows.Close()
+        return true, nil</span>
+}
+
+func UpdateBlock(b MODELS.BLOCKS) (bool, error) <span class="cov0" title="0">{
+
+        db, err := connectdatabase()
+        // Query all users
+        if err != nil </span><span class="cov0" title="0">{
+
+                log.Print("can not connect to database!")
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        rows, err := db.Exec("update BLOCKS set nameBlock = ? , address = ? , description = ? where id = ?", b.NameBlock, b.Address, b.Description, b.Id)
+
+        num, err := rows.RowsAffected()
+        m := int64(num)
+        if m == 0 </span><span class="cov0" title="0">{
+                return false, err
+        }</span>
+        <span class="cov0" title="0">return true, nil</span>
+}
+
+func DeleteBlock(id int) (bool, error) <span class="cov0" title="0">{
+        db, err := connectdatabase()
+
+        if err != nil </span><span class="cov0" title="0">{
+                log.Print("can not connect to database!")
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        res, err := db.Exec(`delete from BLOCKS where id = ?`, id)
+
+        if err != nil </span><span class="cov0" title="0">{
+                panic(err)</span>
+        }
+
+        <span class="cov0" title="0">num, err := res.RowsAffected()
+        m := int64(num)
+        if m == 0 </span><span class="cov0" title="0">{
+                return false, err
+        }</span>
+        <span class="cov0" title="0">return true, nil</span>
+}
+
+func DeleteBlocks(ids []int) (bool, error) <span class="cov0" title="0">{
+        db, err := connectdatabase()
+
+        if err != nil </span><span class="cov0" title="0">{
+                log.Print("can not connect to database!")
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        args := make([]interface{}, len(ids))
+        for i, id := range ids </span><span class="cov0" title="0">{
+                args[i] = id
+        }</span>
+        <span class="cov0" title="0">stmt := `delete from BLOCKS where id in (?` + strings.Repeat(",?", len(args)-1) + `)`
+        rows, err := db.Exec(stmt, args...)
+
+        num, err := rows.RowsAffected()
+        m := int64(num)
+        if m == 0 </span><span class="cov0" title="0">{
+                return false, err
+        }</span>
+        <span class="cov0" title="0">return true, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package DATABASE
+
+import (
+        "database/sql"
+)
+
+const (
+        APP_KEY           = "thisissecreckeyyesitisreallyofcourcetrustmeitiskeyofthisapphahaha"
+        CONNECTION_STRING = "thanhhuydz123:_doan123@tcp(db4free.net:3306)/rooms_con?parseTime=true"
+        DRIVER_NAME       = "mysql"
+        REDISURL          = "redis://localhost:6379"
+)
+
+var Db *sql.DB = nil
+func GetDbInstance() *sql.DB<span class="cov0" title="0">{
+        if Db == nil</span><span class="cov0" title="0">{
+                Db,_ = connectdatabase()
+        }</span>
+        <span class="cov0" title="0">return Db</span>
+}
+func connectdatabase() (*sql.DB, error) <span class="cov0" title="0">{
+        db, err := sql.Open(DRIVER_NAME, CONNECTION_STRING)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, nil
+        }</span>
+        <span class="cov0" title="0">if err := db.Ping(); err != nil </span><span class="cov0" title="0">{
+                return nil, nil
+        }</span>
+        <span class="cov0" title="0">return db, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package DATABASE
+
+import (
+        "ROOMS/MODELS"
+        "context"
+        "log"
+        "strings"
+)
+
+func GetContractByBlockId(BlockId int) ([]MODELS.GET_CONTRACTS_REQUEST, bool, error) <span class="cov0" title="0">{
+        var listContracts []MODELS.GET_CONTRACTS_REQUEST
+        db, err := connectdatabase()
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        rows, err := db.Query("SELECT C.*, R.nameRoom, CU.fullName FROM CONTRACTS C INNER JOIN ROOMS R ON C.idRoom = R.id INNER JOIN CUSTOMERS CU ON C.idSlave = CU.id WHERE C.idBlock = ?", BlockId)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+                return nil, false, err
+        }</span>
+
+        <span class="cov0" title="0">for rows.Next() </span><span class="cov0" title="0">{
+                var c MODELS.GET_CONTRACTS_REQUEST
+
+                err := rows.Scan(&amp;c.Id, &amp;c.IdRoom, &amp;c.IdOwner, &amp;c.IdSlave, &amp;c.StartDate,
+                        &amp;c.EndDate, &amp;c.CirclePay, &amp;c.Deposit, &amp;c.DayPay,
+                        &amp;c.Note, &amp;c.IdBlock, &amp;c.NameRoom, &amp;c.FullName)
+                row2, err := db.Query("SELECT idUser FROM USER_ROOM WHERE idRoom = ?", c.IdRoom)
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                        return nil, false, err
+                }</span>
+                <span class="cov0" title="0">for row2.Next() </span><span class="cov0" title="0">{
+                        var a int
+                        err := row2.Scan(&amp;a)
+                        c.IdUsers = append(c.IdUsers, a)
+
+                        if err != nil </span><span class="cov0" title="0">{
+                                log.Fatal(err)
+                                return nil, false, err
+                        }</span>
+                }
+
+                <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                        return nil, false, err
+                }</span>
+                <span class="cov0" title="0">listContracts = append(listContracts, c)</span>
+        }
+        <span class="cov0" title="0">defer rows.Close()
+        return listContracts, true, nil</span>
+}
+
+func CreateContract(CCR MODELS.CREATE_UPDATE_CONTRACT_REQUEST) bool <span class="cov0" title="0">{
+        db, err := connectdatabase()
+
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal("Can't connet to database")
+                return false
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        // Query all users
+
+        ctx := context.Background()
+        tx, err1 := db.BeginTx(ctx, nil)
+        if err1 != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+        }</span>
+
+        <span class="cov0" title="0">_, err = tx.ExecContext(ctx, `INSERT INTO CONTRACTS (idRoom, idOwner, idSlave, startDate, endDate, circlePay, deposit, dayPay, note, idBlock) VALUES (?,?,?,?,?,?,?,?,?,?)`, CCR.IdRoom, CCR.IdOwner, CCR.IdSlave, CCR.StartDate, CCR.EndDate, CCR.CirclePay, CCR.Deposit, CCR.DayPay, CCR.Note, CCR.IdBlock)
+        if err != nil </span><span class="cov0" title="0">{
+                // Incase we find any error in the query execution, rollback the transaction
+                tx.Rollback()
+                return false
+        }</span>
+
+        // The next query is handled similarly
+        <span class="cov0" title="0">for _, vals := range CCR.UserRooms </span><span class="cov0" title="0">{
+                _, err = tx.ExecContext(ctx, `INSERT INTO USER_ROOM (idUser, idRoom) VALUES(?,?)`, vals.IdUser, vals.IdRoom)
+                if err != nil </span><span class="cov0" title="0">{
+                        // Incase we find any error in the query execution, rollback the transaction
+                        tx.Rollback()
+                        return false
+                }</span>
+        }
+
+        // Finally, if no errors are recieved from the queries, commit the transaction
+        // this applies the above changes to our database
+        <span class="cov0" title="0">err = nil
+        err = tx.Commit()
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+        }</span>
+        //defer rows.Close()
+        <span class="cov0" title="0">return true</span>
+}
+
+func DeleteContract(idCustomer int) (bool, error) <span class="cov0" title="0">{
+        db, err := connectdatabase()
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalln(err)
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        rs, err := db.Query(`DELETE FROM CONTRACTS WHERE id = ?`, idCustomer)
+
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalln(err)
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer rs.Close()
+
+        return true, nil</span>
+}
+
+func DeleteAllContract(idContract []int) (bool, error) <span class="cov0" title="0">{
+        db, err := connectdatabase()
+
+        if err != nil </span><span class="cov0" title="0">{
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        args := make([]interface{}, len(idContract))
+        for i, id := range idContract </span><span class="cov0" title="0">{
+                args[i] = id
+        }</span>
+
+        <span class="cov0" title="0">stmt := `DELETE FROM CONTRACTS WHERE id IN (?` + strings.Repeat(",?", len(args)-1) + `)`
+        rows, err := db.Exec(stmt, args...)
+
+        num, err := rows.RowsAffected()
+        n := int64(num)
+
+        if n == 0 </span><span class="cov0" title="0">{
+                return false, err
+        }</span>
+
+        <span class="cov0" title="0">return true, nil</span>
+}
+
+func UpdateContract(c MODELS.CREATE_UPDATE_CONTRACT_REQUEST) (bool, error) <span class="cov0" title="0">{
+        db, err := connectdatabase()
+        if err != nil </span><span class="cov0" title="0">{
+                log.Print("can not connect to database!")
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+        ctx := context.Background()
+        tx, err1 := db.BeginTx(ctx, nil)
+        if err1 != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+        }</span>
+        <span class="cov0" title="0">_, err = db.Exec("UPDATE CONTRACTS SET idSlave = ?, startDate = ?, endDate = ?, circlePay = ?, deposit = ?, dayPay = ?, note = ? WHERE id = ?", c.IdSlave, c.StartDate, c.EndDate, c.CirclePay, c.Deposit, c.DayPay, c.Note, c.Id)
+        if err != nil </span><span class="cov0" title="0">{
+                // Incase we find any error in the query execution, rollback the transaction
+                tx.Rollback()
+                return false, err
+        }</span>
+
+        <span class="cov0" title="0">_, err2 := db.Exec("DELETE FROM USER_ROOM WHERE idRoom = ?", c.IdRoom)
+        if err2 != nil </span><span class="cov0" title="0">{
+                // Incase we find any error in the query execution, rollback the transaction
+                tx.Rollback()
+                return false, err
+        }</span>
+        <span class="cov0" title="0">for _, vals := range c.UserRooms </span><span class="cov0" title="0">{
+                _, err4 := tx.ExecContext(ctx, `INSERT INTO USER_ROOM (idUser, idRoom) VALUES(?,?)`, vals.IdUser, vals.IdRoom)
+                if err4 != nil </span><span class="cov0" title="0">{
+                        // Incase we find any error in the query execution, rollback the transaction
+                        tx.Rollback()
+                        return false, err
+                }</span>
+        }
+        <span class="cov0" title="0">err = nil
+        err = tx.Commit()
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+        }</span>
+
+        <span class="cov0" title="0">return true, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package DATABASE
+
+import (
+        "ROOMS/MODELS"
+        "log"
+        "strings"
+)
+
+func GetCustomers(userId int) ([]MODELS.CUSTOMER, bool, error) <span class="cov0" title="0">{
+        var listCustomers []MODELS.CUSTOMER
+        db, err := connectdatabase()
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        rows, err := db.Query("SELECT CU.*, R.nameRoom FROM CUSTOMERS CU LEFT JOIN USER_ROOM UR ON CU.id = UR.idUser "+
+                "LEFT JOIN ROOMS R ON UR.idRoom = R.id  WHERE idOwner = ?", userId)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+                return nil, false, err
+        }</span>
+
+        <span class="cov0" title="0">for rows.Next() </span><span class="cov0" title="0">{
+                var c MODELS.CUSTOMER
+
+                err := rows.Scan(&amp;c.Id, &amp;c.CodeUser, &amp;c.UserName, &amp;c.Pass, &amp;c.FullName,
+                        &amp;c.IdentifyFront, &amp;c.IdentifyBack, &amp;c.DateBirth, &amp;c.Address,
+                        &amp;c.Role, &amp;c.Sex, &amp;c.Job, &amp;c.WorkPlace, &amp;c.TempReg, &amp;c.Province,
+                        &amp;c.Email, &amp;c.Avatar, &amp;c.PhoneNumber, &amp;c.IdOwner, &amp;c.Note, &amp;c.NameRoom)
+
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                        return nil, false, err
+                }</span>
+                <span class="cov0" title="0">listCustomers = append(listCustomers, c)</span>
+        }
+        <span class="cov0" title="0">defer rows.Close()
+        return listCustomers, true, nil</span>
+}
+
+func GetCustomersByUserId(userId int) ([]MODELS.CUSTOMER_GET, bool, error) <span class="cov0" title="0">{
+        var listCustomers []MODELS.CUSTOMER_GET
+        db, err := connectdatabase()
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        rows, err := db.Query("SELECT * FROM CUSTOMERS WHERE idOwner = ?", userId)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+                return nil, false, err
+        }</span>
+
+        <span class="cov0" title="0">for rows.Next() </span><span class="cov0" title="0">{
+                var c MODELS.CUSTOMER_GET
+
+                err := rows.Scan(&amp;c.Id, &amp;c.CodeUser, &amp;c.UserName, &amp;c.Pass, &amp;c.FullName,
+                        &amp;c.IdentifyFront, &amp;c.IdentifyBack, &amp;c.DateBirth, &amp;c.Address,
+                        &amp;c.Role, &amp;c.Sex, &amp;c.Job, &amp;c.WorkPlace, &amp;c.TempReg, &amp;c.Province,
+                        &amp;c.Email, &amp;c.Avatar, &amp;c.PhoneNumber, &amp;c.IdOwner, &amp;c.Note)
+
+                var r, _, _ = SelectNameRoom(c.Id)
+                for i := range r </span><span class="cov0" title="0">{
+                        c.Rooms = append(c.Rooms, MODELS.CUSTOMER_ROOMS{RoomName: r[i]})
+                }</span>
+
+                <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                        return nil, false, err
+                }</span>
+                <span class="cov0" title="0">listCustomers = append(listCustomers, c)</span>
+        }
+        <span class="cov0" title="0">defer rows.Close()
+        return listCustomers, true, nil</span>
+}
+
+func CreateCustomer(c MODELS.CUSTOMER_INPUT) (bool, error) <span class="cov0" title="0">{
+        db, err := connectdatabase()
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalln(err)
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        rs, err := db.Query(`INSERT INTO CUSTOMERS (codeUser, fullName, identifyFront, identifyBack, dateBirth, sex, 
+                job, workPlace, tempReg, email, avatar, phoneNumber, idOwner, note) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+                c.CodeUser, c.FullName, c.IdentifyFront, c.IdentifyBack, c.DateBirth, c.Sex, c.Job,
+                c.WorkPlace, c.TempReg, c.Email, c.Avatar, c.PhoneNumber, c.IdOwner, c.Note)
+
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalln(err)
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer rs.Close()
+
+        return true, nil</span>
+}
+
+func DeleteCustomer(idCustomer int) (bool, error) <span class="cov0" title="0">{
+        db, err := connectdatabase()
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalln(err)
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        rs, err := db.Query(`DELETE FROM CUSTOMERS WHERE id = ?`, idCustomer)
+
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalln(err)
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer rs.Close()
+
+        return true, nil</span>
+}
+
+func DeleteManyCustomers(ids []int) (bool, error) <span class="cov0" title="0">{
+        db, err := connectdatabase()
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalln(err)
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        args := make([]interface{}, len(ids))
+        for i, id := range ids </span><span class="cov0" title="0">{
+                args[i] = id
+        }</span>
+        <span class="cov0" title="0">stmt := `DELETE FROM CUSTOMERS WHERE id IN(?` + strings.Repeat(",?", len(args)-1) + `)`
+        rows, err := db.Exec(stmt, args...)
+
+        num, err := rows.RowsAffected()
+        m := int64(num)
+        if m == 0 </span><span class="cov0" title="0">{
+                return false, err
+        }</span>
+        <span class="cov0" title="0">return true, nil</span>
+}
+
+func UpdateCustomer(c MODELS.CUSTOMER_UPDATE) (bool, error) <span class="cov0" title="0">{
+        db, err := connectdatabase()
+
+        if err != nil </span><span class="cov0" title="0">{
+
+                log.Print("can not connect to database!")
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        rows, err := db.Exec(`UPDATE CUSTOMERS SET fullName = ?, identifyFront = ?, identifyBack = ?, dateBirth = ?, 
+address = ?, sex = ?, job = ?, workPlace = ?, tempReg = ?, email = ?, avatar = ?, phoneNumber = ?, note = ? WHERE id = ?`,
+                c.FullName, c.IdentifyFront, c.IdentifyBack, c.DateBirth, c.Address, c.Sex, c.Job,
+                c.WorkPlace, c.TempReg, c.Email, c.Avatar, c.PhoneNumber, c.Note, c.Id)
+
+        num, err := rows.RowsAffected()
+        m := int64(num)
+        if m == 0 </span><span class="cov0" title="0">{
+                return false, err
+        }</span>
+        <span class="cov0" title="0">return true, nil</span>
+}
+
+func SelectNameRoom(idUser int) ([]string, bool, error) <span class="cov0" title="0">{
+        db, err := connectdatabase()
+
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal("Can't connet to database")
+                return nil, false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        rows, err := db.Query(`SELECT R.nameRoom FROM USER_ROOM UR INNER JOIN ROOMS R ON UR.idRoom = R.id WHERE idUser = ?`, idUser)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+                return nil, false, err
+        }</span>
+
+        <span class="cov0" title="0">var rooms []string
+
+        for rows.Next() </span><span class="cov0" title="0">{
+                var room string
+                err := rows.Scan(&amp;room)
+
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                }</span>
+                <span class="cov0" title="0">rooms = append(rooms, room)</span>
+        }
+        <span class="cov0" title="0">return rooms, true, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package DATABASE
+
+import (
+        "ROOMS/MODELS"
+        "log"
+)
+
+func Get_all_default_service() ([]MODELS.GET_DEFAULT_SERVICES_REQUEST, bool) <span class="cov0" title="0">{
+        var default_services []MODELS.GET_DEFAULT_SERVICES_REQUEST
+        db, err := connectdatabase()
+        // Query all users
+        if db == nil </span><span class="cov0" title="0">{
+
+                log.Print("can not connect to database!")
+                return default_services, false
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        rows, err := db.Query("SELECT DS.*,U.name FROM DEFAULT_SERVICES as DS INNER JOIN UNITS as U on DS.idUnit = U.id")
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+        }</span>
+        <span class="cov0" title="0">for rows.Next() </span><span class="cov0" title="0">{
+                var defaultServices MODELS.GET_DEFAULT_SERVICES_REQUEST
+                err := rows.Scan(&amp;defaultServices.Id, &amp;defaultServices.NameService, &amp;defaultServices.Price, &amp;defaultServices.Description, &amp;defaultServices.IdUnit, &amp;defaultServices.UnitName)
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                }</span>
+                <span class="cov0" title="0">default_services = append(default_services, defaultServices)</span>
+        }
+        <span class="cov0" title="0">defer rows.Close()
+        return default_services, true</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package DATABASE
+
+import (
+        "ROOMS/MODELS"
+        "database/sql"
+        "log"
+        "strings"
+)
+
+func GetRoom(idBlock int) ([]MODELS.ROOMS, bool, error) <span class="cov0" title="0">{
+
+        db, err := connectdatabase()
+
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal("Can't connet to database")
+                return nil, false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        rows, err := db.Query(`SELECT * FROM ROOMS WHERE idBlock = ?`, idBlock)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+                return nil, false, err
+        }</span>
+
+        <span class="cov0" title="0">var rooms []MODELS.ROOMS
+
+        for rows.Next() </span><span class="cov0" title="0">{
+                var room MODELS.ROOMS
+                err := rows.Scan(&amp;room.Id, &amp;room.Name, &amp;room.Floor, &amp;room.Square, &amp;room.Price, &amp;room.Description, &amp;room.IdBlock, &amp;room.MaxPeople, &amp;room.Status, &amp;room.CodeRoom)
+
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                }</span>
+                <span class="cov0" title="0">rooms = append(rooms, room)</span>
+        }
+        <span class="cov0" title="0">return rooms, true, nil</span>
+}
+
+func CreateRoom(room MODELS.ROOMS) (bool, error) <span class="cov0" title="0">{
+
+        db, err := connectdatabase()
+
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal("Cannot connect to database")
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        row, err := db.Query(`INSERT INTO ROOMS(nameRoom, maxPeople,floor, square, price, description, idBlock, status) 
+                                                                                                        VALUES(?,?,?,?,?,?,?,?)`,
+                room.Name, room.MaxPeople, room.Floor, room.Square, room.Price,
+                room.Description, room.IdBlock, room.Status)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer row.Close()
+
+        return true, nil</span>
+}
+
+func DeleteRoom(id int) (bool, error) <span class="cov0" title="0">{
+
+        db, err := connectdatabase()
+
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal("Can't connect to database")
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        row, err := db.Query(`DELETE FROM ROOMS WHERE id = ?`, id)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer row.Close()
+
+        return true, nil</span>
+}
+
+func DeleteRooms(roomsId []int) (bool, error) <span class="cov0" title="0">{
+
+        db, err := connectdatabase()
+
+        if err != nil </span><span class="cov0" title="0">{
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        args := make([]interface{}, len(roomsId))
+        for i, id := range roomsId </span><span class="cov0" title="0">{
+                args[i] = id
+        }</span>
+
+        <span class="cov0" title="0">stmt := `DELETE FROM ROOMS WHERE id IN (?` + strings.Repeat(",?", len(args)-1) + `)`
+        rows, err := db.Exec(stmt, args...)
+
+        num, err := rows.RowsAffected()
+        n := int64(num)
+
+        if n == 0 </span><span class="cov0" title="0">{
+                return false, err
+        }</span>
+
+        <span class="cov0" title="0">return true, nil</span>
+}
+
+func UpdateRoom(id int, room MODELS.ROOMS) (bool, error) <span class="cov0" title="0">{
+
+        db, err := connectdatabase()
+
+        if err != nil </span><span class="cov0" title="0">{
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        row, err := db.Query(`UPDATE ROOMS 
+                                                                                SET nameRoom = ? , maxPeople = ?, floor = ?, square = ? , price = ?, description = ?
+                                                                                WHERE id = ?`,
+                room.Name, room.MaxPeople, room.Floor, room.Square, room.Price, room.Description, id)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer row.Close()
+
+        return true, nil</span>
+}
+
+func UpdateGetRoom(idBlock int) ([]MODELS.ROOMS, bool, error) <span class="cov0" title="0">{
+        db, err := connectdatabase()
+
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal("Can't connect to database")
+                return nil, false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        rows, err := db.Query(`SELECT R.id, R.nameRoom, R.floor, R.square, R.price, R.description, R.idBlock, R.maxPeople        , R.status, R.codeRoom
+FROM ROOMS R LEFT JOIN USER_ROOM UR ON R.id = UR.idRoom WHERE UR.idRoom IS NULL AND idBlock = ?`, idBlock)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+                return nil, false, err
+        }</span>
+
+        <span class="cov0" title="0">var rooms []MODELS.ROOMS
+
+        for rows.Next() </span><span class="cov0" title="0">{
+                var room MODELS.ROOMS
+                err := rows.Scan(&amp;room.Id, &amp;room.Name, &amp;room.Floor, &amp;room.Square, &amp;room.Price, &amp;room.Description, &amp;room.IdBlock, &amp;room.MaxPeople, &amp;room.Status, &amp;room.CodeRoom)
+
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                }</span>
+                <span class="cov0" title="0">rooms = append(rooms, room)</span>
+        }
+        <span class="cov0" title="0">return rooms, true, nil</span>
+}
+
+func GetRoomDB(idBlock int, status int, userid int) ([]MODELS.GET_ROOMDB_REQUEST, error) <span class="cov0" title="0">{
+        db, err := connectdatabase()
+
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal("Can't connect to database")
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+        var rows *sql.Rows
+        var err1 error
+        if idBlock == -1 &amp;&amp; status == -1 </span><span class="cov0" title="0">{
+                rows, err1 = db.Query(`SELECT R.*, B.nameBlock, C.startDate FROM ROOMS R INNER JOIN BLOCKS B ON R.idBlock = B.id LEFT JOIN CONTRACTS C ON R.id = C.idRoom WHERE B.idOwner = ?`, userid)
+        }</span> else<span class="cov0" title="0"> if idBlock == -1 &amp;&amp; status != -1 </span><span class="cov0" title="0">{
+                rows, err1 = db.Query(`SELECT R.*, B.nameBlock, C.startDate FROM ROOMS R INNER JOIN BLOCKS B ON R.idBlock = B.id LEFT JOIN CONTRACTS C ON R.id = C.idRoom WHERE B.idOwner = ? AND R.status = ?`, userid, status)
+        }</span> else<span class="cov0" title="0"> {
+                if status == -1 </span><span class="cov0" title="0">{
+                        rows, err1 = db.Query(`SELECT R.*, B.nameBlock, C.startDate FROM ROOMS R INNER JOIN BLOCKS B ON R.idBlock = B.id LEFT JOIN CONTRACTS C ON R.id = C.idRoom WHERE R.idBlock = ?`, idBlock)
+                }</span> else<span class="cov0" title="0"> {
+                        rows, err1 = db.Query(`SELECT R.*, B.nameBlock, C.startDate FROM ROOMS R INNER JOIN BLOCKS B ON R.idBlock = B.id LEFT JOIN CONTRACTS C ON R.id = C.idRoom WHERE status = ? AND R.idBlock = ?`, status, idBlock)
+                }</span>
+        }
+
+        <span class="cov0" title="0">if err1 != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">var rooms []MODELS.GET_ROOMDB_REQUEST
+
+        for rows.Next() </span><span class="cov0" title="0">{
+                var room MODELS.GET_ROOMDB_REQUEST
+                err := rows.Scan(&amp;room.Id, &amp;room.Name, &amp;room.Floor, &amp;room.Square, &amp;room.Price, &amp;room.Description, &amp;room.IdBlock, &amp;room.MaxPeople, &amp;room.Status, &amp;room.CodeRoom, &amp;room.NameBlock, &amp;room.StartDate)
+
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                }</span>
+                <span class="cov0" title="0">rooms = append(rooms, room)</span>
+        }
+        <span class="cov0" title="0">return rooms, nil</span>
+}
+
+func GetRoomImage(codeRoom string) ([]MODELS.ROOM_IMAGE, bool, error) <span class="cov0" title="0">{
+
+        db, err := connectdatabase()
+
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal("Can't connet to database")
+                return nil, false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        rows, err := db.Query(`SELECT * FROM ROOM_IMAGES WHERE codeRoom = ?`, codeRoom)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+                return nil, false, err
+        }</span>
+
+        <span class="cov0" title="0">var rooms []MODELS.ROOM_IMAGE
+
+        for rows.Next() </span><span class="cov0" title="0">{
+                var room MODELS.ROOM_IMAGE
+                err := rows.Scan(&amp;room.Id, &amp;room.Name, &amp;room.Status, &amp;room.Url, &amp;room.CodeRoom)
+
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                }</span>
+                <span class="cov0" title="0">rooms = append(rooms, room)</span>
+        }
+        <span class="cov0" title="0">return rooms, true, nil</span>
+}
+
+func GetUserRenting(codeRoom int) ([]MODELS.ROOM_USER_RENTING_NAME, bool, error) <span class="cov0" title="0">{
+
+        db, err := connectdatabase()
+
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal("Can't connet to database")
+                return nil, false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        rows, err := db.Query(`SELECT C.fullName FROM USER_ROOM UR INNER JOIN CUSTOMERS C ON UR.idUser = C.id  WHERE UR.idRoom = ?`, codeRoom)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+                return nil, false, err
+        }</span>
+
+        <span class="cov0" title="0">var rooms []MODELS.ROOM_USER_RENTING_NAME
+
+        for rows.Next() </span><span class="cov0" title="0">{
+                var room MODELS.ROOM_USER_RENTING_NAME
+                err := rows.Scan(&amp;room.Name)
+
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                }</span>
+                <span class="cov0" title="0">rooms = append(rooms, room)</span>
+        }
+        <span class="cov0" title="0">return rooms, true, nil</span>
+}
+
+func GetRoomById(id int) (*MODELS.ROOMS, error) <span class="cov0" title="0">{
+        db, err := connectdatabase()
+
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal("Can't connect to database")
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+        var rows *sql.Rows
+        var err1 error
+
+        rows, err1 = db.Query(`SELECT * FROM ROOMS WHERE id = ?`, id)
+
+        if err1 != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">for rows.Next() </span><span class="cov0" title="0">{
+                var room MODELS.ROOMS
+                err := rows.Scan(&amp;room.Id, &amp;room.Name, &amp;room.Floor, &amp;room.Square, &amp;room.Price, &amp;room.Description, &amp;room.IdBlock, &amp;room.MaxPeople, &amp;room.Status, &amp;room.CodeRoom)
+
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+                <span class="cov0" title="0">return &amp;room, nil</span>
+        }
+        <span class="cov0" title="0">return nil, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package DATABASE
+
+import (
+        "ROOMS/MODELS"
+        "log"
+        "strings"
+)
+
+func GetServiceById(Id int) ([]MODELS.GET_SERVICES_REQUEST, bool) <span class="cov0" title="0">{
+        var Services []MODELS.GET_SERVICES_REQUEST
+        db, err := connectdatabase()
+        // Query all users
+        if db == nil </span><span class="cov0" title="0">{
+
+                log.Print("can not connect to database!")
+                return Services, false
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        rows, err := db.Query("SELECT S.*, U.name nameUnit FROM SERVICES S INNER JOIN UNITS U ON S.idUnit = U.id WHERE idBlock = ?", Id)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+        }</span>
+        <span class="cov0" title="0">for rows.Next() </span><span class="cov0" title="0">{
+                var services MODELS.GET_SERVICES_REQUEST
+                err := rows.Scan(&amp;services.Id, &amp;services.NameService, &amp;services.Price, &amp;services.IdUnit, &amp;services.Description, &amp;services.IdBlock, &amp;services.UnitName)
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                }</span>
+                <span class="cov0" title="0">Services = append(Services, services)</span>
+        }
+        <span class="cov0" title="0">defer rows.Close()
+        return Services, true</span>
+}
+func DeleteService(id int) (bool, error) <span class="cov0" title="0">{
+        db, err := connectdatabase()
+
+        if err != nil </span><span class="cov0" title="0">{
+                log.Print("can not connect to database!")
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        res, err := db.Exec(`delete from SERVICES where id = ?`, id)
+
+        if err != nil </span><span class="cov0" title="0">{
+                panic(err)</span>
+        }
+
+        <span class="cov0" title="0">num, err := res.RowsAffected()
+        m := int64(num)
+        if m == 0 </span><span class="cov0" title="0">{
+                return false, err
+        }</span>
+        <span class="cov0" title="0">return true, nil</span>
+}
+
+func CreateService(services []MODELS.SERVICE_INPUT) (bool, error) <span class="cov0" title="0">{
+
+        db, err := connectdatabase()
+        if err != nil </span><span class="cov0" title="0">{
+                log.Print("can not connect to database!")
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        sqlStr := "insert into SERVICES(nameService, price, idUnit, description, idBlock) values "
+        vals := []interface{}{}
+
+        for _, row := range services </span><span class="cov0" title="0">{
+                sqlStr += "(?, ?, ?, ?, ?),"
+                vals = append(vals, row.NameService, row.Price, row.IdUnit, row.Description, row.IdBlock)
+        }</span>
+
+        <span class="cov0" title="0">sqlStr = strings.TrimSuffix(sqlStr, ",")
+
+        stmt, _ := db.Prepare(sqlStr)
+        res, err := stmt.Exec(vals...)
+
+        if err != nil || res == nil </span><span class="cov0" title="0">{
+                return false, err
+        }</span>
+
+        <span class="cov0" title="0">return true, nil</span>
+}
+
+func DeleteServices(servicesId []int) (bool, error) <span class="cov0" title="0">{
+        db, err := connectdatabase()
+        if err != nil </span><span class="cov0" title="0">{
+                log.Print("can not connect to database!")
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        args := make([]interface{}, len(servicesId))
+        for i, id := range servicesId </span><span class="cov0" title="0">{
+                args[i] = id
+        }</span>
+
+        <span class="cov0" title="0">stmt := `delete from SERVICES where id in (?` + strings.Repeat(",?", len(args)-1) + `)`
+        rows, err := db.Exec(stmt, args...)
+
+        num, err := rows.RowsAffected()
+        m := int64(num)
+        if m == 0 </span><span class="cov0" title="0">{
+                return false, err
+        }</span>
+        <span class="cov0" title="0">return true, nil
+
+        return true, nil</span>
+}
+
+func UpdateService(service MODELS.SERVICE_INPUT) (bool, error) <span class="cov0" title="0">{
+        db, err := connectdatabase()
+        if err != nil </span><span class="cov0" title="0">{
+                log.Print("can not connect to database!")
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        rows, err := db.Exec("UPDATE SERVICES SET price = ?, idUnit = ?, description = ? WHERE id = ?",
+                service.Price, service.IdUnit, service.Description, service.Id)
+
+        num, err := rows.RowsAffected()
+        m := int64(num)
+        if m == 0 </span><span class="cov0" title="0">{
+                return false, err
+        }</span>
+        <span class="cov0" title="0">return true, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package DATABASE
+
+import (
+        "ROOMS/MODELS"
+        "database/sql"
+        "log"
+)
+
+func GetAllUnits(db *sql.DB) ([]MODELS.UNIT, bool) <span class="cov8" title="1">{
+        var units []MODELS.UNIT
+        //db, err := connectdatabase()
+        // Query all users
+
+        if db == nil </span><span class="cov0" title="0">{
+
+                log.Print("can not connect to database!")
+                return units, false
+        }</span>
+        <span class="cov8" title="1">defer db.Close()
+
+        rows, err := db.Query("select * from UNITS")
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+        }</span>
+        <span class="cov8" title="1">for rows.Next() </span><span class="cov8" title="1">{
+                var unit MODELS.UNIT
+                err := rows.Scan(&amp;unit.Id, &amp;unit.Name, &amp;unit.Description)
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                }</span>
+                <span class="cov8" title="1">units = append(units, unit)</span>
+        }
+        <span class="cov8" title="1">defer rows.Close()
+        return units, true</span>
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package DATABASE
+
+import (
+        "ROOMS/MODELS"
+        "golang.org/x/crypto/bcrypt"
+        "log"
+        "strconv"
+)
+
+func Login(username string, pass string) (bool, bool, MODELS.USERS) <span class="cov0" title="0">{
+        exsist := false
+        passOK := false
+        a := MODELS.USERS{}
+        //getuset from datebase
+        db, err := connectdatabase()
+        // Query all users
+        if db == nil </span><span class="cov0" title="0">{
+
+                log.Print("can not connect to database!")
+                return exsist, false, a
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        rows, err := db.Query("select id,username,pass,fullname,role from USERS where username = ?", username)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+        }</span>
+        <span class="cov0" title="0">for rows.Next() </span><span class="cov0" title="0">{
+                err := rows.Scan(&amp;a.Id, &amp;a.UserName, &amp;a.Pass, &amp;a.FullName, &amp;a.Role)
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                }</span>
+                <span class="cov0" title="0">exsist = true</span>
+        }
+        <span class="cov0" title="0">defer rows.Close()
+        //hashpass,err := HashPassword(pass)
+        if checkPasswordHash(pass, a.Pass) </span><span class="cov0" title="0">{
+                passOK = true
+        }</span>
+        <span class="cov0" title="0">return exsist, passOK, a</span>
+}
+
+func Register(user MODELS.RequestRegister) (bool, error) <span class="cov0" title="0">{
+
+        //getuset from datebase
+        db, err := connectdatabase()
+        // Query all users
+        if err != nil </span><span class="cov0" title="0">{
+
+                log.Print("can not connect to database!")
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+        passhash, _ := hashPassword(user.Pass)
+        rows, err := db.Query(`insert into USERS(userName,Pass,FullName,Address,Role,Sex,Province,Email)
+                                                          values(?,?,?,?,?,?,?,?)`, user.UserName, passhash, user.FullName, user.Address, user.Role, user.Sex, user.Province, user.Email)
+        if err != nil </span><span class="cov0" title="0">{
+                return false, err
+        }</span>
+        <span class="cov0" title="0">defer rows.Close()
+        return true, nil</span>
+}
+
+func GetAllUserName() []string <span class="cov0" title="0">{
+        var Allusername []string
+        db, err := connectdatabase()
+        // Query all users
+        if db == nil </span><span class="cov0" title="0">{
+
+                log.Print("can not connect to database!")
+                return nil
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        rows, err := db.Query("select username from USERS")
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+        }</span>
+        <span class="cov0" title="0">for rows.Next() </span><span class="cov0" title="0">{
+                var username string
+                err := rows.Scan(&amp;username)
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                }</span>
+                <span class="cov0" title="0">Allusername = append(Allusername, username)</span>
+        }
+        <span class="cov0" title="0">defer rows.Close()
+        return Allusername</span>
+}
+
+func hashPassword(password string) (string, error) <span class="cov0" title="0">{
+        bytes, err := bcrypt.GenerateFromPassword([]byte(password), 5)
+        return string(bytes), err
+}</span>
+
+func checkPasswordHash(password, hash string) bool <span class="cov0" title="0">{
+        err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+        return err == nil
+}</span>
+
+func GetUsers(Id int) []MODELS.USERS <span class="cov0" title="0">{
+
+        db, err := connectdatabase()
+        // Query all users
+        if db == nil </span><span class="cov0" title="0">{
+
+                log.Print("can not connect to database!")
+                return nil
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+        query := ""
+        list := []MODELS.USERS{}
+
+        if Id == -1 </span><span class="cov0" title="0">{
+                query = "select * from USERS"
+        }</span> else<span class="cov0" title="0"> {
+                query = "select * from USERS where Id = " + strconv.Itoa(Id)
+        }</span>
+
+        <span class="cov0" title="0">rows, err := db.Query(query)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+        }</span>
+        <span class="cov0" title="0">for rows.Next() </span><span class="cov0" title="0">{
+                var user MODELS.USERS
+                err := rows.Scan(&amp;user.Id, &amp;user.UserName, &amp;user.Pass, &amp;user.FullName, &amp;user.IdentifyFront, &amp;user.IdentifyBack, &amp;user.DateBirth, &amp;user.Address,
+                        &amp;user.Role, &amp;user.Sex, &amp;user.Job, &amp;user.WorkPlace, &amp;user.TempReg, &amp;user.Province, &amp;user.Email, &amp;user.Avatar, &amp;user.PhoneNumber)
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                }</span>
+                <span class="cov0" title="0">list = append(list, user)</span>
+        }
+        <span class="cov0" title="0">return list</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

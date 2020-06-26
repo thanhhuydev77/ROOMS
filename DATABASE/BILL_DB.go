@@ -122,7 +122,7 @@ func CreateBill(bill MODELS.CREATE_UPDATE_BILL_REQUEST) (int, error) {
 	}
 	errcmt := tx.Commit()
 	if errcmt != nil {
-		log.Printf("err while commit :", errcmt.Error())
+		log.Printf("err while commit :%v", errcmt.Error())
 		return 0, nil
 	}
 	return 1, nil
