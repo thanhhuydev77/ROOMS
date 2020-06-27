@@ -11,7 +11,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func GetBlock(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) GetBlock(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	keys, ok := r.URL.Query()["userId"]
 	if !ok || len(keys[0]) < 1 {
@@ -19,7 +19,7 @@ func GetBlock(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	idowner, _ := strconv.Atoi(keys[0])
-	listBlock := BUSINESS.GetBlockByIdOwner(idowner)
+	listBlock := BUSINESS.GetBlockByIdOwner(a.Db, idowner)
 	jsonlist, _ := json.Marshal(listBlock)
 	if len(listBlock) == 0 {
 		io.WriteString(w, `{"status": 200,

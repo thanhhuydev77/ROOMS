@@ -7,3 +7,12 @@ type UNIT struct {
 	Name        string              `json:"name"`
 	Description COMMON.MyNullString `json:"description"`
 }
+
+type RespondOk struct {
+	Status  int         `json:"status"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
+}
+type RespondFail struct {
+	Message string `json:"message"`
+}

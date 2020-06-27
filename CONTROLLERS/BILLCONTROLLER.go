@@ -136,3 +136,36 @@ func DeleteBill(w http.ResponseWriter, r *http.Request) {
 	}
 	io.WriteString(w, `{"message" : "Can’t delete bill"}`)
 }
+
+func (a *ApiDB) GetBillsbyblock(w http.ResponseWriter, r *http.Request) {
+
+	type Data struct {
+		Bills []MODELS.BILLS `json:"bills"`
+	}
+
+	w.Header().Add("Content-Type", "application/json")
+	vars := mux.Vars(r)
+	idBlock, err := strconv.Atoi(vars["id"])
+
+	if err != nil {
+		io.WriteString(w, `{"message":"can not convert id as int"}`)
+		return
+	}
+	bill, ok, errget := BUSINESS.GetBillByIdblock(a.Db, idBlock)
+	if ok != true || errget != nil {
+		io.WriteString(w, `{ "message": "Can’t get contracts" }`)
+		return
+	}
+
+	res := MODELS.RespondOk{
+		Status:  200,
+		Message: "ok",
+		Data:    Data{bill},
+	}
+	jsonresult, errjson := json.Marshal(res)
+	if errjson != nil {
+		log.Print("err while convert json :", err.Error())
+	}
+
+	io.WriteString(w, string(jsonresult))
+}
