@@ -3,6 +3,7 @@ package DATABASE
 import (
 	"ROOMS/MODELS"
 	"database/sql"
+	"fmt"
 	"log"
 	"strings"
 )
@@ -16,7 +17,10 @@ func GetRoom(db *sql.DB, idBlock int) ([]MODELS.ROOMS, bool, error) {
 	//	return nil, false, err
 	//}
 	//defer db.Close()
-
+	if db == nil {
+		log.Print("can not connect to database!")
+		return nil, false, fmt.Errorf("can not connect to database!")
+	}
 	rows, err := db.Query(`SELECT * FROM ROOMS WHERE idBlock = ?`, idBlock)
 	if err != nil {
 		log.Fatal(err)
@@ -46,7 +50,10 @@ func CreateRoom(db *sql.DB, room MODELS.ROOMS) (bool, error) {
 	//	return false, err
 	//}
 	//defer db.Close()
-
+	if db == nil {
+		log.Print("can not connect to database!")
+		return false, fmt.Errorf("can not connect to database!")
+	}
 	row, err := db.Query(`INSERT INTO ROOMS(nameRoom, maxPeople,floor, square, price, description, idBlock, status) 
 													VALUES(?,?,?,?,?,?,?,?)`,
 		room.Name, room.MaxPeople, room.Floor, room.Square, room.Price,
@@ -68,7 +75,10 @@ func DeleteRoom(db *sql.DB, id int) (bool, error) {
 	//	log.Fatal("Can't connect to database")
 	//}
 	//defer db.Close()
-
+	if db == nil {
+		log.Print("can not connect to database!")
+		return false, fmt.Errorf("can not connect to database!")
+	}
 	row, err := db.Query(`DELETE FROM ROOMS WHERE id = ?`, id)
 
 	if err != nil {
@@ -87,7 +97,10 @@ func DeleteRooms(db *sql.DB, roomsId []int) (bool, error) {
 	//	return false, err
 	//}
 	//defer db.Close()
-
+	if db == nil {
+		log.Print("can not connect to database!")
+		return false, fmt.Errorf("can not connect to database!")
+	}
 	args := make([]interface{}, len(roomsId))
 	for i, id := range roomsId {
 		args[i] = id
@@ -114,7 +127,10 @@ func UpdateRoom(db *sql.DB, id int, room MODELS.ROOMS) (bool, error) {
 	//	return false, err
 	//}
 	//defer db.Close()
-
+	if db == nil {
+		log.Print("can not connect to database!")
+		return false, fmt.Errorf("can not connect to database!")
+	}
 	row, err := db.Query(`UPDATE ROOMS 
 										SET nameRoom = ? , maxPeople = ?, floor = ?, square = ? , price = ?, description = ?
 										WHERE id = ?`,
@@ -136,7 +152,10 @@ func UpdateGetRoom(db *sql.DB, idBlock int) ([]MODELS.ROOMS, bool, error) {
 	//	return nil, false, err
 	//}
 	//defer db.Close()
-
+	if db == nil {
+		log.Print("can not connect to database!")
+		return nil, false, fmt.Errorf("can not connect to database!")
+	}
 	rows, err := db.Query(`SELECT R.id, R.nameRoom, R.floor, R.square, R.price, R.description, R.idBlock, R.maxPeople	, R.status, R.codeRoom
 FROM ROOMS R LEFT JOIN USER_ROOM UR ON R.id = UR.idRoom WHERE UR.idRoom IS NULL AND idBlock = ?`, idBlock)
 	if err != nil {
@@ -166,6 +185,10 @@ func GetRoomDB(db *sql.DB, idBlock int, status int, userid int) ([]MODELS.GET_RO
 	//	return nil, err
 	//}
 	//defer db.Close()
+	if db == nil {
+		log.Print("can not connect to database!")
+		return nil, fmt.Errorf("can not connect to database!")
+	}
 	var rows *sql.Rows
 	var err1 error
 	if idBlock == -1 && status == -1 {
@@ -208,7 +231,10 @@ func GetRoomImage(db *sql.DB, codeRoom string) ([]MODELS.ROOM_IMAGE, bool, error
 	//	return nil, false, err
 	//}
 	//defer db.Close()
-
+	if db == nil {
+		log.Print("can not connect to database!")
+		return nil, false, fmt.Errorf("can not connect to database!")
+	}
 	rows, err := db.Query(`SELECT * FROM ROOM_IMAGES WHERE codeRoom = ?`, codeRoom)
 	if err != nil {
 		log.Fatal(err)
@@ -238,7 +264,10 @@ func GetUserRenting(db *sql.DB, codeRoom int) ([]MODELS.ROOM_USER_RENTING_NAME, 
 	//	return nil, false, err
 	//}
 	//defer db.Close()
-
+	if db == nil {
+		log.Print("can not connect to database!")
+		return nil, false, fmt.Errorf("can not connect to database!")
+	}
 	rows, err := db.Query(`SELECT C.fullName FROM USER_ROOM UR INNER JOIN CUSTOMERS C ON UR.idUser = C.id  WHERE UR.idRoom = ?`, codeRoom)
 	if err != nil {
 		log.Fatal(err)
@@ -267,6 +296,10 @@ func GetRoomById(db *sql.DB, id int) (*MODELS.ROOMS, error) {
 	//	return nil, err
 	//}
 	//defer db.Close()
+	if db == nil {
+		log.Print("can not connect to database!")
+		return nil, fmt.Errorf("can not connect to database!")
+	}
 	var rows *sql.Rows
 	var err1 error
 

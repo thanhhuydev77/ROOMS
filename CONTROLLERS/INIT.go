@@ -21,12 +21,12 @@ func InitAllController(a ApiDB, r *mux.Router, storage *Storage) {
 	r.Handle("/user/get-user/{Id}", AuthMiddleware(Cached(storage, "10s", a.GetUser))).Methods("GET")
 
 	//BlocksController
-	r.Handle("/block/get-block/{id}", AuthMiddleware(Cached(storage, "10s", GetBlockById))).Methods("GET")
+	r.Handle("/block/get-block/{id}", AuthMiddleware(Cached(storage, "10s", a.GetBlockById))).Methods("GET")
 	r.Handle("/block/get-block", AuthMiddleware(Cached(storage, "10s", a.GetBlock))).Methods("GET")
-	r.Handle("/block/create", AuthMiddleware(http.HandlerFunc(CreateBlock))).Methods("POST")
-	r.Handle("/block/update/{id}", AuthMiddleware(http.HandlerFunc(UpdateBlock))).Methods("PUT")
-	r.Handle("/block/delete/{id}", AuthMiddleware(http.HandlerFunc(DeleteBlock))).Methods("DELETE")
-	r.Handle("/block/delete-all", AuthMiddleware(http.HandlerFunc(DeleteBlocks))).Methods("POST")
+	r.Handle("/block/create", AuthMiddleware(http.HandlerFunc(a.CreateBlock))).Methods("POST")
+	r.Handle("/block/update/{id}", AuthMiddleware(http.HandlerFunc(a.UpdateBlock))).Methods("PUT")
+	r.Handle("/block/delete/{id}", AuthMiddleware(http.HandlerFunc(a.DeleteBlock))).Methods("DELETE")
+	r.Handle("/block/delete-all", AuthMiddleware(http.HandlerFunc(a.DeleteBlocks))).Methods("POST")
 
 	//RoomController
 	r.Handle("/room/get-rooms", AuthMiddleware(Cached(storage, "10s", a.GetRoom))).Methods("GET")
@@ -56,24 +56,24 @@ func InitAllController(a ApiDB, r *mux.Router, storage *Storage) {
 	r.HandleFunc("/upload/userAvatar", UploadPicture).Methods("POST")
 
 	//CustomerController
-	r.Handle("/customer/get-customers", AuthMiddleware(http.HandlerFunc(GetCustomersByUserId))).Methods("GET")
-	r.Handle("/customer/create", AuthMiddleware(http.HandlerFunc(CreateCustomer))).Methods("POST")
-	r.Handle("/customer/delete/{id}", AuthMiddleware(http.HandlerFunc(DeleteCustomer))).Methods("DELETE")
-	r.Handle("/customer/delete-all", AuthMiddleware(http.HandlerFunc(DeleteManyCustomers))).Methods("POST")
-	r.Handle("/customer/update/{id}", AuthMiddleware(http.HandlerFunc(UpdateCustomer))).Methods("PUT")
+	r.Handle("/customer/get-customers", AuthMiddleware(http.HandlerFunc(a.GetCustomersByUserId))).Methods("GET")
+	r.Handle("/customer/create", AuthMiddleware(http.HandlerFunc(a.CreateCustomer))).Methods("POST")
+	r.Handle("/customer/delete/{id}", AuthMiddleware(http.HandlerFunc(a.DeleteCustomer))).Methods("DELETE")
+	r.Handle("/customer/delete-all", AuthMiddleware(http.HandlerFunc(a.DeleteManyCustomers))).Methods("POST")
+	r.Handle("/customer/update/{id}", AuthMiddleware(http.HandlerFunc(a.UpdateCustomer))).Methods("PUT")
 
 	//ContractController
-	r.Handle("/contract/get-contracts", AuthMiddleware(http.HandlerFunc(GetContract))).Methods("GET")
-	r.Handle("/contract/create", AuthMiddleware(http.HandlerFunc(CreateContract))).Methods("POST")
-	r.Handle("/contract/delete/{id}", AuthMiddleware(http.HandlerFunc(DeleteContract))).Methods("DELETE")
-	r.Handle("/contract/delete-all", AuthMiddleware(http.HandlerFunc(DeleteAllContract))).Methods("POST")
-	r.Handle("/contract/update/{id}", AuthMiddleware(http.HandlerFunc(UpdateContract))).Methods("PUT")
+	r.Handle("/contract/get-contracts", AuthMiddleware(http.HandlerFunc(a.GetContract))).Methods("GET")
+	r.Handle("/contract/create", AuthMiddleware(http.HandlerFunc(a.CreateContract))).Methods("POST")
+	r.Handle("/contract/delete/{id}", AuthMiddleware(http.HandlerFunc(a.DeleteContract))).Methods("DELETE")
+	r.Handle("/contract/delete-all", AuthMiddleware(http.HandlerFunc(a.DeleteAllContract))).Methods("POST")
+	r.Handle("/contract/update/{id}", AuthMiddleware(http.HandlerFunc(a.UpdateContract))).Methods("PUT")
 
 	//BillControllers
 	r.Handle("/bill/get-bills/{id}", AuthMiddleware(http.HandlerFunc(a.GetBillsbyblock))).Methods("GET")
-	r.Handle("/bill/get-bill-by-id/{id}", AuthMiddleware(http.HandlerFunc(GetBills))).Methods("GET")
-	r.Handle("/bill/create", AuthMiddleware(http.HandlerFunc(CreateBill))).Methods("POST")
-	r.Handle("/bill/delete/{id}", AuthMiddleware(http.HandlerFunc(DeleteBill))).Methods("DELETE")
+	r.Handle("/bill/get-bill-by-id/{id}", AuthMiddleware(http.HandlerFunc(a.GetBills))).Methods("GET")
+	r.Handle("/bill/create", AuthMiddleware(http.HandlerFunc(a.CreateBill))).Methods("POST")
+	r.Handle("/bill/delete/{id}", AuthMiddleware(http.HandlerFunc(a.DeleteBill))).Methods("DELETE")
 	//r.Handle("/contract/delete-all", AuthMiddleware(http.HandlerFunc(DeleteAllContract))).Methods("POST")
-	r.Handle("/bill/update/{id}", AuthMiddleware(http.HandlerFunc(UpdateBill))).Methods("PUT")
+	r.Handle("/bill/update/{id}", AuthMiddleware(http.HandlerFunc(a.UpdateBill))).Methods("PUT")
 }

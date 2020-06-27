@@ -4,6 +4,7 @@ import (
 	"ROOMS/MODELS"
 	"context"
 	"database/sql"
+	"fmt"
 	"log"
 )
 
@@ -11,10 +12,9 @@ func GetBillByBlockId(db *sql.DB, idBlock int) ([]MODELS.BILLS, bool, error) {
 	bills := []MODELS.BILLS{}
 	//db, err := connectdatabase()
 	//
-	//if db == nil {
-	//	connectdatabase()
-	//	return nil, err
-	//}
+	if db == nil {
+		return nil, false, fmt.Errorf("can not connect db")
+	}
 	rows, err := db.Query(`select * from BILLS where idRoom in(select id from ROOMS where idBlock = ?)`, idBlock)
 	if err != nil {
 		return nil, false, err
@@ -32,10 +32,10 @@ func GetBillByBlockId(db *sql.DB, idBlock int) ([]MODELS.BILLS, bool, error) {
 	return bills, true, nil
 }
 
-func GetBillById(id int) (MODELS.BILLS, bool, error) {
-	db, err := connectdatabase()
+func GetBillById(db *sql.DB, id int) (MODELS.BILLS, bool, error) {
+	//db, err := connectdatabase()
 	if db == nil {
-		return MODELS.BILLS{}, false, err
+		return MODELS.BILLS{}, false, fmt.Errorf("can not connect db")
 	}
 
 	// Query all bills with id = id
@@ -56,12 +56,12 @@ func GetBillById(id int) (MODELS.BILLS, bool, error) {
 	return MODELS.BILLS{}, false, nil
 }
 
-func GetBillDetailById(id int) ([]MODELS.BILL_DETAILS, bool, error) {
+func GetBillDetailById(db *sql.DB, id int) ([]MODELS.BILL_DETAILS, bool, error) {
 	listbilldt := []MODELS.BILL_DETAILS{}
 
-	db, err := connectdatabase()
+	//db, err := connectdatabase()
 	if db == nil {
-		return nil, false, err
+		return nil, false, fmt.Errorf("can not connect db")
 	}
 
 	// Query all bills with id = id
@@ -82,14 +82,18 @@ func GetBillDetailById(id int) ([]MODELS.BILL_DETAILS, bool, error) {
 	return listbilldt, true, nil
 }
 
-func CreateBill(bill MODELS.CREATE_UPDATE_BILL_REQUEST) (int, error) {
-	db, err := connectdatabase()
+func CreateBill(db *sql.DB, bill MODELS.CREATE_UPDATE_BILL_REQUEST) (int, error) {
+	//db, err := connectdatabase()
+	//if db == nil {
+	//	return 0, err
+	//}
 	if db == nil {
-		return 0, err
+		log.Print("can not connect to database!")
+		return 0, fmt.Errorf("can not connect db")
 	}
 	ctx := context.Background()
-	tx, err1 := db.BeginTx(ctx, nil)
-	if err1 != nil {
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
 		log.Fatal(err)
 	}
 	query := "insert into BILLS(idRoom,dateCheckOut,totalPrice,isCheckedOut) VALUES(?,?,?,?)"
@@ -130,16 +134,20 @@ func CreateBill(bill MODELS.CREATE_UPDATE_BILL_REQUEST) (int, error) {
 	return 1, nil
 }
 
-func UpdateBill(c MODELS.CREATE_UPDATE_BILL_REQUEST) (bool, error) {
-	db, err := connectdatabase()
-	if err != nil {
+func UpdateBill(db *sql.DB, c MODELS.CREATE_UPDATE_BILL_REQUEST) (bool, error) {
+	//db, err := connectdatabase()
+	//if err != nil {
+	//	log.Print("can not connect to database!")
+	//	return false, err
+	//}
+	//defer db.Close()
+	if db == nil {
 		log.Print("can not connect to database!")
-		return false, err
+		return false, fmt.Errorf("can not connect db")
 	}
-	defer db.Close()
 	ctx := context.Background()
-	tx, err1 := db.BeginTx(ctx, nil)
-	if err1 != nil {
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
 		log.Fatal(err)
 	}
 	_, err = db.Exec("UPDATE BILLS SET dateCheckOut = ?, totalPrice = ?, isCheckedOut = ? WHERE id = ?", c.DateCheckOut, c.TotalPrice, c.IsCheckedOut, c.Id)
@@ -172,13 +180,18 @@ func UpdateBill(c MODELS.CREATE_UPDATE_BILL_REQUEST) (bool, error) {
 	return true, nil
 }
 
-func DeleteBill(idbill int) (bool, error) {
-	db, err := connectdatabase()
-	if err != nil {
-		log.Fatalln(err)
-		return false, err
+func DeleteBill(db *sql.DB, idbill int) (bool, error) {
+	//db, err := connectdatabase()
+	//if err != nil {
+	//	log.Fatalln(err)
+	//	return false, err
+	//}
+	//defer db.Close()
+
+	if db == nil {
+		log.Print("can not connect to database!")
+		return false, fmt.Errorf("can not connect db")
 	}
-	defer db.Close()
 
 	rs, err := db.Exec(`DELETE FROM BILLS WHERE id = ?`, idbill)
 

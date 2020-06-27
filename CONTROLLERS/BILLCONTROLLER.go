@@ -11,7 +11,7 @@ import (
 	"strconv"
 )
 
-func GetBills(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) GetBills(w http.ResponseWriter, r *http.Request) {
 
 	type Data struct {
 		Bill       MODELS.BILLS          `json:"bill"`
@@ -33,8 +33,8 @@ func GetBills(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-	billinfo, okinfo, err := BUSINESS.GetBillById(idBill)
-	billdetail, okdetail, err := BUSINESS.GetBillDetailById(idBill)
+	billinfo, okinfo, err := BUSINESS.GetBillById(a.Db, idBill)
+	billdetail, okdetail, err := BUSINESS.GetBillDetailById(a.Db, idBill)
 	if okinfo != true || okdetail != true {
 		io.WriteString(w, `{ "message": "Can’t get contracts" }`)
 		return
@@ -56,7 +56,7 @@ func GetBills(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, string(jsonresult))
 }
 
-func CreateBill(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) CreateBill(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	p := MODELS.CREATE_UPDATE_BILL_REQUEST{}
 	err := json.NewDecoder(r.Body).Decode(&p)
@@ -65,7 +65,7 @@ func CreateBill(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := BUSINESS.CreateBill(p)
+	result, err := BUSINESS.CreateBill(a.Db, p)
 	if result > 0 {
 		io.WriteString(w, `  { "status": 200,
     "message": "Create bill success",
@@ -79,7 +79,7 @@ func CreateBill(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func UpdateBill(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) UpdateBill(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
@@ -94,7 +94,7 @@ func UpdateBill(w http.ResponseWriter, r *http.Request) {
 	}
 
 	p.Id = idContract
-	res, _ := BUSINESS.UpdateBill(p)
+	res, _ := BUSINESS.UpdateBill(a.Db, p)
 
 	if res {
 		io.WriteString(w, `{
@@ -109,7 +109,7 @@ func UpdateBill(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, `{"message" : "Can’t update bill"}`)
 }
 
-func DeleteBill(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) DeleteBill(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
@@ -122,7 +122,7 @@ func DeleteBill(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, _ := BUSINESS.DeleteBill(idbill)
+	res, _ := BUSINESS.DeleteBill(a.Db, idbill)
 
 	if res {
 		io.WriteString(w, `{

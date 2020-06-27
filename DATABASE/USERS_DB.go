@@ -3,6 +3,7 @@ package DATABASE
 import (
 	"ROOMS/MODELS"
 	"database/sql"
+	"fmt"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"strconv"
@@ -50,6 +51,10 @@ func Register(db *sql.DB, user MODELS.RequestRegister) (bool, error) {
 	//	return false, err
 	//}
 	//defer db.Close()
+	if db == nil {
+		log.Print("can not connect to database!")
+		return false, fmt.Errorf("can not connect to database")
+	}
 	passhash, _ := hashPassword(user.Pass)
 	rows, err := db.Query(`insert into USERS(userName,Pass,FullName,Address,Role,Sex,Province,Email)
 							  values(?,?,?,?,?,?,?,?)`, user.UserName, passhash, user.FullName, user.Address, user.Role, user.Sex, user.Province, user.Email)
@@ -64,11 +69,11 @@ func GetAllUserName(db *sql.DB) []string {
 	var Allusername []string
 	//db, err := connectdatabase()
 	// Query all users
-	//if db == nil {
-	//
-	//	log.Print("can not connect to database!")
-	//	return nil
-	//}
+	if db == nil {
+
+		log.Print("can not connect to database!")
+		return nil
+	}
 	//defer db.Close()
 
 	rows, err := db.Query("select username from USERS")
@@ -101,11 +106,11 @@ func GetUsers(db *sql.DB, Id int) []MODELS.USERS {
 
 	//db, err := connectdatabase()
 	//// Query all users
-	//if db == nil {
-	//
-	//	log.Print("can not connect to database!")
-	//	return nil
-	//}
+	if db == nil {
+
+		log.Print("can not connect to database!")
+		return nil
+	}
 	//defer db.Close()
 	query := ""
 	list := []MODELS.USERS{}
