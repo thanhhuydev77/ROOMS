@@ -3,14 +3,15 @@ package BUSINESS
 import (
 	"ROOMS/DATABASE"
 	"ROOMS/MODELS"
+	"database/sql"
 )
 
 func GetBlockById(Id int) (MODELS.BLOCKS, bool) {
 	return DATABASE.GetBlockById(Id)
 }
 
-func GetBlockByIdOwner(IdOwner int) []MODELS.BLOCKS {
-	return DATABASE.GetBlockByIdOwner(IdOwner)
+func GetBlockByIdOwner(db *sql.DB, IdOwner int) []MODELS.BLOCKS {
+	return DATABASE.GetBlockByIdOwner(db, IdOwner)
 }
 
 func CreateBlock(b MODELS.BLOCKS) (bool, error) {

@@ -3,6 +3,7 @@ package BUSINESS
 import (
 	"ROOMS/DATABASE"
 	"ROOMS/MODELS"
+	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -16,6 +17,10 @@ func GetBillById(id int) (MODELS.BILLS, bool, error) {
 func GetBillDetailById(id int) ([]MODELS.BILL_DETAILS, bool, error) {
 	billDetail, ok, err := DATABASE.GetBillDetailById(id)
 	return billDetail, ok, err
+}
+func GetBillByIdblock(db *sql.DB, id int) ([]MODELS.BILLS, bool, error) {
+	//get room
+	return DATABASE.GetBillByBlockId(db, id)
 }
 
 //update a bill with its id

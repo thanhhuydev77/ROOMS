@@ -2,6 +2,7 @@ package DATABASE
 
 import (
 	"ROOMS/MODELS"
+	"database/sql"
 	"log"
 	"strings"
 )
@@ -33,16 +34,16 @@ func GetBlockById(Id int) (MODELS.BLOCKS, bool) {
 	return Block, true
 }
 
-func GetBlockByIdOwner(IdOwner int) []MODELS.BLOCKS {
+func GetBlockByIdOwner(db *sql.DB, IdOwner int) []MODELS.BLOCKS {
 	var listBlock []MODELS.BLOCKS
-	db, err := connectdatabase()
-	// Query all users
-	if db == nil {
-
-		log.Print("can not connect to database!")
-		return nil
-	}
-	defer db.Close()
+	//db, err := connectdatabase()
+	//// Query all users
+	//if db == nil {
+	//
+	//	log.Print("can not connect to database!")
+	//	return nil
+	//}
+	//defer db.Close()
 
 	rows, err := db.Query("select * from BLOCKS where idowner = ?", IdOwner)
 	if err != nil {

@@ -3,19 +3,21 @@ package DATABASE
 import (
 	"ROOMS/MODELS"
 	"context"
+	"database/sql"
 	"log"
 )
 
-func GetallBills() ([]MODELS.BILLS, error) {
+func GetBillByBlockId(db *sql.DB, idBlock int) ([]MODELS.BILLS, bool, error) {
 	bills := []MODELS.BILLS{}
-	db, err := connectdatabase()
-
-	if db == nil {
-		return nil, err
-	}
-	rows, err := db.Query(`SELECT * FROM BILLS`)
+	//db, err := connectdatabase()
+	//
+	//if db == nil {
+	//	connectdatabase()
+	//	return nil, err
+	//}
+	rows, err := db.Query(`select * from BILLS where idRoom in(select id from ROOMS where idBlock = ?)`, idBlock)
 	if err != nil {
-		log.Fatal(err)
+		return nil, false, err
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -27,7 +29,7 @@ func GetallBills() ([]MODELS.BILLS, error) {
 		}
 		bills = append(bills, u)
 	}
-	return bills, nil
+	return bills, true, nil
 }
 
 func GetBillById(id int) (MODELS.BILLS, bool, error) {

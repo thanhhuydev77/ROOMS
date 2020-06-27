@@ -16,6 +16,7 @@ func main() {
 	app := &CONTROLLERS.ApiDB{
 		Db: DATABASE.GetDbInstance(),
 	}
+	defer app.Db.Close()
 	fmt.Print("Server is running...")
 	CONTROLLERS.InitAllController(*app, r, Redis)
 	handler := cors.AllowAll().Handler(r)
