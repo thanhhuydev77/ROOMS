@@ -11,7 +11,6 @@ func Get_all_default_service(db *sql.DB) ([]MODELS.GET_DEFAULT_SERVICES_REQUEST,
 	//db, err := connectdatabase()
 	//// Query all users
 	if db == nil {
-
 		log.Print("can not connect to database!")
 		return default_services, false
 	}

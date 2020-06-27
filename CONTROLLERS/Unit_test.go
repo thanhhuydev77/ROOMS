@@ -10,43 +10,34 @@ import (
 	"testing"
 )
 
-var db *sql.DB = nil
-var mock sqlmock.Sqlmock = nil
-var err error = nil
-
-func GetMockDb() (*sql.DB, sqlmock.Sqlmock, error) {
-	if db == nil || mock == nil {
-		db, mock, err = createMockDb()
-	}
-	return db, mock, err
-}
-func createMockDb() (*sql.DB, sqlmock.Sqlmock, error) {
+func createMockUnit() (*sql.DB, sqlmock.Sqlmock, error) {
 	db, mock, err := sqlmock.New()
 	getallunit := sqlmock.NewRows([]string{"id", "name", "description"}).
 		AddRow(1, "post 1", "hello").
 		AddRow(2, "post 2", "world")
-
 	mock.ExpectQuery(`select \* from UNITS`).WillReturnRows(getallunit)
 
+	//mock.ExpectCommit()
 	return db, mock, err
 }
 
-type data struct {
-	Units []MODELS.UNIT `json:"units"`
-}
-type Output struct {
-	Status  int    `json:"status"`
-	Message string `json:"message"`
-	Data    data   `json:"data"`
-}
-
 func TestGetAllUnitPass(t *testing.T) {
+
+	type data struct {
+		Units []MODELS.UNIT `json:"units"`
+	}
+	type output struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+		Data    data   `json:"data"`
+	}
+
 	req, err := http.NewRequest("GET", "/unit/get-units", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 	rr := httptest.NewRecorder()
-	db, _, _ = GetMockDb()
+	db, _, _ := createMockUnit()
 	a := &ApiDB{
 		db,
 	}
@@ -57,7 +48,9 @@ func TestGetAllUnitPass(t *testing.T) {
 			status, http.StatusOK)
 	}
 
-	var out Output
+	out := output{
+		Data: data{nil},
+	}
 	err = json.Unmarshal(rr.Body.Bytes(), &out)
 	if err != nil {
 		t.Errorf("error marshal :%v", err)
@@ -69,15 +62,27 @@ func TestGetAllUnitPass(t *testing.T) {
 
 //
 func TestGetAllUnitFail(t *testing.T) {
+
+	type data struct {
+		Units []MODELS.UNIT `json:"units"`
+	}
+	type output struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+		Data    data   `json:"data"`
+	}
+
 	req, err := http.NewRequest("GET", "/unit/get-units", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 	rr := httptest.NewRecorder()
-	db, _, _ = GetMockDb()
+	//db, _, _ := createMockUnit()
+
 	a := &ApiDB{
 		nil,
 	}
+
 	handler := http.HandlerFunc(a.GetAllUnit)
 	handler.ServeHTTP(rr, req)
 	if status := rr.Code; status != http.StatusOK {
@@ -85,7 +90,7 @@ func TestGetAllUnitFail(t *testing.T) {
 			status, http.StatusOK)
 	}
 
-	var out Output
+	var out output
 	err = json.Unmarshal(rr.Body.Bytes(), &out)
 	if err != nil {
 		t.Errorf("error marshal :%v", err)

@@ -42,25 +42,17 @@ func Login(db *sql.DB, username string, pass string) (bool, bool, MODELS.USERS) 
 
 func Register(db *sql.DB, user MODELS.RequestRegister) (bool, error) {
 
-	//getuset from datebase
-	//db, err := connectdatabase()
-	// Query all users
-	//if err != nil {
-	//
-	//	log.Print("can not connect to database!")
-	//	return false, err
-	//}
-	//defer db.Close()
 	if db == nil {
 		log.Print("can not connect to database!")
 		return false, fmt.Errorf("can not connect to database")
 	}
 	passhash, _ := hashPassword(user.Pass)
-	rows, err := db.Query(`insert into USERS(userName,Pass,FullName,Address,Role,Sex,Province,Email)
-							  values(?,?,?,?,?,?,?,?)`, user.UserName, passhash, user.FullName, user.Address, user.Role, user.Sex, user.Province, user.Email)
+	rows, err := db.Query(`insert into USERS(userName,Pass,FullName,Address,Role,Sex,Province,Email) values(?,?,?,?,?,?,?,?)`, user.UserName, passhash, user.FullName, user.Address, user.Role, user.Sex, user.Province, user.Email)
 	if err != nil {
+		fmt.Print("loi:" + err.Error())
 		return false, err
 	}
+
 	defer rows.Close()
 	return true, nil
 }

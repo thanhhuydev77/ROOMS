@@ -17,7 +17,7 @@ func (a *ApiDB) Get_default_service(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	stringresult := `{"status": 200,
-    				"message": "Get services success",
+    				"message": "Get default services success",
     				"data": {
         			"defaultServices":`
 	stringresult += string(jsonlist)
