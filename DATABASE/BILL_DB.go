@@ -15,14 +15,13 @@ func GetBillByBlockId(db *sql.DB, idBlock int) ([]MODELS.BILLS, bool, error) {
 	if db == nil {
 		return nil, false, fmt.Errorf("can not connect db")
 	}
-	rows, err := db.Query(`select * from BILLS where idRoom in(select id from ROOMS where idBlock = ?)`, idBlock)
+	rows, err := db.Query(`SELECT * FROM BILLS where idRoom in(select id from ROOMS where idBlock = ?)`, idBlock)
 	if err != nil {
 		return nil, false, err
 	}
 	defer rows.Close()
 	for rows.Next() {
 		u := MODELS.BILLS{}
-
 		err := rows.Scan(&u.Id, &u.IdRoom, &u.DateCheckOut, &u.TotalPrice, &u.IsCheckedOut)
 		if err != nil {
 			log.Fatal(err)
@@ -88,7 +87,7 @@ func CreateBill(db *sql.DB, bill MODELS.CREATE_UPDATE_BILL_REQUEST) (int, error)
 	//	return 0, err
 	//}
 	if db == nil {
-		log.Print("can not connect to database!")
+		//log.Printf("can not connect to database! : (%v)",db)
 		return 0, fmt.Errorf("can not connect db")
 	}
 	ctx := context.Background()
@@ -99,6 +98,7 @@ func CreateBill(db *sql.DB, bill MODELS.CREATE_UPDATE_BILL_REQUEST) (int, error)
 	query := "insert into BILLS(idRoom,dateCheckOut,totalPrice,isCheckedOut) VALUES(?,?,?,?)"
 	_, errinsert := db.Query(query, bill.IdRoom, bill.DateCheckOut, bill.TotalPrice, bill.IsCheckedOut)
 	if errinsert != nil {
+		//print(errinsert.Error())
 		// Incase we find any error in the query execution, rollback the transaction
 		tx.Rollback()
 		return 0, err
@@ -107,6 +107,7 @@ func CreateBill(db *sql.DB, bill MODELS.CREATE_UPDATE_BILL_REQUEST) (int, error)
 	rowsid, errid := db.Query(queryid, bill.IdRoom, bill.DateCheckOut)
 	defer rowsid.Close()
 	if errid != nil {
+		print(errid.Error())
 		tx.Rollback()
 		return 0, errid
 	}
@@ -114,6 +115,7 @@ func CreateBill(db *sql.DB, bill MODELS.CREATE_UPDATE_BILL_REQUEST) (int, error)
 	for rowsid.Next() {
 		errscan := rowsid.Scan(&id)
 		if errscan != nil || id == 0 {
+			//	print(errscan.Error())
 			tx.Rollback()
 			return 0, errid
 		}
@@ -122,13 +124,14 @@ func CreateBill(db *sql.DB, bill MODELS.CREATE_UPDATE_BILL_REQUEST) (int, error)
 		query := "INSERT INTO BILL_DETAILS(IdBill,IdService,Amount,TotalPrice) VALUES (?,?,?,?)"
 		_, errinsert := db.Query(query, id, val.IdService, val.Amount, val.TotalPrice)
 		if errinsert != nil {
+			//	print(errinsert.Error())
 			tx.Rollback()
 			return 0, err
 		}
 	}
 	errcmt := tx.Commit()
 	if errcmt != nil {
-		log.Printf("err while commit :", errcmt.Error())
+		//	log.Printf("err while commit :", errcmt.Error())
 		return 0, nil
 	}
 	return 1, nil
@@ -164,7 +167,7 @@ func UpdateBill(db *sql.DB, c MODELS.CREATE_UPDATE_BILL_REQUEST) (bool, error) {
 		return false, err
 	}
 	for _, vals := range c.BillDetail {
-		_, err4 := tx.ExecContext(ctx, `INSERT INTO BILL_DETAILS(idBill, idService,amount,totalPrice) VALUES(?,?,?,?)`, c.Id, vals.IdService, vals.Amount, vals.TotalPrice)
+		_, err4 := tx.Exec(`INSERT INTO BILL_DETAILS(idBill, idService,amount,totalPrice) VALUES(?,?,?,?)`, c.Id, vals.IdService, vals.Amount, vals.TotalPrice)
 		if err4 != nil {
 			// Incase we find any error in the query execution, rollback the transaction
 			tx.Rollback()
@@ -189,7 +192,7 @@ func DeleteBill(db *sql.DB, idbill int) (bool, error) {
 	//defer db.Close()
 
 	if db == nil {
-		log.Print("can not connect to database!")
+		//log.Print("can not connect to database!")
 		return false, fmt.Errorf("can not connect db")
 	}
 

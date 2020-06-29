@@ -56,7 +56,7 @@
 				
 				<option value="file0">ROOMS/CONTROLLERS/AUTH.go (0.0%)</option>
 				
-				<option value="file1">ROOMS/CONTROLLERS/BILLCONTROLLER.go (0.0%)</option>
+				<option value="file1">ROOMS/CONTROLLERS/BILLCONTROLLER.go (100.0%)</option>
 				
 				<option value="file2">ROOMS/CONTROLLERS/BLOCKCONTROLLER.go (0.0%)</option>
 				
@@ -138,14 +138,14 @@ import (
         "ROOMS/BUSINESS"
         "ROOMS/MODELS"
         "encoding/json"
+        "fmt"
         "github.com/gorilla/mux"
         "io"
-        "log"
         "net/http"
         "strconv"
 )
 
-func (a *ApiDB) GetBills(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) GetBills(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
 
         type Data struct {
                 Bill       MODELS.BILLS          `json:"bill"`
@@ -161,19 +161,19 @@ func (a *ApiDB) GetBills(w http.ResponseWriter, r *http.Request) <span class="co
         vars := mux.Vars(r)
         idBill, err := strconv.Atoi(vars["id"])
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 //w.WriteHeader(http.StatusBadRequest)
                 io.WriteString(w, `{"message":"can not convert id as int"}`)
 
                 return
         }</span>
-        <span class="cov0" title="0">billinfo, okinfo, err := BUSINESS.GetBillById(a.Db, idBill)
+        <span class="cov8" title="1">billinfo, okinfo, err := BUSINESS.GetBillById(a.Db, idBill)
         billdetail, okdetail, err := BUSINESS.GetBillDetailById(a.Db, idBill)
-        if okinfo != true || okdetail != true </span><span class="cov0" title="0">{
+        if okinfo != true || okdetail != true </span><span class="cov8" title="1">{
                 io.WriteString(w, `{ "message": "Can’t get contracts" }`)
                 return
         }</span>
-        <span class="cov0" title="0">result := Result{
+        <span class="cov8" title="1">result := Result{
                 Status:  200,
                 Message: "get bill success",
                 Data: Data{
@@ -182,25 +182,22 @@ func (a *ApiDB) GetBills(w http.ResponseWriter, r *http.Request) <span class="co
                 },
         }
 
-        jsonresult, errjson := json.Marshal(result)
-        if errjson != nil </span><span class="cov0" title="0">{
-                log.Print("err while convert json :", err.Error())
-        }</span>
-
-        <span class="cov0" title="0">io.WriteString(w, string(jsonresult))</span>
+        jsonresult,_ := json.Marshal(result)
+        io.WriteString(w, string(jsonresult))</span>
 }
 
-func (a *ApiDB) CreateBill(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) CreateBill(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         p := MODELS.CREATE_UPDATE_BILL_REQUEST{}
         err := json.NewDecoder(r.Body).Decode(&amp;p)
-        if err != nil </span><span class="cov0" title="0">{
-                io.WriteString(w, `{"message": "wrong format!"}`+err.Error())
+        if err != nil </span><span class="cov8" title="1">{
+                io.WriteString(w, `{"message": "wrong format!"}`)
                 return
         }</span>
 
-        <span class="cov0" title="0">result, err := BUSINESS.CreateBill(a.Db, p)
-        if result &gt; 0 </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">result,_ := BUSINESS.CreateBill(a.Db, p)
+
+        if result &gt; 0 </span><span class="cov8" title="1">{
                 io.WriteString(w, `  { "status": 200,
     "message": "Create bill success",
     "data": {
@@ -208,12 +205,13 @@ func (a *ApiDB) CreateBill(w http.ResponseWriter, r *http.Request) <span class="
     }
 }
 `)
-        }</span> else<span class="cov0" title="0"> {
+        }</span> else<span class="cov8" title="1"> {
+
                 io.WriteString(w, `{ "message": "Can’t create bill"}`)
         }</span>
 }
 
-func (a *ApiDB) UpdateBill(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) UpdateBill(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
         vars := mux.Vars(r)
@@ -222,15 +220,15 @@ func (a *ApiDB) UpdateBill(w http.ResponseWriter, r *http.Request) <span class="
         var p = MODELS.CREATE_UPDATE_BILL_REQUEST{}
 
         err := json.NewDecoder(r.Body).Decode(&amp;p)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 io.WriteString(w, `{ "message": "Wrong format" }`)
                 return
         }</span>
 
-        <span class="cov0" title="0">p.Id = idContract
+        <span class="cov8" title="1">p.Id = idContract
         res, _ := BUSINESS.UpdateBill(a.Db, p)
 
-        if res </span><span class="cov0" title="0">{
+        if res </span><span class="cov8" title="1">{
                 io.WriteString(w, `{
                                                 "status": 200,
                                                 "message": "Update bill success",
@@ -240,25 +238,25 @@ func (a *ApiDB) UpdateBill(w http.ResponseWriter, r *http.Request) <span class="
                                                 }`)
                 return
         }</span>
-        <span class="cov0" title="0">io.WriteString(w, `{"message" : "Can’t update bill"}`)</span>
+        <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t update bill"}`)</span>
 }
 
-func (a *ApiDB) DeleteBill(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) DeleteBill(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
         vars := mux.Vars(r)
         idbill, err := strconv.Atoi(vars["id"])
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 //w.WriteHeader(http.StatusBadRequest)
                 io.WriteString(w, `{"message":"can not convert id as int"}`)
 
                 return
         }</span>
 
-        <span class="cov0" title="0">res, _ := BUSINESS.DeleteBill(a.Db, idbill)
+        <span class="cov8" title="1">res, _ := BUSINESS.DeleteBill(a.Db, idbill)
 
-        if res </span><span class="cov0" title="0">{
+        if res </span><span class="cov8" title="1">{
                 io.WriteString(w, `{
                                                 "status": 200,
                                                 "message": "Delete bill success",
@@ -268,10 +266,10 @@ func (a *ApiDB) DeleteBill(w http.ResponseWriter, r *http.Request) <span class="
                                                 }`)
                 return
         }</span>
-        <span class="cov0" title="0">io.WriteString(w, `{"message" : "Can’t delete bill"}`)</span>
+        <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t delete bill"}`)</span>
 }
 
-func (a *ApiDB) GetBillsbyblock(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) GetBillsbyblock(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
 
         type Data struct {
                 Bills []MODELS.BILLS `json:"bills"`
@@ -281,27 +279,25 @@ func (a *ApiDB) GetBillsbyblock(w http.ResponseWriter, r *http.Request) <span cl
         vars := mux.Vars(r)
         idBlock, err := strconv.Atoi(vars["id"])
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 io.WriteString(w, `{"message":"can not convert id as int"}`)
                 return
         }</span>
-        <span class="cov0" title="0">bill, ok, errget := BUSINESS.GetBillByIdblock(a.Db, idBlock)
-        if ok != true || errget != nil </span><span class="cov0" title="0">{
-                io.WriteString(w, `{ "message": "Can’t get contracts" }`)
+        <span class="cov8" title="1">bill, ok, errget := BUSINESS.GetBillByIdblock(a.Db, idBlock)
+        if ok != true || errget != nil </span><span class="cov8" title="1">{
+                fmt.Print(errget)
+                io.WriteString(w, `{ "message": "Can’t get bills" }`)
                 return
         }</span>
 
-        <span class="cov0" title="0">res := MODELS.RespondOk{
+        <span class="cov8" title="1">res := MODELS.RespondOk{
                 Status:  200,
-                Message: "ok",
+                Message: "get bill success",
                 Data:    Data{bill},
         }
-        jsonresult, errjson := json.Marshal(res)
-        if errjson != nil </span><span class="cov0" title="0">{
-                log.Print("err while convert json :", err.Error())
-        }</span>
+        jsonresult,_ := json.Marshal(res)
 
-        <span class="cov0" title="0">io.WriteString(w, string(jsonresult))</span>
+        io.WriteString(w, string(jsonresult))</span>
 }
 </pre>
 		
@@ -1485,7 +1481,7 @@ func UploadPicture(w http.ResponseWriter, r *http.Request) <span class="cov8" ti
         }</span>
         <span class="cov8" title="1">defer file.Close()
 
-        f,_ := os.OpenFile("../public/images/avatars/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+        f, _ := os.OpenFile("../public/images/avatars/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
         //if err != nil {
         //        //fmt.Printf("error :%v",err)
         //        io.WriteString(w, `{"message":"Can’t upload avatar"}`)

@@ -4,9 +4,9 @@ import (
 	"ROOMS/BUSINESS"
 	"ROOMS/MODELS"
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	"io"
-	"log"
 	"net/http"
 	"strconv"
 )
@@ -48,11 +48,7 @@ func (a *ApiDB) GetBills(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	jsonresult, errjson := json.Marshal(result)
-	if errjson != nil {
-		log.Print("err while convert json :", err.Error())
-	}
-
+	jsonresult, _ := json.Marshal(result)
 	io.WriteString(w, string(jsonresult))
 }
 
@@ -61,11 +57,12 @@ func (a *ApiDB) CreateBill(w http.ResponseWriter, r *http.Request) {
 	p := MODELS.CREATE_UPDATE_BILL_REQUEST{}
 	err := json.NewDecoder(r.Body).Decode(&p)
 	if err != nil {
-		io.WriteString(w, `{"message": "wrong format!"}`+err.Error())
+		io.WriteString(w, `{"message": "wrong format!"}`)
 		return
 	}
 
-	result, err := BUSINESS.CreateBill(a.Db, p)
+	result, _ := BUSINESS.CreateBill(a.Db, p)
+
 	if result > 0 {
 		io.WriteString(w, `  { "status": 200,
     "message": "Create bill success",
@@ -75,6 +72,7 @@ func (a *ApiDB) CreateBill(w http.ResponseWriter, r *http.Request) {
 }
 `)
 	} else {
+
 		io.WriteString(w, `{ "message": "Can’t create bill"}`)
 	}
 }
@@ -153,19 +151,17 @@ func (a *ApiDB) GetBillsbyblock(w http.ResponseWriter, r *http.Request) {
 	}
 	bill, ok, errget := BUSINESS.GetBillByIdblock(a.Db, idBlock)
 	if ok != true || errget != nil {
-		io.WriteString(w, `{ "message": "Can’t get contracts" }`)
+		fmt.Print(errget)
+		io.WriteString(w, `{ "message": "Can’t get bills" }`)
 		return
 	}
 
 	res := MODELS.RespondOk{
 		Status:  200,
-		Message: "ok",
+		Message: "get bill success",
 		Data:    Data{bill},
 	}
-	jsonresult, errjson := json.Marshal(res)
-	if errjson != nil {
-		log.Print("err while convert json :", err.Error())
-	}
+	jsonresult, _ := json.Marshal(res)
 
 	io.WriteString(w, string(jsonresult))
 }
