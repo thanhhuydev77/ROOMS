@@ -4,7 +4,6 @@ import (
 	"ROOMS/BUSINESS"
 	"ROOMS/MODELS"
 	"encoding/json"
-	"fmt"
 	"github.com/gorilla/mux"
 	"io"
 	"net/http"
@@ -151,7 +150,7 @@ func (a *ApiDB) GetBillsbyblock(w http.ResponseWriter, r *http.Request) {
 	}
 	bill, ok, errget := BUSINESS.GetBillByIdblock(a.Db, idBlock)
 	if ok != true || errget != nil {
-		fmt.Print(errget)
+		//fmt.Print(errget)
 		io.WriteString(w, `{ "message": "Can’t get bills" }`)
 		return
 	}

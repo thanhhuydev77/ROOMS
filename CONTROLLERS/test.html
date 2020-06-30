@@ -64,21 +64,17 @@
 				
 				<option value="file4">ROOMS/CONTROLLERS/CUSTOMERCONTROLLER.go (0.0%)</option>
 				
-				<option value="file5">ROOMS/CONTROLLERS/Cache.go (0.0%)</option>
+				<option value="file5">ROOMS/CONTROLLERS/DEFAULT_SERVICECONTROLLER.go (100.0%)</option>
 				
-				<option value="file6">ROOMS/CONTROLLERS/DEFAULT_SERVICECONTROLLER.go (100.0%)</option>
+				<option value="file6">ROOMS/CONTROLLERS/ROOMCONTROLLER.go (0.0%)</option>
 				
-				<option value="file7">ROOMS/CONTROLLERS/INIT.go (0.0%)</option>
+				<option value="file7">ROOMS/CONTROLLERS/SERVICECONTROLLER.go (0.0%)</option>
 				
-				<option value="file8">ROOMS/CONTROLLERS/ROOMCONTROLLER.go (0.0%)</option>
+				<option value="file8">ROOMS/CONTROLLERS/UNITCONTROLLER.go (100.0%)</option>
 				
-				<option value="file9">ROOMS/CONTROLLERS/SERVICECONTROLLER.go (0.0%)</option>
+				<option value="file9">ROOMS/CONTROLLERS/UPLOADFILE.go (100.0%)</option>
 				
-				<option value="file10">ROOMS/CONTROLLERS/UNITCONTROLLER.go (100.0%)</option>
-				
-				<option value="file11">ROOMS/CONTROLLERS/UPLOADFILE.go (100.0%)</option>
-				
-				<option value="file12">ROOMS/CONTROLLERS/USERCONTROLLER.go (98.0%)</option>
+				<option value="file10">ROOMS/CONTROLLERS/USERCONTROLLER.go (98.0%)</option>
 				
 				</select>
 			</div>
@@ -781,90 +777,6 @@ func (a *ApiDB) UpdateCustomer(w http.ResponseWriter, r *http.Request) <span cla
 		<pre class="file" id="file5" style="display: none">package CONTROLLERS
 
 import (
-        "fmt"
-        r "gopkg.in/redis.v5"
-        "net/http"
-        "net/http/httptest"
-        "regexp"
-        "strings"
-        "time"
-)
-
-var preffix = "_PAGE_CACHE_"
-
-//Storage mecanism for caching strings in memory
-type Storage struct {
-        client *r.Client
-}
-
-//NewStorage creates a new redis storage
-func NewStorage(url string) (*Storage, error) <span class="cov0" title="0">{
-        var (
-                opts *r.Options
-                err  error
-        )
-
-        if opts, err = r.ParseURL(url); err != nil </span><span class="cov0" title="0">{
-                return nil, err
-        }</span>
-
-        <span class="cov0" title="0">return &amp;Storage{
-                client: r.NewClient(opts),
-        }, nil</span>
-}
-
-//Get a cached content by key
-func (s Storage) Get(key string) []byte <span class="cov0" title="0">{
-        val, _ := s.client.Get(preffix + key).Bytes()
-        return val
-}</span>
-
-//Set a cached content by key
-func (s Storage) Set(key string, content []byte, duration time.Duration) <span class="cov0" title="0">{
-        s.client.Set(preffix+key, content, duration)
-}</span>
-
-//Only use to Get Method
-func Cached(storage *Storage, duration string, handler func(w http.ResponseWriter, r *http.Request)) http.Handler <span class="cov0" title="0">{
-        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
-                w.Header().Add("Content-Type", "application/json")
-
-                re := regexp.MustCompile(`token=(\w*)\.(\w*).(\w*)`)
-                negString := string(re.Find([]byte(r.RequestURI)))
-                Key := strings.Replace(r.RequestURI, negString, "", 1)
-
-                content := storage.Get(Key)
-                if content != nil </span><span class="cov0" title="0">{
-                        fmt.Print("Cache Hit!\n")
-                        w.Write(content)
-                }</span> else<span class="cov0" title="0"> {
-                        c := httptest.NewRecorder()
-                        handler(c, r)
-
-                        for k, v := range c.HeaderMap </span><span class="cov0" title="0">{
-                                w.Header()[k] = v
-                        }</span>
-
-                        <span class="cov0" title="0">w.WriteHeader(c.Code)
-                        content := c.Body.Bytes()
-
-                        if d, err := time.ParseDuration(duration); err == nil </span><span class="cov0" title="0">{
-                                fmt.Printf("New page cached: %s for %s\n", Key, duration)
-                                storage.Set(Key, content, d)
-                        }</span> else<span class="cov0" title="0"> {
-                                fmt.Printf("Page not cached. err: %s\n", err)
-                        }</span>
-
-                        <span class="cov0" title="0">w.Write(content)</span>
-                }
-
-        })
-}
-</pre>
-		
-		<pre class="file" id="file6" style="display: none">package CONTROLLERS
-
-import (
         "ROOMS/BUSINESS"
         "encoding/json"
         "io"
@@ -890,88 +802,7 @@ func (a *ApiDB) Get_default_service(w http.ResponseWriter, r *http.Request) <spa
 }
 </pre>
 		
-		<pre class="file" id="file7" style="display: none">package CONTROLLERS
-
-import (
-        "database/sql"
-        "github.com/gorilla/mux"
-        "net/http"
-)
-
-type ApiDB struct {
-        Db *sql.DB
-}
-
-func InitAllController(a ApiDB, r *mux.Router, storage *Storage) <span class="cov0" title="0">{
-
-        //UsersController
-        r.HandleFunc("/user/login", a.UserLogin).Methods("POST")
-        r.HandleFunc("/user/register", a.UserRegister).Methods("POST")
-        r.Handle("/user/get-all-username", Cached(storage, "10s", a.GetallUserName)).Methods("GET")
-        r.Handle("/user/validate", AuthMiddleware(http.HandlerFunc(ValidateToken))).Methods("POST")
-        r.Handle("/user/get-user", AuthMiddleware(Cached(storage, "10s", a.GetUser))).Methods("GET")
-        r.Handle("/user/get-user/{Id}", AuthMiddleware(Cached(storage, "10s", a.GetUser))).Methods("GET")
-
-        //BlocksController
-        r.Handle("/block/get-block/{id}", AuthMiddleware(Cached(storage, "10s", a.GetBlockById))).Methods("GET")
-        r.Handle("/block/get-block", AuthMiddleware(Cached(storage, "10s", a.GetBlock))).Methods("GET")
-        r.Handle("/block/create", AuthMiddleware(http.HandlerFunc(a.CreateBlock))).Methods("POST")
-        r.Handle("/block/update/{id}", AuthMiddleware(http.HandlerFunc(a.UpdateBlock))).Methods("PUT")
-        r.Handle("/block/delete/{id}", AuthMiddleware(http.HandlerFunc(a.DeleteBlock))).Methods("DELETE")
-        r.Handle("/block/delete-all", AuthMiddleware(http.HandlerFunc(a.DeleteBlocks))).Methods("POST")
-
-        //RoomController
-        r.Handle("/room/get-rooms", AuthMiddleware(Cached(storage, "10s", a.GetRoom))).Methods("GET")
-        r.Handle("/room/get-rooms/{id}", AuthMiddleware(Cached(storage, "10s", a.GetRoom))).Methods("GET")
-        r.Handle("/room/get-rooms-dashboard", AuthMiddleware(Cached(storage, "10s", a.GetRoomDB))).Methods("GET")
-        r.Handle("/room/get-images", AuthMiddleware(Cached(storage, "10s", a.GetRoomImage))).Methods("GET")
-        r.Handle("/room/get-user-rent", AuthMiddleware(Cached(storage, "10s", a.GetRoomUser))).Methods("GET")
-        r.Handle("/room/create", AuthMiddleware(http.HandlerFunc(a.CreateRoom))).Methods("POST")
-        r.Handle("/room/delete/{id}", AuthMiddleware(http.HandlerFunc(a.DeleteRoom))).Methods("DELETE")
-        r.Handle("/room/delete-all", AuthMiddleware(http.HandlerFunc(a.DeleteRooms))).Methods("POST")
-        r.Handle("/room/update/{id}", AuthMiddleware(http.HandlerFunc(a.UpdateRoom))).Methods("PUT")
-
-        //UnitController
-        r.Handle("/unit/get-units", AuthMiddleware(Cached(storage, "10s", a.GetAllUnit))).Methods("GET")
-
-        //DefaultServiceController
-        r.Handle("/default-service/get-default-services", AuthMiddleware(Cached(storage, "10s", a.Get_default_service))).Methods("GET")
-
-        //ServiceController
-        r.Handle("/service/get-services", AuthMiddleware(Cached(storage, "10s", a.GetService))).Methods("GET")
-        r.Handle("/service/delete/{id}", AuthMiddleware(http.HandlerFunc(a.DeleteService))).Methods("DELETE")
-        r.Handle("/service/create", AuthMiddleware(http.HandlerFunc(a.CreateService))).Methods("POST")
-        r.Handle("/service/delete-all", AuthMiddleware(http.HandlerFunc(a.DeleteServices))).Methods("POST")
-        r.Handle("/service/update/{id}", AuthMiddleware(http.HandlerFunc(a.UpdateService))).Methods("PUT")
-
-        //uploadFile
-        r.HandleFunc("/upload/userAvatar", UploadPicture).Methods("POST")
-
-        //CustomerController
-        r.Handle("/customer/get-customers", AuthMiddleware(http.HandlerFunc(a.GetCustomersByUserId))).Methods("GET")
-        r.Handle("/customer/create", AuthMiddleware(http.HandlerFunc(a.CreateCustomer))).Methods("POST")
-        r.Handle("/customer/delete/{id}", AuthMiddleware(http.HandlerFunc(a.DeleteCustomer))).Methods("DELETE")
-        r.Handle("/customer/delete-all", AuthMiddleware(http.HandlerFunc(a.DeleteManyCustomers))).Methods("POST")
-        r.Handle("/customer/update/{id}", AuthMiddleware(http.HandlerFunc(a.UpdateCustomer))).Methods("PUT")
-
-        //ContractController
-        r.Handle("/contract/get-contracts", AuthMiddleware(http.HandlerFunc(a.GetContract))).Methods("GET")
-        r.Handle("/contract/create", AuthMiddleware(http.HandlerFunc(a.CreateContract))).Methods("POST")
-        r.Handle("/contract/delete/{id}", AuthMiddleware(http.HandlerFunc(a.DeleteContract))).Methods("DELETE")
-        r.Handle("/contract/delete-all", AuthMiddleware(http.HandlerFunc(a.DeleteAllContract))).Methods("POST")
-        r.Handle("/contract/update/{id}", AuthMiddleware(http.HandlerFunc(a.UpdateContract))).Methods("PUT")
-
-        //BillControllers
-        r.Handle("/bill/get-bills/{id}", AuthMiddleware(http.HandlerFunc(a.GetBillsbyblock))).Methods("GET")
-        r.Handle("/bill/get-bill-by-id/{id}", AuthMiddleware(http.HandlerFunc(a.GetBills))).Methods("GET")
-        r.Handle("/bill/create", AuthMiddleware(http.HandlerFunc(a.CreateBill))).Methods("POST")
-        r.Handle("/bill/delete/{id}", AuthMiddleware(http.HandlerFunc(a.DeleteBill))).Methods("DELETE")
-        //r.Handle("/contract/delete-all", AuthMiddleware(http.HandlerFunc(DeleteAllContract))).Methods("POST")
-        r.Handle("/bill/update/{id}", AuthMiddleware(http.HandlerFunc(a.UpdateBill))).Methods("PUT")
-}</span>
-</pre>
-		
-		<pre class="file" id="file8" style="display: none">package CONTROLLERS
+		<pre class="file" id="file6" style="display: none">package CONTROLLERS
 
 import (
         "ROOMS/BUSINESS"
@@ -1285,7 +1116,7 @@ func (a *ApiDB) GetRoomUser(w http.ResponseWriter, r *http.Request) <span class=
 }
 </pre>
 		
-		<pre class="file" id="file9" style="display: none">package CONTROLLERS
+		<pre class="file" id="file7" style="display: none">package CONTROLLERS
 
 import (
         "ROOMS/BUSINESS"
@@ -1431,7 +1262,7 @@ func (a *ApiDB) UpdateService(w http.ResponseWriter, r *http.Request) <span clas
 }
 </pre>
 		
-		<pre class="file" id="file10" style="display: none">package CONTROLLERS
+		<pre class="file" id="file8" style="display: none">package CONTROLLERS
 
 import (
         "ROOMS/BUSINESS"
@@ -1459,7 +1290,7 @@ func (a *ApiDB) GetAllUnit(w http.ResponseWriter, r *http.Request) <span class="
 }
 </pre>
 		
-		<pre class="file" id="file11" style="display: none">package CONTROLLERS
+		<pre class="file" id="file9" style="display: none">package CONTROLLERS
 
 import (
         "io"
@@ -1501,7 +1332,7 @@ func UploadPicture(w http.ResponseWriter, r *http.Request) <span class="cov8" ti
 }
 </pre>
 		
-		<pre class="file" id="file12" style="display: none">package CONTROLLERS
+		<pre class="file" id="file10" style="display: none">package CONTROLLERS
 
 import (
         "ROOMS/BUSINESS"
