@@ -54,7 +54,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">ROOMS/CONTROLLERS/AUTH.go (0.0%)</option>
+				<option value="file0">ROOMS/CONTROLLERS/AUTH.go (85.7%)</option>
 				
 				<option value="file1">ROOMS/CONTROLLERS/BILLCONTROLLER.go (100.0%)</option>
 				
@@ -99,15 +99,12 @@ import (
         jwtmiddleware "github.com/auth0/go-jwt-middleware"
         "github.com/dgrijalva/jwt-go"
         "io"
-        "log"
         "net/http"
 )
 
-func AuthMiddleware(next http.Handler) http.Handler <span class="cov0" title="0">{
-        if len(DATABASE.APP_KEY) == 0 </span><span class="cov0" title="0">{
-                log.Fatal("HTTP server unable to start, expected an APP_KEY for JWT auth")
-        }</span>
-        <span class="cov0" title="0">jwtMiddleware := jwtmiddleware.New(jwtmiddleware.Options{
+func AuthMiddleware(next http.Handler) http.Handler <span class="cov8" title="1">{
+
+        jwtMiddleware := jwtmiddleware.New(jwtmiddleware.Options{
                 Extractor: jwtmiddleware.FromFirst(jwtmiddleware.FromAuthHeader,
                         jwtmiddleware.FromParameter("token")),
                 ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) </span><span class="cov0" title="0">{
@@ -115,10 +112,10 @@ func AuthMiddleware(next http.Handler) http.Handler <span class="cov0" title="0"
                 }</span>,
                 SigningMethod: jwt.SigningMethodHS256,
         })
-        <span class="cov0" title="0">return jwtMiddleware.Handler(next)</span>
+        <span class="cov8" title="1">return jwtMiddleware.Handler(next)</span>
 }
 
-func ValidateToken(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func ValidateToken(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         stringresult := `{
                 "status": 200,
@@ -182,7 +179,7 @@ func (a *ApiDB) GetBills(w http.ResponseWriter, r *http.Request) <span class="co
                 },
         }
 
-        jsonresult,_ := json.Marshal(result)
+        jsonresult, _ := json.Marshal(result)
         io.WriteString(w, string(jsonresult))</span>
 }
 
@@ -195,7 +192,7 @@ func (a *ApiDB) CreateBill(w http.ResponseWriter, r *http.Request) <span class="
                 return
         }</span>
 
-        <span class="cov8" title="1">result,_ := BUSINESS.CreateBill(a.Db, p)
+        <span class="cov8" title="1">result, _ := BUSINESS.CreateBill(a.Db, p)
 
         if result &gt; 0 </span><span class="cov8" title="1">{
                 io.WriteString(w, `  { "status": 200,
@@ -295,7 +292,7 @@ func (a *ApiDB) GetBillsbyblock(w http.ResponseWriter, r *http.Request) <span cl
                 Message: "get bill success",
                 Data:    Data{bill},
         }
-        jsonresult,_ := json.Marshal(res)
+        jsonresult, _ := json.Marshal(res)
 
         io.WriteString(w, string(jsonresult))</span>
 }

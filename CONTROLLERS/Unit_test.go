@@ -82,7 +82,8 @@ func TestGetAllUnitFail(t *testing.T) {
 	a := &ApiDB{
 		nil,
 	}
-
+	//abc := AuthMiddleware(http.HandlerFunc(ValidateToken))
+	//abc.ServeHTTP()
 	handler := http.HandlerFunc(a.GetAllUnit)
 	handler.ServeHTTP(rr, req)
 	if status := rr.Code; status != http.StatusOK {
