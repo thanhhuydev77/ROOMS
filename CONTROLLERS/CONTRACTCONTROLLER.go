@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func GetContract(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) GetContract(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	keys, ok := r.URL.Query()["idBlock"]
 	if !ok || len(keys[0]) < 1 {
@@ -18,7 +18,7 @@ func GetContract(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	BlockId, _ := strconv.Atoi(keys[0])
-	listCustomer, _, err := BUSINESS.GetContractByBlockId(BlockId)
+	listCustomer, _, err := BUSINESS.GetContractByBlockId(a.Db, BlockId)
 	jsonCustomers, _ := json.Marshal(listCustomer)
 
 	if err != nil {
@@ -35,7 +35,7 @@ func GetContract(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, stringresult)
 }
 
-func CreateContract(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) CreateContract(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	p := MODELS.CREATE_UPDATE_CONTRACT_REQUEST{}
 	err := json.NewDecoder(r.Body).Decode(&p)
@@ -44,7 +44,7 @@ func CreateContract(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result := BUSINESS.CreateContract(p)
+	result := BUSINESS.CreateContract(a.Db, p)
 	if result {
 		io.WriteString(w, `  { "status": 200,
     "message": "Create contract success",
@@ -58,7 +58,7 @@ func CreateContract(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func DeleteContract(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) DeleteContract(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
@@ -71,7 +71,7 @@ func DeleteContract(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, _ := BUSINESS.DeleteContract(idContract)
+	res, _ := BUSINESS.DeleteContract(a.Db, idContract)
 
 	if res {
 		io.WriteString(w, `{
@@ -86,7 +86,7 @@ func DeleteContract(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, `{"message" : "Can’t delete contract"}`)
 }
 
-func DeleteAllContract(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) DeleteAllContract(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
 	type arrcontractId struct {
@@ -106,7 +106,7 @@ func DeleteAllContract(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, _ := BUSINESS.DeleteAllContract(p.ContractsId)
+	res, _ := BUSINESS.DeleteAllContract(a.Db, p.ContractsId)
 
 	if res {
 		io.WriteString(w, `{
@@ -121,7 +121,7 @@ func DeleteAllContract(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, `{"message" : "Can’t delete contract"}`)
 }
 
-func UpdateContract(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) UpdateContract(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
@@ -136,7 +136,7 @@ func UpdateContract(w http.ResponseWriter, r *http.Request) {
 	}
 
 	p.Id = idContract
-	res, _ := BUSINESS.UpdateContract(p)
+	res, _ := BUSINESS.UpdateContract(a.Db, p)
 
 	if res {
 		io.WriteString(w, `{

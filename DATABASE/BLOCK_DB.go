@@ -3,20 +3,21 @@ package DATABASE
 import (
 	"ROOMS/MODELS"
 	"database/sql"
+	"fmt"
 	"log"
 	"strings"
 )
 
-func GetBlockById(Id int) (MODELS.BLOCKS, bool) {
+func GetBlockById(db *sql.DB, Id int) (MODELS.BLOCKS, bool) {
 	var Block MODELS.BLOCKS
-	db, err := connectdatabase()
-	// Query all users
+	//db, err := connectdatabase()
+	//// Query all users
 	if db == nil {
 
 		log.Print("can not connect to database!")
 		return Block, false
 	}
-	defer db.Close()
+	//defer db.Close()
 
 	rows, err := db.Query("select * from BLOCKS where id = ?", Id)
 	if err != nil {
@@ -38,11 +39,11 @@ func GetBlockByIdOwner(db *sql.DB, IdOwner int) []MODELS.BLOCKS {
 	var listBlock []MODELS.BLOCKS
 	//db, err := connectdatabase()
 	//// Query all users
-	//if db == nil {
-	//
-	//	log.Print("can not connect to database!")
-	//	return nil
-	//}
+	if db == nil {
+
+		log.Print("can not connect to database!")
+		return nil
+	}
 	//defer db.Close()
 
 	rows, err := db.Query("select * from BLOCKS where idowner = ?", IdOwner)
@@ -61,17 +62,20 @@ func GetBlockByIdOwner(db *sql.DB, IdOwner int) []MODELS.BLOCKS {
 	return listBlock
 }
 
-func CreateBlock(b MODELS.BLOCKS) (bool, error) {
+func CreateBlock(db *sql.DB, b MODELS.BLOCKS) (bool, error) {
 
-	db, err := connectdatabase()
-	// Query all users
-	if err != nil {
-
+	//db, err := connectdatabase()
+	//// Query all users
+	//if err != nil {
+	//
+	//	log.Print("can not connect to database!")
+	//	return false, err
+	//}
+	//defer db.Close()
+	if db == nil {
 		log.Print("can not connect to database!")
-		return false, err
+		return false, fmt.Errorf("can not connect db")
 	}
-	defer db.Close()
-
 	rows, err := db.Query(`insert into BLOCKS(nameBlock,address,description,idOwner)
 							  values(?,?,?,?)`, b.NameBlock, b.Address, b.Description, b.IdOwner)
 	if err != nil {
@@ -81,16 +85,20 @@ func CreateBlock(b MODELS.BLOCKS) (bool, error) {
 	return true, nil
 }
 
-func UpdateBlock(b MODELS.BLOCKS) (bool, error) {
+func UpdateBlock(db *sql.DB, b MODELS.BLOCKS) (bool, error) {
 
-	db, err := connectdatabase()
-	// Query all users
-	if err != nil {
-
+	//db, err := connectdatabase()
+	//// Query all users
+	//if err != nil {
+	//
+	//	log.Print("can not connect to database!")
+	//	return false, err
+	//}
+	//defer db.Close()
+	if db == nil {
 		log.Print("can not connect to database!")
-		return false, err
+		return false, fmt.Errorf("can not connect db")
 	}
-	defer db.Close()
 
 	rows, err := db.Exec("update BLOCKS set nameBlock = ? , address = ? , description = ? where id = ?", b.NameBlock, b.Address, b.Description, b.Id)
 
@@ -102,14 +110,18 @@ func UpdateBlock(b MODELS.BLOCKS) (bool, error) {
 	return true, nil
 }
 
-func DeleteBlock(id int) (bool, error) {
-	db, err := connectdatabase()
-
-	if err != nil {
+func DeleteBlock(db *sql.DB, id int) (bool, error) {
+	//db, err := connectdatabase()
+	//
+	//if err != nil {
+	//	log.Print("can not connect to database!")
+	//	return false, err
+	//}
+	//defer db.Close()
+	if db == nil {
 		log.Print("can not connect to database!")
-		return false, err
+		return false, fmt.Errorf("can not connect db")
 	}
-	defer db.Close()
 
 	res, err := db.Exec(`delete from BLOCKS where id = ?`, id)
 
@@ -125,15 +137,18 @@ func DeleteBlock(id int) (bool, error) {
 	return true, nil
 }
 
-func DeleteBlocks(ids []int) (bool, error) {
-	db, err := connectdatabase()
-
-	if err != nil {
+func DeleteBlocks(db *sql.DB, ids []int) (bool, error) {
+	//db, err := connectdatabase()
+	//
+	//if err != nil {
+	//	log.Print("can not connect to database!")
+	//	return false, err
+	//}
+	//defer db.Close()
+	if db == nil {
 		log.Print("can not connect to database!")
-		return false, err
+		return false, fmt.Errorf("can not connect db")
 	}
-	defer db.Close()
-
 	args := make([]interface{}, len(ids))
 	for i, id := range ids {
 		args[i] = id

@@ -3,19 +3,24 @@ package DATABASE
 import (
 	"ROOMS/MODELS"
 	"context"
+	"database/sql"
+	"fmt"
 	"log"
 	"strings"
 )
 
-func GetContractByBlockId(BlockId int) ([]MODELS.GET_CONTRACTS_REQUEST, bool, error) {
+func GetContractByBlockId(db *sql.DB, BlockId int) ([]MODELS.GET_CONTRACTS_REQUEST, bool, error) {
 	var listContracts []MODELS.GET_CONTRACTS_REQUEST
-	db, err := connectdatabase()
-
-	if err != nil {
-		return nil, false, err
+	//db, err := connectdatabase()
+	//
+	//if err != nil {
+	//	return nil, false, err
+	//}
+	//defer db.Close()
+	if db == nil {
+		log.Print("can not connect to database!")
+		return nil, false, fmt.Errorf("can not connect db")
 	}
-	defer db.Close()
-
 	rows, err := db.Query("SELECT C.*, R.nameRoom, CU.fullName FROM CONTRACTS C INNER JOIN ROOMS R ON C.idRoom = R.id INNER JOIN CUSTOMERS CU ON C.idSlave = CU.id WHERE C.idBlock = ?", BlockId)
 	if err != nil {
 		log.Fatal(err)
@@ -54,20 +59,23 @@ func GetContractByBlockId(BlockId int) ([]MODELS.GET_CONTRACTS_REQUEST, bool, er
 	return listContracts, true, nil
 }
 
-func CreateContract(CCR MODELS.CREATE_UPDATE_CONTRACT_REQUEST) bool {
-	db, err := connectdatabase()
-
-	if err != nil {
-		log.Fatal("Can't connet to database")
+func CreateContract(db *sql.DB, CCR MODELS.CREATE_UPDATE_CONTRACT_REQUEST) bool {
+	//db, err := connectdatabase()
+	//
+	//if err != nil {
+	//	log.Fatal("Can't connet to database")
+	//	return false
+	//}
+	//defer db.Close()
+	if db == nil {
+		log.Print("can not connect to database!")
 		return false
 	}
-	defer db.Close()
-
 	// Query all users
 
 	ctx := context.Background()
-	tx, err1 := db.BeginTx(ctx, nil)
-	if err1 != nil {
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
 		log.Fatal(err)
 	}
 
@@ -99,14 +107,17 @@ func CreateContract(CCR MODELS.CREATE_UPDATE_CONTRACT_REQUEST) bool {
 	return true
 }
 
-func DeleteContract(idCustomer int) (bool, error) {
-	db, err := connectdatabase()
-	if err != nil {
-		log.Fatalln(err)
-		return false, err
+func DeleteContract(db *sql.DB, idCustomer int) (bool, error) {
+	//db, err := connectdatabase()
+	//if err != nil {
+	//	log.Fatalln(err)
+	//	return false, err
+	//}
+	//defer db.Close()
+	if db == nil {
+		log.Print("can not connect to database!")
+		return false, fmt.Errorf("can not connect db")
 	}
-	defer db.Close()
-
 	rs, err := db.Exec(`DELETE FROM CONTRACTS WHERE id = ?`, idCustomer)
 
 	if err != nil {
@@ -120,14 +131,17 @@ func DeleteContract(idCustomer int) (bool, error) {
 	return true, nil
 }
 
-func DeleteAllContract(idContract []int) (bool, error) {
-	db, err := connectdatabase()
-
-	if err != nil {
-		return false, err
+func DeleteAllContract(db *sql.DB, idContract []int) (bool, error) {
+	//db, err := connectdatabase()
+	//
+	//if err != nil {
+	//	return false, err
+	//}
+	//defer db.Close()
+	if db == nil {
+		log.Print("can not connect to database!")
+		return false, fmt.Errorf("can not connect db")
 	}
-	defer db.Close()
-
 	args := make([]interface{}, len(idContract))
 	for i, id := range idContract {
 		args[i] = id
@@ -146,16 +160,20 @@ func DeleteAllContract(idContract []int) (bool, error) {
 	return true, nil
 }
 
-func UpdateContract(c MODELS.CREATE_UPDATE_CONTRACT_REQUEST) (bool, error) {
-	db, err := connectdatabase()
-	if err != nil {
+func UpdateContract(db *sql.DB, c MODELS.CREATE_UPDATE_CONTRACT_REQUEST) (bool, error) {
+	//db, err := connectdatabase()
+	//if err != nil {
+	//	log.Print("can not connect to database!")
+	//	return false, err
+	//}
+	//defer db.Close()
+	if db == nil {
 		log.Print("can not connect to database!")
-		return false, err
+		return false, fmt.Errorf("can not connect db")
 	}
-	defer db.Close()
 	ctx := context.Background()
-	tx, err1 := db.BeginTx(ctx, nil)
-	if err1 != nil {
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
 		log.Fatal(err)
 	}
 	_, err = db.Exec("UPDATE CONTRACTS SET idSlave = ?, startDate = ?, endDate = ?, circlePay = ?, deposit = ?, dayPay = ?, note = ? WHERE id = ?", c.IdSlave, c.StartDate, c.EndDate, c.CirclePay, c.Deposit, c.DayPay, c.Note, c.Id)

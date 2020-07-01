@@ -3,6 +3,7 @@ package DATABASE
 import (
 	"ROOMS/MODELS"
 	"database/sql"
+	"fmt"
 	"log"
 	"strings"
 )
@@ -11,11 +12,11 @@ func GetServiceById(db *sql.DB, Id int) ([]MODELS.GET_SERVICES_REQUEST, bool) {
 	var Services []MODELS.GET_SERVICES_REQUEST
 	//db, err := connectdatabase()
 	//// Query all users
-	//if db == nil {
-	//
-	//	log.Print("can not connect to database!")
-	//	return Services, false
-	//}
+	if db == nil {
+
+		log.Print("can not connect to database!")
+		return Services, false
+	}
 	//defer db.Close()
 
 	rows, err := db.Query("SELECT S.*, U.name nameUnit FROM SERVICES S INNER JOIN UNITS U ON S.idUnit = U.id WHERE idBlock = ?", Id)
@@ -42,7 +43,10 @@ func DeleteService(db *sql.DB, id int) (bool, error) {
 	//	return false, err
 	//}
 	//defer db.Close()
-
+	if db == nil {
+		log.Print("can not connect to database!")
+		return false, fmt.Errorf("can not connect to database!")
+	}
 	res, err := db.Exec(`delete from SERVICES where id = ?`, id)
 
 	if err != nil {
@@ -65,7 +69,10 @@ func CreateService(db *sql.DB, services []MODELS.SERVICE_INPUT) (bool, error) {
 	//	return false, err
 	//}
 	//defer db.Close()
-
+	if db == nil {
+		log.Print("can not connect to database!")
+		return false, fmt.Errorf("can not connect to database!")
+	}
 	sqlStr := "insert into SERVICES(nameService, price, idUnit, description, idBlock) values "
 	vals := []interface{}{}
 
@@ -93,7 +100,10 @@ func DeleteServices(db *sql.DB, servicesId []int) (bool, error) {
 	//	return false, err
 	//}
 	//defer db.Close()
-
+	if db == nil {
+		log.Print("can not connect to database!")
+		return false, fmt.Errorf("can not connect to database!")
+	}
 	args := make([]interface{}, len(servicesId))
 	for i, id := range servicesId {
 		args[i] = id
@@ -117,7 +127,10 @@ func UpdateService(db *sql.DB, service MODELS.SERVICE_INPUT) (bool, error) {
 	//	return false, err
 	//}
 	//defer db.Close()
-
+	if db == nil {
+		log.Print("can not connect to database!")
+		return false, fmt.Errorf("can not connect to database!")
+	}
 	rows, err := db.Exec("UPDATE SERVICES SET price = ?, idUnit = ?, description = ? WHERE id = ?",
 		service.Price, service.IdUnit, service.Description, service.Id)
 

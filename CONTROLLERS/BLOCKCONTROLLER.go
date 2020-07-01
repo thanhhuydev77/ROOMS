@@ -37,7 +37,7 @@ func (a *ApiDB) GetBlock(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, stringresult)
 }
 
-func GetBlockById(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) GetBlockById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -46,7 +46,7 @@ func GetBlockById(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, `{"message":"can not convert idowner as int"}`)
 		return
 	}
-	listBlock, OK := BUSINESS.GetBlockById(id)
+	listBlock, OK := BUSINESS.GetBlockById(a.Db, id)
 	jsonlist, _ := json.Marshal(listBlock)
 	if !OK {
 		io.WriteString(w, `{ "message": "Can’t get Blocks" }`)
@@ -61,7 +61,7 @@ func GetBlockById(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, stringresult)
 }
 
-func CreateBlock(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) CreateBlock(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	p := MODELS.BLOCKS{}
 	err := json.NewDecoder(r.Body).Decode(&p)
@@ -70,7 +70,7 @@ func CreateBlock(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, _ := BUSINESS.CreateBlock(p)
+	result, _ := BUSINESS.CreateBlock(a.Db, p)
 	if result {
 		io.WriteString(w, `{ "status": 200,
     						"message": "Create block success",
@@ -83,7 +83,7 @@ func CreateBlock(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func UpdateBlock(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) UpdateBlock(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	vars := mux.Vars(r)
 	idblock, err := strconv.Atoi(vars["id"])
@@ -99,7 +99,7 @@ func UpdateBlock(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	p.Id = idblock
-	hasroweffected, _ := BUSINESS.UpdateBlock(p)
+	hasroweffected, _ := BUSINESS.UpdateBlock(a.Db, p)
 	if hasroweffected == false {
 		io.WriteString(w, `{ "message": "Can’t update block" }`)
 		return
@@ -114,7 +114,7 @@ func UpdateBlock(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func DeleteBlock(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) DeleteBlock(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
@@ -131,7 +131,7 @@ func DeleteBlock(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, _ := BUSINESS.DeleteBlock(idblock)
+	res, _ := BUSINESS.DeleteBlock(a.Db, idblock)
 
 	if res {
 		io.WriteString(w, `{
@@ -146,7 +146,7 @@ func DeleteBlock(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, `{"message" : "Can’t  Delete Block"}`)
 }
 
-func DeleteBlocks(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) DeleteBlocks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
 	var p = MODELS.IDBLOCKS{}
@@ -156,7 +156,7 @@ func DeleteBlocks(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, `{ "message": "Wrong format" }`)
 		return
 	}
-	res, _ := BUSINESS.DeleteBlocks(p.BlocksId)
+	res, _ := BUSINESS.DeleteBlocks(a.Db, p.BlocksId)
 
 	if res {
 		io.WriteString(w, `{

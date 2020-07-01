@@ -16,6 +16,36 @@ func (s MyNullString) MarshalJSON() ([]byte, error) {
 	return []byte(`null`), nil
 }
 
+func (v *MyNullString) UnmarshalJSON(data []byte) error {
+	// Unmarshalling into a pointer will let us detect null
+	var x *string
+	if err := json.Unmarshal(data, &x); err != nil {
+		return err
+	}
+	if x != nil {
+		v.Valid = true
+		v.String = *x
+	} else {
+		v.Valid = false
+	}
+	return nil
+}
+
+func (v *MyNullInt) UnmarshalJSON(data []byte) error {
+	// Unmarshalling into a pointer will let us detect null
+	var x *int64
+	if err := json.Unmarshal(data, &x); err != nil {
+		return err
+	}
+	if x != nil {
+		v.Valid = true
+		v.Int64 = *x
+	} else {
+		v.Valid = false
+	}
+	return nil
+}
+
 type MyNullTime struct {
 	sql.NullTime
 }

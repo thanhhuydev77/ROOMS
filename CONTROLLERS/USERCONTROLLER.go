@@ -42,12 +42,7 @@ func (a *ApiDB) UserLogin(w http.ResponseWriter, r *http.Request) {
 		"exp":  time.Now().Add(time.Hour * time.Duration(1000*24)).Unix(),
 		"iat":  time.Now().Unix(),
 	})
-	tokenString, err := token.SignedString([]byte(DATABASE.APP_KEY))
-	if err != nil {
-		//w.WriteHeader(http.StatusInternalServerError)
-		io.WriteString(w, `{"error":"token_generation_failed"}`)
-		return
-	}
+	tokenString, _ := token.SignedString([]byte(DATABASE.APP_KEY))
 
 	//w.Write([]byte(`{"hello": "world"}`))
 	stringresult := `{"message": "Login success","data":{"token":"` + tokenString + `","user":{ "id":` + strconv.Itoa(user.Id) + `,
@@ -61,15 +56,15 @@ func (a *ApiDB) UserRegister(w http.ResponseWriter, r *http.Request) {
 	p := MODELS.RequestRegister{}
 	err1 := json.NewDecoder(r.Body).Decode(&p)
 	if err1 != nil {
-		io.WriteString(w, `{"message": "wrong format!"}`+err1.Error())
+		io.WriteString(w, `{"message": "wrong format!"}`)
 		return
 	}
 
-	result, err := BUSINESS.Register(a.Db, p)
-	if result {
-		io.WriteString(w, `{"message": "Register success","data": {"status": 1}}`)
+	_, err := BUSINESS.Register(a.Db, p)
+	if err == nil {
+		io.WriteString(w, `{"message":"Register success"}`)
 	} else {
-		io.WriteString(w, `{"message":{"code":"`+err.Error()+`"}}`)
+		io.WriteString(w, `{"message":"Register fail"}`)
 	}
 }
 
@@ -81,15 +76,16 @@ func (a *ApiDB) GetallUserName(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	if allusername == nil {
 		//w.WriteHeader(http.StatusBadRequest)
-		io.WriteString(w, `{"message": "unsuccess"}`)
+		io.WriteString(w, `{"message":"get all username unsuccess"}`)
 		return
 	}
-	//w.WriteHeader(200)
-	io.WriteString(w, `{"message": "success","data":{`)
-	for _, val := range allusername {
-		io.WriteString(w, "\""+val+"\",")
+	type result struct {
+		Message string   `json:"message"`
+		Data    []string `json:"data"`
 	}
-	io.WriteString(w, "}}")
+	Result, _ := json.Marshal(result{Message: "get all username success", Data: allusername})
+	//w.WriteHeader(200)
+	io.WriteString(w, string(Result))
 }
 
 func (a *ApiDB) GetUser(w http.ResponseWriter, r *http.Request) {
@@ -101,11 +97,9 @@ func (a *ApiDB) GetUser(w http.ResponseWriter, r *http.Request) {
 		Id = -1
 	}
 	List := BUSINESS.GetUsers(a.Db, Id)
-	jsonlist, err1 := json.Marshal(List)
+	jsonlist, _ := json.Marshal(List)
 	result := List[0]
-	if err1 != nil {
-		return
-	}
+
 	stringresult := `{"message": "Get Users success","status": 200,"data":{"user":`
 	if len(List) == 1 {
 		jsonresult, _ := json.Marshal(result)
@@ -114,6 +108,5 @@ func (a *ApiDB) GetUser(w http.ResponseWriter, r *http.Request) {
 		stringresult += string(jsonlist)
 	}
 	stringresult += "}}"
-
 	io.WriteString(w, stringresult)
 }

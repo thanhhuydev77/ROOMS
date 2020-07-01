@@ -6,12 +6,11 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"io"
-	"log"
 	"net/http"
 	"strconv"
 )
 
-func GetBills(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) GetBills(w http.ResponseWriter, r *http.Request) {
 
 	type Data struct {
 		Bill       MODELS.BILLS          `json:"bill"`
@@ -33,8 +32,8 @@ func GetBills(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-	billinfo, okinfo, err := BUSINESS.GetBillById(idBill)
-	billdetail, okdetail, err := BUSINESS.GetBillDetailById(idBill)
+	billinfo, okinfo, err := BUSINESS.GetBillById(a.Db, idBill)
+	billdetail, okdetail, err := BUSINESS.GetBillDetailById(a.Db, idBill)
 	if okinfo != true || okdetail != true {
 		io.WriteString(w, `{ "message": "Can’t get contracts" }`)
 		return
@@ -48,24 +47,21 @@ func GetBills(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	jsonresult, errjson := json.Marshal(result)
-	if errjson != nil {
-		log.Print("err while convert json :", err.Error())
-	}
-
+	jsonresult, _ := json.Marshal(result)
 	io.WriteString(w, string(jsonresult))
 }
 
-func CreateBill(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) CreateBill(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	p := MODELS.CREATE_UPDATE_BILL_REQUEST{}
 	err := json.NewDecoder(r.Body).Decode(&p)
 	if err != nil {
-		io.WriteString(w, `{"message": "wrong format!"}`+err.Error())
+		io.WriteString(w, `{"message": "wrong format!"}`)
 		return
 	}
 
-	result, err := BUSINESS.CreateBill(p)
+	result, _ := BUSINESS.CreateBill(a.Db, p)
+
 	if result > 0 {
 		io.WriteString(w, `  { "status": 200,
     "message": "Create bill success",
@@ -75,11 +71,12 @@ func CreateBill(w http.ResponseWriter, r *http.Request) {
 }
 `)
 	} else {
+
 		io.WriteString(w, `{ "message": "Can’t create bill"}`)
 	}
 }
 
-func UpdateBill(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) UpdateBill(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
@@ -94,7 +91,7 @@ func UpdateBill(w http.ResponseWriter, r *http.Request) {
 	}
 
 	p.Id = idContract
-	res, _ := BUSINESS.UpdateBill(p)
+	res, _ := BUSINESS.UpdateBill(a.Db, p)
 
 	if res {
 		io.WriteString(w, `{
@@ -109,7 +106,7 @@ func UpdateBill(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, `{"message" : "Can’t update bill"}`)
 }
 
-func DeleteBill(w http.ResponseWriter, r *http.Request) {
+func (a *ApiDB) DeleteBill(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
@@ -122,7 +119,7 @@ func DeleteBill(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, _ := BUSINESS.DeleteBill(idbill)
+	res, _ := BUSINESS.DeleteBill(a.Db, idbill)
 
 	if res {
 		io.WriteString(w, `{
@@ -153,19 +150,17 @@ func (a *ApiDB) GetBillsbyblock(w http.ResponseWriter, r *http.Request) {
 	}
 	bill, ok, errget := BUSINESS.GetBillByIdblock(a.Db, idBlock)
 	if ok != true || errget != nil {
-		io.WriteString(w, `{ "message": "Can’t get contracts" }`)
+		//fmt.Print(errget)
+		io.WriteString(w, `{ "message": "Can’t get bills" }`)
 		return
 	}
 
 	res := MODELS.RespondOk{
 		Status:  200,
-		Message: "ok",
+		Message: "get bill success",
 		Data:    Data{bill},
 	}
-	jsonresult, errjson := json.Marshal(res)
-	if errjson != nil {
-		log.Print("err while convert json :", err.Error())
-	}
+	jsonresult, _ := json.Marshal(res)
 
 	io.WriteString(w, string(jsonresult))
 }

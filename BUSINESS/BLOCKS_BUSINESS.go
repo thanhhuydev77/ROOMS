@@ -6,26 +6,26 @@ import (
 	"database/sql"
 )
 
-func GetBlockById(Id int) (MODELS.BLOCKS, bool) {
-	return DATABASE.GetBlockById(Id)
+func GetBlockById(db *sql.DB, Id int) (MODELS.BLOCKS, bool) {
+	return DATABASE.GetBlockById(db, Id)
 }
 
 func GetBlockByIdOwner(db *sql.DB, IdOwner int) []MODELS.BLOCKS {
 	return DATABASE.GetBlockByIdOwner(db, IdOwner)
 }
 
-func CreateBlock(b MODELS.BLOCKS) (bool, error) {
-	return DATABASE.CreateBlock(b)
+func CreateBlock(db *sql.DB, b MODELS.BLOCKS) (bool, error) {
+	return DATABASE.CreateBlock(db, b)
 }
 
-func UpdateBlock(b MODELS.BLOCKS) (bool, error) {
-	return DATABASE.UpdateBlock(b)
+func UpdateBlock(db *sql.DB, b MODELS.BLOCKS) (bool, error) {
+	return DATABASE.UpdateBlock(db, b)
 }
 
-func DeleteBlock(id int) (bool, error) {
-	return DATABASE.DeleteBlock(id)
+func DeleteBlock(db *sql.DB, id int) (bool, error) {
+	return DATABASE.DeleteBlock(db, id)
 }
 
-func DeleteBlocks(ids []int) (bool, error) {
-	return DATABASE.DeleteBlocks(ids)
+func DeleteBlocks(db *sql.DB, ids []int) (bool, error) {
+	return DATABASE.DeleteBlocks(db, ids)
 }

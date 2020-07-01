@@ -2,18 +2,24 @@ package DATABASE
 
 import (
 	"ROOMS/MODELS"
+	"database/sql"
+	"fmt"
 	"log"
 	"strings"
 )
 
-func GetCustomers(userId int) ([]MODELS.CUSTOMER, bool, error) {
+func GetCustomers(db *sql.DB, userId int) ([]MODELS.CUSTOMER, bool, error) {
 	var listCustomers []MODELS.CUSTOMER
-	db, err := connectdatabase()
-
-	if err != nil {
-		return nil, false, err
+	//db, err := connectdatabase()
+	//
+	//if err != nil {
+	//	return nil, false, err
+	//}
+	//defer db.Close()
+	if db == nil {
+		log.Print("can not connect to database!")
+		return nil, false, fmt.Errorf("can not connect db")
 	}
-	defer db.Close()
 
 	rows, err := db.Query("SELECT CU.*, R.nameRoom FROM CUSTOMERS CU LEFT JOIN USER_ROOM UR ON CU.id = UR.idUser "+
 		"LEFT JOIN ROOMS R ON UR.idRoom = R.id  WHERE idOwner = ?", userId)
@@ -40,14 +46,18 @@ func GetCustomers(userId int) ([]MODELS.CUSTOMER, bool, error) {
 	return listCustomers, true, nil
 }
 
-func GetCustomersByUserId(userId int) ([]MODELS.CUSTOMER_GET, bool, error) {
+func GetCustomersByUserId(db *sql.DB, userId int) ([]MODELS.CUSTOMER_GET, bool, error) {
 	var listCustomers []MODELS.CUSTOMER_GET
-	db, err := connectdatabase()
-
-	if err != nil {
-		return nil, false, err
+	//db, err := connectdatabase()
+	//
+	//if err != nil {
+	//	return nil, false, err
+	//}
+	//defer db.Close
+	if db == nil {
+		log.Print("can not connect to database!")
+		return nil, false, fmt.Errorf("can not connect db")
 	}
-	defer db.Close()
 
 	rows, err := db.Query("SELECT * FROM CUSTOMERS WHERE idOwner = ?", userId)
 	if err != nil {
@@ -63,7 +73,7 @@ func GetCustomersByUserId(userId int) ([]MODELS.CUSTOMER_GET, bool, error) {
 			&c.Role, &c.Sex, &c.Job, &c.WorkPlace, &c.TempReg, &c.Province,
 			&c.Email, &c.Avatar, &c.PhoneNumber, &c.IdOwner, &c.Note)
 
-		var r, _, _ = SelectNameRoom(c.Id)
+		var r, _, _ = SelectNameRoom(db, c.Id)
 		for i := range r {
 			c.Rooms = append(c.Rooms, MODELS.CUSTOMER_ROOMS{RoomName: r[i]})
 		}
@@ -78,14 +88,17 @@ func GetCustomersByUserId(userId int) ([]MODELS.CUSTOMER_GET, bool, error) {
 	return listCustomers, true, nil
 }
 
-func CreateCustomer(c MODELS.CUSTOMER_INPUT) (bool, error) {
-	db, err := connectdatabase()
-	if err != nil {
-		log.Fatalln(err)
-		return false, err
+func CreateCustomer(db *sql.DB, c MODELS.CUSTOMER_INPUT) (bool, error) {
+	//db, err := connectdatabase()
+	//if err != nil {
+	//	log.Fatalln(err)
+	//	return false, err
+	//}
+	//defer db.Close()
+	if db == nil {
+		log.Print("can not connect to database!")
+		return false, fmt.Errorf("can not connect db")
 	}
-	defer db.Close()
-
 	rs, err := db.Query(`INSERT INTO CUSTOMERS (codeUser, fullName, identifyFront, identifyBack, dateBirth, sex, 
 		job, workPlace, tempReg, email, avatar, phoneNumber, idOwner, note) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
 		c.CodeUser, c.FullName, c.IdentifyFront, c.IdentifyBack, c.DateBirth, c.Sex, c.Job,
@@ -100,14 +113,17 @@ func CreateCustomer(c MODELS.CUSTOMER_INPUT) (bool, error) {
 	return true, nil
 }
 
-func DeleteCustomer(idCustomer int) (bool, error) {
-	db, err := connectdatabase()
-	if err != nil {
-		log.Fatalln(err)
-		return false, err
+func DeleteCustomer(db *sql.DB, idCustomer int) (bool, error) {
+	//db, err := connectdatabase()
+	//if err != nil {
+	//	log.Fatalln(err)
+	//	return false, err
+	//}
+	//defer db.Close()
+	if db == nil {
+		log.Print("can not connect to database!")
+		return false, fmt.Errorf("can not connect db")
 	}
-	defer db.Close()
-
 	rs, err := db.Exec(`DELETE FROM CUSTOMERS WHERE id = ?`, idCustomer)
 
 	if err != nil {
@@ -121,14 +137,17 @@ func DeleteCustomer(idCustomer int) (bool, error) {
 	return true, nil
 }
 
-func DeleteManyCustomers(ids []int) (bool, error) {
-	db, err := connectdatabase()
-	if err != nil {
-		log.Fatalln(err)
-		return false, err
+func DeleteManyCustomers(db *sql.DB, ids []int) (bool, error) {
+	//db, err := connectdatabase()
+	//if err != nil {
+	//	log.Fatalln(err)
+	//	return false, err
+	//}
+	//defer db.Close()
+	if db == nil {
+		log.Print("can not connect to database!")
+		return false, fmt.Errorf("can not connect db")
 	}
-	defer db.Close()
-
 	args := make([]interface{}, len(ids))
 	for i, id := range ids {
 		args[i] = id
@@ -144,15 +163,19 @@ func DeleteManyCustomers(ids []int) (bool, error) {
 	return true, nil
 }
 
-func UpdateCustomer(c MODELS.CUSTOMER_UPDATE) (bool, error) {
-	db, err := connectdatabase()
-
-	if err != nil {
-
+func UpdateCustomer(db *sql.DB, c MODELS.CUSTOMER_UPDATE) (bool, error) {
+	//db, err := connectdatabase()
+	//
+	//if err != nil {
+	//
+	//	log.Print("can not connect to database!")
+	//	return false, err
+	//}
+	//defer db.Close()
+	if db == nil {
 		log.Print("can not connect to database!")
-		return false, err
+		return false, fmt.Errorf("can not connect db")
 	}
-	defer db.Close()
 
 	rows, err := db.Exec(`UPDATE CUSTOMERS SET fullName = ?, identifyFront = ?, identifyBack = ?, dateBirth = ?, 
 address = ?, sex = ?, job = ?, workPlace = ?, tempReg = ?, email = ?, avatar = ?, phoneNumber = ?, note = ? WHERE id = ?`,
@@ -167,14 +190,18 @@ address = ?, sex = ?, job = ?, workPlace = ?, tempReg = ?, email = ?, avatar = ?
 	return true, nil
 }
 
-func SelectNameRoom(idUser int) ([]string, bool, error) {
-	db, err := connectdatabase()
-
-	if err != nil {
-		log.Fatal("Can't connet to database")
-		return nil, false, err
+func SelectNameRoom(db *sql.DB, idUser int) ([]string, bool, error) {
+	//db, err := connectdatabase()
+	//
+	//if err != nil {
+	//	log.Fatal("Can't connet to database")
+	//	return nil, false, err
+	//}
+	//defer db.Close()
+	if db == nil {
+		log.Print("can not connect to database!")
+		return nil, false, fmt.Errorf("can not connect db")
 	}
-	defer db.Close()
 
 	rows, err := db.Query(`SELECT R.nameRoom FROM USER_ROOM UR INNER JOIN ROOMS R ON UR.idRoom = R.id WHERE idUser = ?`, idUser)
 	if err != nil {
