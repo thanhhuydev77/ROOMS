@@ -2,6 +2,7 @@ package CONTROLLERS
 
 import (
 	"ROOMS/MODELS"
+	"bytes"
 	"database/sql"
 	"encoding/json"
 	"net/http"
@@ -260,6 +261,138 @@ func TestGetBlockIdFail2(t *testing.T) {
 
 	handle := http.HandlerFunc(a.GetBlockById)
 	handle.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+}
+
+func createMockCreateBlock() (*sql.DB, sqlmock.Sqlmock, error) {
+	db, mock, err := sqlmock.New()
+
+	resultID := sqlmock.NewRows([]string{"id"}).
+		AddRow(1)
+	mock.ExpectQuery(`insert into BLOCKS `).
+		WithArgs("hahaa", "haha", "hdsdfsd", 68).
+		WillReturnRows(resultID)
+
+	return db, mock, err
+}
+
+func TestCreateBlock(t *testing.T) {
+	type Data struct {
+		Status int `json:"status"`
+	}
+	type Result struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+		Data    Data   `json:"data"`
+	}
+
+	var jsonStr = []byte(`{
+		"nameBlock": "hahaa",
+		"address": "haha",
+		"description": "hdsdfsd",
+		"idOwner": 68
+	}`)
+
+	req, err := http.NewRequest("POST", "/block/create", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	db, _, _ := createMockCreateBlock()
+	a := &ApiDB{
+		db,
+	}
+	handler := http.HandlerFunc(a.CreateBlock)
+	handler.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	var out Result
+	err = json.Unmarshal(rr.Body.Bytes(), &out)
+	if err != nil {
+		t.Errorf("error marshal :%v", err)
+	}
+	if out.Message != "Create block success" {
+		t.Errorf("error message(%v)", out.Message)
+	}
+}
+
+func TestCreateBlockFall1(t *testing.T) {
+	type Data struct {
+		Status int `json:"status"`
+	}
+	type Result struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+		Data    Data   `json:"data"`
+	}
+
+	var jsonStr = []byte(`{
+		"nameBlock": "hahaa",
+		"address": "haha",
+		"description": "hdsdfsd",
+		"idOwner": 68
+	}`)
+
+	req, err := http.NewRequest("POST", "/block/create", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	// db, _, _ := createMockCreateBlock()
+	a := &ApiDB{
+		nil,
+	}
+	handler := http.HandlerFunc(a.CreateBlock)
+	handler.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	// var out Result
+	// err = json.Unmarshal(rr.Body.Bytes(), &out)
+	// if err != nil {
+	// 	t.Errorf("error marshal :%v", err)
+	// }
+	// if out.Message != "Create block success" {
+	// 	t.Errorf("error message(%v)", out.Message)
+	// }
+}
+
+func TestCreateBlockFall2(t *testing.T) {
+	type Data struct {
+		Status int `json:"status"`
+	}
+	type Result struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+		Data    Data   `json:"data"`
+	}
+
+	var jsonStr = []byte(`{
+		abc
+	}`)
+
+	req, err := http.NewRequest("POST", "/block/create", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	db, _, _ := createMockCreateBlock()
+	a := &ApiDB{
+		db,
+	}
+	handler := http.HandlerFunc(a.CreateBlock)
+	handler.ServeHTTP(rr, req)
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusOK)

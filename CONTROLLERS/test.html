@@ -58,7 +58,7 @@
 				
 				<option value="file1">ROOMS/CONTROLLERS/BILLCONTROLLER.go (100.0%)</option>
 				
-				<option value="file2">ROOMS/CONTROLLERS/BLOCKCONTROLLER.go (33.3%)</option>
+				<option value="file2">ROOMS/CONTROLLERS/BLOCKCONTROLLER.go (45.7%)</option>
 				
 				<option value="file3">ROOMS/CONTROLLERS/CONTRACTCONTROLLER.go (0.0%)</option>
 				
@@ -356,24 +356,24 @@ func (a *ApiDB) GetBlockById(w http.ResponseWriter, r *http.Request) <span class
         io.WriteString(w, stringresult)</span>
 }
 
-func (a *ApiDB) CreateBlock(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) CreateBlock(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         p := MODELS.BLOCKS{}
         err := json.NewDecoder(r.Body).Decode(&amp;p)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 io.WriteString(w, `{"message": "wrong format!"}`+err.Error())
                 return
         }</span>
 
-        <span class="cov0" title="0">result, _ := BUSINESS.CreateBlock(a.Db, p)
-        if result </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">result, _ := BUSINESS.CreateBlock(a.Db, p)
+        if result </span><span class="cov8" title="1">{
                 io.WriteString(w, `{ "status": 200,
                                                     "message": "Create block success",
                                                             "data": {
                                                         "status": 1
                                                                             }
                                                                 }`)
-        }</span> else<span class="cov0" title="0"> {
+        }</span> else<span class="cov8" title="1"> {
                 io.WriteString(w, `{ "message": "Can’t create block "}`)
         }</span>
 }
