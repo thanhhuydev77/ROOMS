@@ -66,7 +66,7 @@
 				
 				<option value="file5">ROOMS/CONTROLLERS/DEFAULT_SERVICECONTROLLER.go (100.0%)</option>
 				
-				<option value="file6">ROOMS/CONTROLLERS/ROOMCONTROLLER.go (0.0%)</option>
+				<option value="file6">ROOMS/CONTROLLERS/ROOMCONTROLLER.go (97.4%)</option>
 				
 				<option value="file7">ROOMS/CONTROLLERS/SERVICECONTROLLER.go (0.0%)</option>
 				
@@ -131,7 +131,6 @@ import (
         "ROOMS/BUSINESS"
         "ROOMS/MODELS"
         "encoding/json"
-        "fmt"
         "github.com/gorilla/mux"
         "io"
         "net/http"
@@ -278,7 +277,7 @@ func (a *ApiDB) GetBillsbyblock(w http.ResponseWriter, r *http.Request) <span cl
         }</span>
         <span class="cov8" title="1">bill, ok, errget := BUSINESS.GetBillByIdblock(a.Db, idBlock)
         if ok != true || errget != nil </span><span class="cov8" title="1">{
-                fmt.Print(errget)
+                //fmt.Print(errget)
                 io.WriteString(w, `{ "message": "Can’t get bills" }`)
                 return
         }</span>
@@ -809,57 +808,56 @@ import (
         "ROOMS/MODELS"
         "encoding/json"
         "io"
-        "log"
         "net/http"
         "strconv"
 
         "github.com/gorilla/mux"
 )
 
-func (a *ApiDB) GetRoom(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) GetRoom(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         vars := mux.Vars(r)
         id, err := strconv.Atoi(vars["id"])
-        if err == nil &amp;&amp; id &gt; 0 </span><span class="cov0" title="0">{
+        if err == nil &amp;&amp; id &gt; 0 </span><span class="cov8" title="1">{
                 result, bool := BUSINESS.GetRoomById(a.Db, id)
                 resultJson, _ := json.Marshal(result)
+                //var abc []MODELS.ROOMS
+                //ab,_ := json.Marshal(abc)
+                //print(string(ab))
                 var data string
-                if bool == nil &amp;&amp; result != nil </span><span class="cov0" title="0">{
+                //print(result == nil)
+                if bool == nil &amp;&amp; result != nil </span><span class="cov8" title="1">{
                         data = `{                "status": 200,
                                         "message": "Get rooms success",
                                         "data":
                                                 {"room":`
 
-                        if len(resultJson) &gt; 0 </span><span class="cov0" title="0">{
+                        if len(resultJson) &gt; 0 </span><span class="cov8" title="1">{
                                 data += string(resultJson)
-                        }</span> else<span class="cov0" title="0"> {
-                                data += "[]"
                         }</span>
 
-                        <span class="cov0" title="0">data += `}}`</span>
-                } else<span class="cov0" title="0"> {
+                        <span class="cov8" title="1">data += `}}`</span>
+                } else<span class="cov8" title="1"> {
+                        //print(err)
                         data = `{"message": "Can’t get room"}`
                 }</span>
-                <span class="cov0" title="0">io.WriteString(w, data)
+                <span class="cov8" title="1">io.WriteString(w, data)
                 return</span>
-        } else<span class="cov0" title="0"> {
+        } else<span class="cov8" title="1"> {
                 idBlockP, ok := r.URL.Query()["idBlock"]
-                if !ok || len(idBlockP[0]) &lt; 1 </span><span class="cov0" title="0">{
+                if !ok || len(idBlockP[0]) &lt; 1 </span><span class="cov8" title="1">{
                         io.WriteString(w, `{ "message": "Url Param 'idBlock' is missing"}`)
                         return
                 }</span>
-                <span class="cov0" title="0">idBlock, err := strconv.Atoi(idBlockP[0])
-                if err != nil </span><span class="cov0" title="0">{
+                <span class="cov8" title="1">idBlock, err := strconv.Atoi(idBlockP[0])
+                if err != nil </span><span class="cov8" title="1">{
                         io.WriteString(w, `{"message": "Wrong format!"}`)
                         return
                 }</span>
-                <span class="cov0" title="0">if err := r.ParseForm(); err != nil </span><span class="cov0" title="0">{
-                        log.Printf("Error parsing form: %s", err)
-                        return
-                }</span>
-                <span class="cov0" title="0">isMatchP, err := strconv.ParseBool(r.Form.Get("isMatch"))
+                <span class="cov8" title="1">r.ParseForm()
+                isMatchP, err := strconv.ParseBool(r.Form.Get("isMatch"))
 
-                if isMatchP </span><span class="cov0" title="0">{
+                if isMatchP </span><span class="cov8" title="1">{
                         result, bool, _ := BUSINESS.UpdateGetRoom(a.Db, idBlock)
                         resultJson, _ := json.Marshal(result)
 
@@ -867,17 +865,15 @@ func (a *ApiDB) GetRoom(w http.ResponseWriter, r *http.Request) <span class="cov
                                         "message": "Get rooms success",
                                         "data":
                                                 {"rooms":`
-                        if len(result) &gt; 0 </span><span class="cov0" title="0">{
+                        if len(result) &gt; 0 </span><span class="cov8" title="1">{
                                 data += string(resultJson)
-                        }</span> else<span class="cov0" title="0"> {
-                                data += "[]"
-                        }</span>
-                        <span class="cov0" title="0">data += `}}`
+                        }</span> else<span class="cov0" title="0"> {data += "[]"}</span>
+                        <span class="cov8" title="1">data += `}}`
 
-                        if bool </span><span class="cov0" title="0">{
+                        if bool </span><span class="cov8" title="1">{
                                 io.WriteString(w, data)
                         }</span>
-                } else<span class="cov0" title="0"> {
+                } else<span class="cov8" title="1"> {
                         result, bool, _ := BUSINESS.GetRoom(a.Db, idBlock)
                         resultJson, _ := json.Marshal(result)
 
@@ -885,33 +881,31 @@ func (a *ApiDB) GetRoom(w http.ResponseWriter, r *http.Request) <span class="cov
                                         "message": "Get rooms success",
                                         "data":
                                                 {"rooms":`
-                        if len(result) &gt; 0 </span><span class="cov0" title="0">{
+                        if len(result) &gt; 0 </span><span class="cov8" title="1">{
                                 data += string(resultJson)
-                        }</span> else<span class="cov0" title="0"> {
-                                data += "[]"
-                        }</span>
-                        <span class="cov0" title="0">data += `}}`
+                        }</span> else<span class="cov0" title="0"> {data += "[]"}</span>
+                        <span class="cov8" title="1">data += `}}`
 
-                        if bool </span><span class="cov0" title="0">{
+                        if bool </span><span class="cov8" title="1">{
                                 io.WriteString(w, data)
                         }</span>
                 }
         }
 }
 
-func (a *ApiDB) CreateRoom(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) CreateRoom(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
         room := MODELS.ROOMS{}
         err := json.NewDecoder(r.Body).Decode(&amp;room)
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 io.WriteString(w, `{"message": "Wrong format!"}`)
                 return
         }</span>
 
-        <span class="cov0" title="0">result, err := BUSINESS.CreateRoom(a.Db, room)
-        if result </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">result, err := BUSINESS.CreateRoom(a.Db, room)
+        if result </span><span class="cov8" title="1">{
                 io.WriteString(w, `{
                                                 "status": 200,
                                                 "message": "Create rooms success",
@@ -919,12 +913,12 @@ func (a *ApiDB) CreateRoom(w http.ResponseWriter, r *http.Request) <span class="
                                                         "status": 1
                                                         }
                                                 }`)
-        }</span> else<span class="cov0" title="0"> {
+        }</span> else<span class="cov8" title="1"> {
                 io.WriteString(w, `{"message" : "Can't create room'"}`)
         }</span>
 }
 
-func (a *ApiDB) DeleteRoom(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) DeleteRoom(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         w.Header().Set("Access-Control-Allow-Origin", "*")
         w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
@@ -934,39 +928,39 @@ func (a *ApiDB) DeleteRoom(w http.ResponseWriter, r *http.Request) <span class="
         vars := mux.Vars(r)
         id, err := strconv.Atoi(vars["id"])
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 io.WriteString(w, `{"message": "Wrong format!"}`)
                 return
         }</span>
 
-        <span class="cov0" title="0">result, err := BUSINESS.DeleteRoom(a.Db, id)
+        <span class="cov8" title="1">result, err := BUSINESS.DeleteRoom(a.Db, id)
 
-        if result </span><span class="cov0" title="0">{
+        if result </span><span class="cov8" title="1">{
                 io.WriteString(w, `{ 
                                                                 "status": 200,
                                                                 "message": "Delete rooms success",
                                                                 "data": {
                                                                         "status": 1
                                                                 }}`)
-        }</span> else<span class="cov0" title="0"> {
-                io.WriteString(w, `"message": "Can’t delete room"`)
+        }</span> else<span class="cov8" title="1"> {
+                io.WriteString(w, `{"message": "Can’t delete room"}`)
         }</span>
 }
 
-func (a *ApiDB) DeleteRooms(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) DeleteRooms(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
         var ids = MODELS.ROOMIDS{}
         err := json.NewDecoder(r.Body).Decode(&amp;ids)
 
-        if err != nil </span><span class="cov0" title="0">{
-                io.WriteString(w, "Wrong format !")
+        if err != nil </span><span class="cov8" title="1">{
+                io.WriteString(w, `{"message":"Wrong format!"}`)
                 return
         }</span>
 
-        <span class="cov0" title="0">result, _ := BUSINESS.DeleteRooms(a.Db, ids.RoomsId)
+        <span class="cov8" title="1">result, _ := BUSINESS.DeleteRooms(a.Db, ids.RoomsId)
 
-        if result </span><span class="cov0" title="0">{
+        if result </span><span class="cov8" title="1">{
                 io.WriteString(w, `{
                                                                 "status": 200,
                                                                 "message": "Delete rooms success",
@@ -974,12 +968,12 @@ func (a *ApiDB) DeleteRooms(w http.ResponseWriter, r *http.Request) <span class=
                                                                         "status": 1
                                                                 }
                                                         }`)
-        }</span> else<span class="cov0" title="0"> {
+        }</span> else<span class="cov8" title="1"> {
                 io.WriteString(w, `{"message": "Can’t delete rooms"}`)
         }</span>
 }
 
-func (a *ApiDB) UpdateRoom(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) UpdateRoom(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
         vars := mux.Vars(r)
@@ -988,130 +982,131 @@ func (a *ApiDB) UpdateRoom(w http.ResponseWriter, r *http.Request) <span class="
         room := MODELS.ROOMS{}
         arr2 := json.NewDecoder(r.Body).Decode(&amp;room)
 
-        if err != nil || arr2 != nil </span><span class="cov0" title="0">{
+        if err != nil || arr2 != nil </span><span class="cov8" title="1">{
                 io.WriteString(w, `{"message": "Wrong format!"}`)
                 return
         }</span>
 
-        <span class="cov0" title="0">result, err := BUSINESS.UpdateRoom(a.Db, id, room)
+        <span class="cov8" title="1">result, err := BUSINESS.UpdateRoom(a.Db, id, room)
 
-        if result </span><span class="cov0" title="0">{
+        if result </span><span class="cov8" title="1">{
                 io.WriteString(w, `{  "status": 200,
                                                                 "message": "Update room success",
                                                                 "data": {
                                                                 "status": 1
                                                                 }}`)
-        }</span> else<span class="cov0" title="0"> {
+        }</span> else<span class="cov8" title="1"> {
                 io.WriteString(w, `{"message": "Can’t update room"}`)
         }</span>
 }
 
-func (a *ApiDB) GetRoomDB(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) GetRoomDB(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         status, ok := r.URL.Query()["status"]
         idBlock, ok1 := r.URL.Query()["idBlock"]
         userId, ok2 := r.URL.Query()["userId"]
-        if !ok1 || len(idBlock[0]) &lt; 1 </span><span class="cov0" title="0">{
+        if !ok1 || len(idBlock[0]) &lt; 1 </span><span class="cov8" title="1">{
                 io.WriteString(w, `{ "message": "Url Param 'idBlock' is missing"}`)
                 return
         }</span>
-        <span class="cov0" title="0">if !ok || len(status[0]) &lt; 1 </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if !ok || len(status[0]) &lt; 1 </span><span class="cov8" title="1">{
                 io.WriteString(w, `{ "message": "Url Param 'status' is missing"}`)
                 return
         }</span>
-        <span class="cov0" title="0">if !ok2 || len(userId[0]) &lt; 1 </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if !ok2 || len(userId[0]) &lt; 1 </span><span class="cov8" title="1">{
                 io.WriteString(w, `{ "message": "Url Param 'userId' is missing"}`)
                 return
         }</span>
 
-        <span class="cov0" title="0">IdBlock, err := strconv.Atoi(idBlock[0])
+        <span class="cov8" title="1">IdBlock, err := strconv.Atoi(idBlock[0])
         Status, err1 := strconv.Atoi(status[0])
         UserId, err2 := strconv.Atoi(userId[0])
 
-        if err != nil || err1 != nil || err2 != nil </span><span class="cov0" title="0">{
+        if err != nil || err1 != nil || err2 != nil </span><span class="cov8" title="1">{
                 io.WriteString(w, `{"message": "Wrong format!"}`)
                 return
         }</span>
 
-        <span class="cov0" title="0">result, err := BUSINESS.GetRoomDB(a.Db, IdBlock, Status, UserId)
+        <span class="cov8" title="1">result, err := BUSINESS.GetRoomDB(a.Db, IdBlock, Status, UserId)
         resultJson, _ := json.Marshal(result)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 io.WriteString(w, `{"message": "Can’t get rooms"}`)
-        }</span>
-        <span class="cov0" title="0">data := `{                "status": 200,
+        }</span>else<span class="cov8" title="1"> {
+                data := `{                "status": 200,
                                         "message": "Get rooms success",
                                         "data":
                                                 {"rooms":`
-        data += string(resultJson)
-        data += `}}`
-        io.WriteString(w, data)</span>
+                data += string(resultJson)
+                data += `}}`
 
+                io.WriteString(w, data)
+        }</span>
 }
 
-func (a *ApiDB) GetRoomImage(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) GetRoomImage(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         codeRoom, ok := r.URL.Query()["codeRoom"]
-        if !ok || len(codeRoom[0]) &lt; 1 </span><span class="cov0" title="0">{
+        if !ok || len(codeRoom[0]) &lt; 1 </span><span class="cov8" title="1">{
                 io.WriteString(w, `{ "message": "Url Param 'idBlock' is missing"}`)
                 return
         }</span>
 
-        <span class="cov0" title="0">result, bool, _ := BUSINESS.GetRoomImage(a.Db, codeRoom[0])
+        <span class="cov8" title="1">result, bool, _ := BUSINESS.GetRoomImage(a.Db, codeRoom[0])
         resultJson, _ := json.Marshal(result)
         var data string
-        if bool </span><span class="cov0" title="0">{
+        if bool </span><span class="cov8" title="1">{
                 data = `{                "status": 200,
                                         "message": "Get images success",
                                         "data":
                                                 {"images":`
-                if len(result) &gt; 0 </span><span class="cov0" title="0">{
+                if len(result) &gt; 0 </span><span class="cov8" title="1">{
                         data += string(resultJson)
                 }</span> else<span class="cov0" title="0"> {
                         data += "[]"
                 }</span>
 
-                <span class="cov0" title="0">data += `}}`</span>
+                <span class="cov8" title="1">data += `}}`</span>
 
-        } else<span class="cov0" title="0"> {
-                data = `{    "message": "Can’t get images",}`
+        } else<span class="cov8" title="1"> {
+                data = `{"message": "Can’t get images"}`
 
         }</span>
-        <span class="cov0" title="0">io.WriteString(w, data)</span>
+        <span class="cov8" title="1">io.WriteString(w, data)</span>
 
 }
 
-func (a *ApiDB) GetRoomUser(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) GetRoomUser(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         idRooms, ok := r.URL.Query()["idRoom"]
-        if !ok || len(idRooms[0]) &lt; 1 </span><span class="cov0" title="0">{
+        if !ok || len(idRooms[0]) &lt; 1 </span><span class="cov8" title="1">{
                 io.WriteString(w, `{ "message": "Url Param 'idRoom' is missing"}`)
                 return
         }</span>
-        <span class="cov0" title="0">IdRoom, err := strconv.Atoi(idRooms[0])
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">IdRoom, err := strconv.Atoi(idRooms[0])
+        if err != nil </span><span class="cov8" title="1">{
                 io.WriteString(w, `{ "message": "can not parse idRoom as int"}`)
                 return
         }</span>
-        <span class="cov0" title="0">result, bool, _ := BUSINESS.GetUserRenting(a.Db, IdRoom)
+        <span class="cov8" title="1">result, bool, _ := BUSINESS.GetUserRenting(a.Db, IdRoom)
         resultJson, _ := json.Marshal(result)
         var data string
-        if bool </span><span class="cov0" title="0">{
+        if bool </span><span class="cov8" title="1">{
                 data = `{                "status": 200,
                                         "message": "Get user rent success",
                                         "data":
                                                 {"userRents":`
-                if len(result) &gt; 0 </span><span class="cov0" title="0">{
+                if len(result) &gt; 0 </span><span class="cov8" title="1">{
                         data += string(resultJson)
                 }</span> else<span class="cov0" title="0"> {
                         data += "[]"
                 }</span>
-                <span class="cov0" title="0">data += `}}`</span>
+                <span class="cov8" title="1">data += `}}`</span>
 
-        } else<span class="cov0" title="0"> {
-                data = `{    "message": "Can’t get user rent",}`
+        } else<span class="cov8" title="1"> {
+                data = `{    "message": "Can’t get user rent"}`
 
         }</span>
-        <span class="cov0" title="0">io.WriteString(w, data)</span>
+        <span class="cov8" title="1">io.WriteString(w, data)</span>
 
 }
 </pre>

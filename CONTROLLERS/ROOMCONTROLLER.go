@@ -5,7 +5,6 @@ import (
 	"ROOMS/MODELS"
 	"encoding/json"
 	"io"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -19,7 +18,11 @@ func (a *ApiDB) GetRoom(w http.ResponseWriter, r *http.Request) {
 	if err == nil && id > 0 {
 		result, bool := BUSINESS.GetRoomById(a.Db, id)
 		resultJson, _ := json.Marshal(result)
+		//var abc []MODELS.ROOMS
+		//ab,_ := json.Marshal(abc)
+		//print(string(ab))
 		var data string
+		//print(result == nil)
 		if bool == nil && result != nil {
 			data = `{		"status": 200,
 					"message": "Get rooms success",
@@ -28,12 +31,11 @@ func (a *ApiDB) GetRoom(w http.ResponseWriter, r *http.Request) {
 
 			if len(resultJson) > 0 {
 				data += string(resultJson)
-			} else {
-				data += "[]"
 			}
 
 			data += `}}`
 		} else {
+			//print(err)
 			data = `{"message": "Can’t get room"}`
 		}
 		io.WriteString(w, data)
@@ -49,10 +51,7 @@ func (a *ApiDB) GetRoom(w http.ResponseWriter, r *http.Request) {
 			io.WriteString(w, `{"message": "Wrong format!"}`)
 			return
 		}
-		if err := r.ParseForm(); err != nil {
-			log.Printf("Error parsing form: %s", err)
-			return
-		}
+		r.ParseForm()
 		isMatchP, err := strconv.ParseBool(r.Form.Get("isMatch"))
 
 		if isMatchP {
@@ -145,7 +144,7 @@ func (a *ApiDB) DeleteRoom(w http.ResponseWriter, r *http.Request) {
 									"status": 1
 								}}`)
 	} else {
-		io.WriteString(w, `"message": "Can’t delete room"`)
+		io.WriteString(w, `{"message": "Can’t delete room"}`)
 	}
 }
 
@@ -156,7 +155,7 @@ func (a *ApiDB) DeleteRooms(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&ids)
 
 	if err != nil {
-		io.WriteString(w, "Wrong format !")
+		io.WriteString(w, `{"message":"Wrong format!"}`)
 		return
 	}
 
@@ -233,15 +232,16 @@ func (a *ApiDB) GetRoomDB(w http.ResponseWriter, r *http.Request) {
 	resultJson, _ := json.Marshal(result)
 	if err != nil {
 		io.WriteString(w, `{"message": "Can’t get rooms"}`)
-	}
-	data := `{		"status": 200,
+	} else {
+		data := `{		"status": 200,
 					"message": "Get rooms success",
 					"data":
 						{"rooms":`
-	data += string(resultJson)
-	data += `}}`
-	io.WriteString(w, data)
+		data += string(resultJson)
+		data += `}}`
 
+		io.WriteString(w, data)
+	}
 }
 
 func (a *ApiDB) GetRoomImage(w http.ResponseWriter, r *http.Request) {
@@ -269,7 +269,7 @@ func (a *ApiDB) GetRoomImage(w http.ResponseWriter, r *http.Request) {
 		data += `}}`
 
 	} else {
-		data = `{    "message": "Can’t get images",}`
+		data = `{"message": "Can’t get images"}`
 
 	}
 	io.WriteString(w, data)
@@ -304,7 +304,7 @@ func (a *ApiDB) GetRoomUser(w http.ResponseWriter, r *http.Request) {
 		data += `}}`
 
 	} else {
-		data = `{    "message": "Can’t get user rent",}`
+		data = `{    "message": "Can’t get user rent"}`
 
 	}
 	io.WriteString(w, data)

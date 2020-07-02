@@ -16,7 +16,7 @@ type ROOMS struct {
 }
 
 type ROOMIDS struct {
-	RoomsId []int
+	RoomsId []int `json:"roomsId"`
 }
 
 type GET_ROOMDB_REQUEST struct {
