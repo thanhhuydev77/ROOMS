@@ -58,7 +58,7 @@
 				
 				<option value="file1">ROOMS/CONTROLLERS/BILLCONTROLLER.go (100.0%)</option>
 				
-				<option value="file2">ROOMS/CONTROLLERS/BLOCKCONTROLLER.go (17.9%)</option>
+				<option value="file2">ROOMS/CONTROLLERS/BLOCKCONTROLLER.go (33.3%)</option>
 				
 				<option value="file3">ROOMS/CONTROLLERS/CONTRACTCONTROLLER.go (0.0%)</option>
 				
@@ -332,22 +332,22 @@ func (a *ApiDB) GetBlock(w http.ResponseWriter, r *http.Request) <span class="co
         io.WriteString(w, stringresult)</span>
 }
 
-func (a *ApiDB) GetBlockById(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) GetBlockById(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         vars := mux.Vars(r)
         id, err := strconv.Atoi(vars["id"])
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 //w.WriteHeader(http.StatusBadRequest)
                 io.WriteString(w, `{"message":"can not convert idowner as int"}`)
                 return
         }</span>
-        <span class="cov0" title="0">listBlock, OK := BUSINESS.GetBlockById(a.Db, id)
+        <span class="cov8" title="1">listBlock, _ := BUSINESS.GetBlockById(a.Db, id)
         jsonlist, _ := json.Marshal(listBlock)
-        if !OK </span><span class="cov0" title="0">{
-                io.WriteString(w, `{ "message": "Can’t get Blocks" }`)
-                return
-        }</span>
-        <span class="cov0" title="0">stringresult := `{"status": 200,
+        // if !OK {
+        //         io.WriteString(w, `{ "message": "Can’t get Blocks" }`)
+        //         return
+        // }
+        stringresult := `{"status": 200,
                                     "message": "Get Blocks success",
                                     "data": {
                                 "blocks":`

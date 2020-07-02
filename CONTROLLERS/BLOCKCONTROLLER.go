@@ -46,12 +46,12 @@ func (a *ApiDB) GetBlockById(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, `{"message":"can not convert idowner as int"}`)
 		return
 	}
-	listBlock, OK := BUSINESS.GetBlockById(a.Db, id)
+	listBlock, _ := BUSINESS.GetBlockById(a.Db, id)
 	jsonlist, _ := json.Marshal(listBlock)
-	if !OK {
-		io.WriteString(w, `{ "message": "Can’t get Blocks" }`)
-		return
-	}
+	// if !OK {
+	// 	io.WriteString(w, `{ "message": "Can’t get Blocks" }`)
+	// 	return
+	// }
 	stringresult := `{"status": 200,
     				"message": "Get Blocks success",
     				"data": {
