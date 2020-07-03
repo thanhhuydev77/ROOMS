@@ -547,3 +547,108 @@ func TestUpdateBlockFail3(t *testing.T) {
 			status, http.StatusOK)
 	}
 }
+
+func createMockDeleteBlock() (*sql.DB, sqlmock.Sqlmock, error) {
+	db, mock, err := sqlmock.New()
+	result := sqlmock.NewRows([]string{"id", "nameBlock", "address", "description", "idowner"}).
+		AddRow(68, "A3", "KTX Khu A - ĐHQG HCM", "To nhất quả đất", 69).
+		AddRow(69, "A2", "KTX Khu A", "To", 69)
+	mock.ExpectQuery(`delete from BLOCKS`).WillReturnRows(result)
+
+	return db, mock, err
+}
+
+func TestDeleteBlockPass(t *testing.T) {
+	type output struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+
+	req, err := http.NewRequest("DELETE", "/block/delete/68", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	req = mux.SetURLVars(req, map[string]string{
+		"id": "68",
+	})
+
+	rr := httptest.NewRecorder()
+	db, _, _ := createMockDeleteBlock()
+	a := &ApiDB{
+		db,
+	}
+
+	handler := http.HandlerFunc(a.DeleteBlock)
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	var out output
+	err = json.Unmarshal(rr.Body.Bytes(), &out)
+	if err != nil {
+		t.Errorf("error marshal :%v", err)
+	}
+	if out.Message != "Delete Block success" {
+		t.Errorf("error message(%v)", out.Message)
+	}
+}
+
+func TestDeleteBlockFail1(t *testing.T) {
+	type output struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+
+	req, err := http.NewRequest("DELETE", "/block/update/68", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	req = mux.SetURLVars(req, map[string]string{
+		"id": "abc",
+	})
+
+	rr := httptest.NewRecorder()
+	db, _, _ := createMockDeleteBlock()
+	a := &ApiDB{
+		db,
+	}
+
+	handler := http.HandlerFunc(a.DeleteBlock)
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+}
+
+func TestDeleteBlockFail2(t *testing.T) {
+	type output struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+
+	req, err := http.NewRequest("DELETE", "/block/delete/68", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	req = mux.SetURLVars(req, map[string]string{
+		"id": "68",
+	})
+
+	rr := httptest.NewRecorder()
+	a := &ApiDB{
+		nil,
+	}
+
+	handler := http.HandlerFunc(a.DeleteBlock)
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+}

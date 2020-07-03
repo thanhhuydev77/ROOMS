@@ -123,17 +123,13 @@ func DeleteBlock(db *sql.DB, id int) (bool, error) {
 		return false, fmt.Errorf("can not connect db")
 	}
 
-	res, err := db.Exec(`delete from BLOCKS where id = ?`, id)
+	res, err := db.Query(`delete from BLOCKS where id = ?`, id)
 
 	if err != nil {
-		panic(err)
-	}
-
-	num, err := res.RowsAffected()
-	m := int64(num)
-	if m == 0 {
 		return false, err
 	}
+	defer res.Close()
+
 	return true, nil
 }
 

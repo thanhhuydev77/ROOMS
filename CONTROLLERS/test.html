@@ -58,7 +58,7 @@
 				
 				<option value="file1">ROOMS/CONTROLLERS/BILLCONTROLLER.go (100.0%)</option>
 				
-				<option value="file2">ROOMS/CONTROLLERS/BLOCKCONTROLLER.go (69.1%)</option>
+				<option value="file2">ROOMS/CONTROLLERS/BLOCKCONTROLLER.go (86.4%)</option>
 				
 				<option value="file3">ROOMS/CONTROLLERS/CONTRACTCONTROLLER.go (0.0%)</option>
 				
@@ -409,7 +409,7 @@ func (a *ApiDB) UpdateBlock(w http.ResponseWriter, r *http.Request) <span class=
         return</span>
 }
 
-func (a *ApiDB) DeleteBlock(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) DeleteBlock(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         w.Header().Set("Access-Control-Allow-Origin", "*")
         w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
@@ -419,16 +419,16 @@ func (a *ApiDB) DeleteBlock(w http.ResponseWriter, r *http.Request) <span class=
         vars := mux.Vars(r)
         idblock, err := strconv.Atoi(vars["id"])
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 //w.WriteHeader(http.StatusBadRequest)
                 io.WriteString(w, `{"message":"can not convert id as int"}`)
 
                 return
         }</span>
 
-        <span class="cov0" title="0">res, _ := BUSINESS.DeleteBlock(a.Db, idblock)
+        <span class="cov8" title="1">res, _ := BUSINESS.DeleteBlock(a.Db, idblock)
 
-        if res </span><span class="cov0" title="0">{
+        if res </span><span class="cov8" title="1">{
                 io.WriteString(w, `{
                                                 "status": 200,
                                                 "message": "Delete Block success",
@@ -438,7 +438,7 @@ func (a *ApiDB) DeleteBlock(w http.ResponseWriter, r *http.Request) <span class=
                                                 }`)
                 return
         }</span>
-        <span class="cov0" title="0">io.WriteString(w, `{"message" : "Can’t  Delete Block"}`)</span>
+        <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t  Delete Block"}`)</span>
 }
 
 func (a *ApiDB) DeleteBlocks(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
