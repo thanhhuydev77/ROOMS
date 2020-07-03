@@ -652,3 +652,101 @@ func TestDeleteBlockFail2(t *testing.T) {
 			status, http.StatusOK)
 	}
 }
+
+func TestDeleteBlocksPass(t *testing.T) {
+	type output struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+
+	var jsonStr = []byte(`{
+		"blocksId": [68,69]
+	}`)
+
+	req, err := http.NewRequest("POST", "/block/delete-all", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	db, _, _ := createMockDeleteBlock()
+	a := &ApiDB{
+		db,
+	}
+
+	handler := http.HandlerFunc(a.DeleteBlocks)
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	var out output
+	err = json.Unmarshal(rr.Body.Bytes(), &out)
+	if err != nil {
+		t.Errorf("error marshal :%v", err)
+	}
+	if out.Message != "Delete Blocks success" {
+		t.Errorf("error message(%v)", out.Message)
+	}
+}
+
+func TestDeleteBlocksFail1(t *testing.T) {
+	type output struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+
+	var jsonStr = []byte(`{
+		"blocksId": abc
+	}`)
+
+	req, err := http.NewRequest("POST", "/block/delete-all", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	db, _, _ := createMockDeleteBlock()
+	a := &ApiDB{
+		db,
+	}
+
+	handler := http.HandlerFunc(a.DeleteBlocks)
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+}
+
+func TestDeleteBlocksFail2(t *testing.T) {
+	type output struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+
+	var jsonStr = []byte(`{
+		"blocksId": [68,69]
+	}`)
+
+	req, err := http.NewRequest("POST", "/block/delete-all", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	a := &ApiDB{
+		nil,
+	}
+
+	handler := http.HandlerFunc(a.DeleteBlocks)
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+}

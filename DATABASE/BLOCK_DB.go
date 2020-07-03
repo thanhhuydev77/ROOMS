@@ -150,12 +150,12 @@ func DeleteBlocks(db *sql.DB, ids []int) (bool, error) {
 		args[i] = id
 	}
 	stmt := `delete from BLOCKS where id in (?` + strings.Repeat(",?", len(args)-1) + `)`
-	rows, err := db.Exec(stmt, args...)
+	rows, err := db.Query(stmt, args...)
 
-	num, err := rows.RowsAffected()
-	m := int64(num)
-	if m == 0 {
+	if err != nil {
 		return false, err
 	}
+	defer rows.Close()
+
 	return true, nil
 }

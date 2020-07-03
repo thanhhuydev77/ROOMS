@@ -93,8 +93,8 @@ func (a *ApiDB) UpdateBlock(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	p := MODELS.BLOCKS{}
-	err = json.NewDecoder(r.Body).Decode(&p)
-	if err != nil {
+	err1 := json.NewDecoder(r.Body).Decode(&p)
+	if err1 != nil {
 		io.WriteString(w, `{"message": "wrong format!"}`)
 		return
 	}
@@ -161,7 +161,7 @@ func (a *ApiDB) DeleteBlocks(w http.ResponseWriter, r *http.Request) {
 	if res {
 		io.WriteString(w, `{
 						"status": 200,
-						"message": "Delete Block success",
+						"message": "Delete Blocks success",
 						"data": {
 							"status": 1
 							}

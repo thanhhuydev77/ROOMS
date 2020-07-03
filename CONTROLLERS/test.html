@@ -58,11 +58,11 @@
 				
 				<option value="file1">ROOMS/CONTROLLERS/BILLCONTROLLER.go (100.0%)</option>
 				
-				<option value="file2">ROOMS/CONTROLLERS/BLOCKCONTROLLER.go (86.4%)</option>
+				<option value="file2">ROOMS/CONTROLLERS/BLOCKCONTROLLER.go (100.0%)</option>
 				
 				<option value="file3">ROOMS/CONTROLLERS/CONTRACTCONTROLLER.go (0.0%)</option>
 				
-				<option value="file4">ROOMS/CONTROLLERS/CUSTOMERCONTROLLER.go (0.0%)</option>
+				<option value="file4">ROOMS/CONTROLLERS/CUSTOMERCONTROLLER.go (21.7%)</option>
 				
 				<option value="file5">ROOMS/CONTROLLERS/DEFAULT_SERVICECONTROLLER.go (100.0%)</option>
 				
@@ -388,8 +388,8 @@ func (a *ApiDB) UpdateBlock(w http.ResponseWriter, r *http.Request) <span class=
                 return
         }</span>
         <span class="cov8" title="1">p := MODELS.BLOCKS{}
-        err = json.NewDecoder(r.Body).Decode(&amp;p)
-        if err != nil </span><span class="cov8" title="1">{
+        err1 := json.NewDecoder(r.Body).Decode(&amp;p)
+        if err1 != nil </span><span class="cov8" title="1">{
                 io.WriteString(w, `{"message": "wrong format!"}`)
                 return
         }</span>
@@ -441,29 +441,29 @@ func (a *ApiDB) DeleteBlock(w http.ResponseWriter, r *http.Request) <span class=
         <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t  Delete Block"}`)</span>
 }
 
-func (a *ApiDB) DeleteBlocks(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) DeleteBlocks(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
         var p = MODELS.IDBLOCKS{}
         err := json.NewDecoder(r.Body).Decode(&amp;p)
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 io.WriteString(w, `{ "message": "Wrong format" }`)
                 return
         }</span>
-        <span class="cov0" title="0">res, _ := BUSINESS.DeleteBlocks(a.Db, p.BlocksId)
+        <span class="cov8" title="1">res, _ := BUSINESS.DeleteBlocks(a.Db, p.BlocksId)
 
-        if res </span><span class="cov0" title="0">{
+        if res </span><span class="cov8" title="1">{
                 io.WriteString(w, `{
                                                 "status": 200,
-                                                "message": "Delete Block success",
+                                                "message": "Delete Blocks success",
                                                 "data": {
                                                         "status": 1
                                                         }
                                                 }`)
                 return
         }</span>
-        <span class="cov0" title="0">io.WriteString(w, `{"message" : "Can’t  Delete Block"}`)</span>
+        <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t  Delete Block"}`)</span>
 }
 </pre>
 		
@@ -633,23 +633,23 @@ import (
         "strconv"
 )
 
-func (a *ApiDB) GetCustomersByUserId(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) GetCustomersByUserId(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         keys, ok := r.URL.Query()["userId"]
-        if !ok || len(keys[0]) &lt; 1 </span><span class="cov0" title="0">{
+        if !ok || len(keys[0]) &lt; 1 </span><span class="cov8" title="1">{
                 io.WriteString(w, `{"message":"can not convert idowner as int"}`)
                 return
         }</span>
-        <span class="cov0" title="0">userId, _ := strconv.Atoi(keys[0])
+        <span class="cov8" title="1">userId, _ := strconv.Atoi(keys[0])
         listCustomer, _, err := BUSINESS.GetCustomersByUserId(a.Db, userId)
         jsonCustomers, _ := json.Marshal(listCustomer)
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 io.WriteString(w, `{ "message": "Can’t get customers" }`)
                 return
         }</span>
 
-        <span class="cov0" title="0">stringresult := `{"status": 200,
+        <span class="cov8" title="1">stringresult := `{"status": 200,
                                     "message": "Get customers success",
                                     "data": {
                                 "customers":`
