@@ -4,10 +4,11 @@ import (
 	"ROOMS/BUSINESS"
 	"ROOMS/MODELS"
 	"encoding/json"
-	"github.com/gorilla/mux"
 	"io"
 	"net/http"
 	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 func (a *ApiDB) GetCustomersByUserId(w http.ResponseWriter, r *http.Request) {
@@ -42,7 +43,7 @@ func (a *ApiDB) CreateCustomer(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&p)
 
 	if err != nil {
-		io.WriteString(w, `{"message": "wrong format!"}`+err.Error())
+		io.WriteString(w, `{"message": "wrong format!"}`)
 		return
 	}
 

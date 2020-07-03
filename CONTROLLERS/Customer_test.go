@@ -2,6 +2,7 @@ package CONTROLLERS
 
 import (
 	"ROOMS/MODELS"
+	"bytes"
 	"database/sql"
 	"encoding/json"
 	"net/http"
@@ -128,6 +129,136 @@ func TestGetCustomersFail2(t *testing.T) {
 
 	handle := http.HandlerFunc(a.GetCustomersByUserId)
 	handle.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+}
+
+func createMockCreateCustomer() (*sql.DB, sqlmock.Sqlmock, error) {
+	db, mock, err := sqlmock.New()
+
+	result := sqlmock.NewRows([]string{"id"}).AddRow(1)
+	mock.ExpectQuery("INSERT INTO CUSTOMERS").WillReturnRows(result)
+
+	return db, mock, err
+}
+
+func TestCreateCustomerPass(t *testing.T) {
+
+	type Result struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+
+	var jsonStr = []byte(`{
+		"fullName": "Nguyễn Thành Huy 2",
+		"phoneNumber": "0987898767",
+		"dateBirth": "2020-05-11",
+		"email": "nltruongvi@gmail.com",
+		"job": "Người đi làm",
+		"workPlace": "Trường đại học công nghệ thông tin",
+		"sex": "male",
+		"tempReg": 1,
+		"note": "fqw2132121",
+		"avatar": "",
+		"identifyBack": "",
+		"identifyFront": "",
+		"codeUser": "#1589206969",
+		"idOwner": 40
+		}`)
+
+	req, err := http.NewRequest("POST", "/customer/create", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	db, _, _ := createMockCreateCustomer()
+	a := &ApiDB{
+		db,
+	}
+	handler := http.HandlerFunc(a.CreateCustomer)
+	handler.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	var out Result
+	err = json.Unmarshal(rr.Body.Bytes(), &out)
+	if err != nil {
+		t.Errorf("error marshal :%v", err)
+	}
+	if out.Message != "Create customer success" {
+		t.Errorf("error message(%v)", out.Message)
+	}
+}
+
+func TestCreateCustomerFail1(t *testing.T) {
+
+	type Result struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+
+	var jsonStr = []byte(`{
+			abc
+		}`)
+
+	req, err := http.NewRequest("POST", "/customer/create", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	db, _, _ := createMockCreateCustomer()
+	a := &ApiDB{
+		db,
+	}
+	handler := http.HandlerFunc(a.CreateCustomer)
+	handler.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+}
+
+func TestCreateCustomerFail2(t *testing.T) {
+
+	type Result struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+
+	var jsonStr = []byte(`{
+		"fullName": "Nguyễn Thành Huy 2",
+		"phoneNumber": "0987898767",
+		"dateBirth": "2020-05-11",
+		"email": "nltruongvi@gmail.com",
+		"job": "Người đi làm",
+		"workPlace": "Trường đại học công nghệ thông tin",
+		"sex": "male",
+		"tempReg": 1,
+		"note": "fqw2132121",
+		"avatar": "",
+		"identifyBack": "",
+		"identifyFront": "",
+		"codeUser": "#1589206969",
+		"idOwner": 40
+		}`)
+
+	req, err := http.NewRequest("POST", "/customer/create", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	a := &ApiDB{
+		nil,
+	}
+	handler := http.HandlerFunc(a.CreateCustomer)
+	handler.ServeHTTP(rr, req)
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusOK)

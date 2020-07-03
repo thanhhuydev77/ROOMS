@@ -62,7 +62,7 @@
 				
 				<option value="file3">ROOMS/CONTROLLERS/CONTRACTCONTROLLER.go (0.0%)</option>
 				
-				<option value="file4">ROOMS/CONTROLLERS/CUSTOMERCONTROLLER.go (21.7%)</option>
+				<option value="file4">ROOMS/CONTROLLERS/CUSTOMERCONTROLLER.go (36.2%)</option>
 				
 				<option value="file5">ROOMS/CONTROLLERS/DEFAULT_SERVICECONTROLLER.go (100.0%)</option>
 				
@@ -627,10 +627,11 @@ import (
         "ROOMS/BUSINESS"
         "ROOMS/MODELS"
         "encoding/json"
-        "github.com/gorilla/mux"
         "io"
         "net/http"
         "strconv"
+
+        "github.com/gorilla/mux"
 )
 
 func (a *ApiDB) GetCustomersByUserId(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
@@ -658,27 +659,27 @@ func (a *ApiDB) GetCustomersByUserId(w http.ResponseWriter, r *http.Request) <sp
         io.WriteString(w, stringresult)</span>
 }
 
-func (a *ApiDB) CreateCustomer(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) CreateCustomer(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
         p := MODELS.CUSTOMER_INPUT{}
         err := json.NewDecoder(r.Body).Decode(&amp;p)
 
-        if err != nil </span><span class="cov0" title="0">{
-                io.WriteString(w, `{"message": "wrong format!"}`+err.Error())
+        if err != nil </span><span class="cov8" title="1">{
+                io.WriteString(w, `{"message": "wrong format!"}`)
                 return
         }</span>
 
-        <span class="cov0" title="0">rs, _ := BUSINESS.CreateCustomer(a.Db, p)
+        <span class="cov8" title="1">rs, _ := BUSINESS.CreateCustomer(a.Db, p)
 
-        if rs </span><span class="cov0" title="0">{
+        if rs </span><span class="cov8" title="1">{
                 io.WriteString(w, `{ "status": 200,
                                                     "message": "Create customer success",
                                                             "data": {
                                                         "status": 1
                                                                             }
                                                                 }`)
-        }</span> else<span class="cov0" title="0"> {
+        }</span> else<span class="cov8" title="1"> {
                 io.WriteString(w, `{ "message": "Can’t create customer "}`)
         }</span>
 }
