@@ -62,7 +62,7 @@
 				
 				<option value="file3">ROOMS/CONTROLLERS/CONTRACTCONTROLLER.go (0.0%)</option>
 				
-				<option value="file4">ROOMS/CONTROLLERS/CUSTOMERCONTROLLER.go (36.2%)</option>
+				<option value="file4">ROOMS/CONTROLLERS/CUSTOMERCONTROLLER.go (56.5%)</option>
 				
 				<option value="file5">ROOMS/CONTROLLERS/DEFAULT_SERVICECONTROLLER.go (100.0%)</option>
 				
@@ -684,7 +684,7 @@ func (a *ApiDB) CreateCustomer(w http.ResponseWriter, r *http.Request) <span cla
         }</span>
 }
 
-func (a *ApiDB) DeleteCustomer(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) DeleteCustomer(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         w.Header().Set("Access-Control-Allow-Origin", "*")
         w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
@@ -694,16 +694,16 @@ func (a *ApiDB) DeleteCustomer(w http.ResponseWriter, r *http.Request) <span cla
         vars := mux.Vars(r)
         idCustomer, err := strconv.Atoi(vars["id"])
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 //w.WriteHeader(http.StatusBadRequest)
                 io.WriteString(w, `{"message":"can not convert id as int"}`)
 
                 return
         }</span>
 
-        <span class="cov0" title="0">res, _ := BUSINESS.DeleteCustomer(a.Db, idCustomer)
+        <span class="cov8" title="1">res, _ := BUSINESS.DeleteCustomer(a.Db, idCustomer)
 
-        if res </span><span class="cov0" title="0">{
+        if res </span><span class="cov8" title="1">{
                 io.WriteString(w, `{
                                                 "status": 200,
                                                 "message": "Delete customer success",
@@ -713,7 +713,7 @@ func (a *ApiDB) DeleteCustomer(w http.ResponseWriter, r *http.Request) <span cla
                                                 }`)
                 return
         }</span>
-        <span class="cov0" title="0">io.WriteString(w, `{"message" : "Can’t delete customer"}`)</span>
+        <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t delete customer"}`)</span>
 }
 
 func (a *ApiDB) DeleteManyCustomers(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{

@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/gorilla/mux"
 )
 
 func createMockCustomer() (*sql.DB, sqlmock.Sqlmock, error) {
@@ -258,6 +259,111 @@ func TestCreateCustomerFail2(t *testing.T) {
 		nil,
 	}
 	handler := http.HandlerFunc(a.CreateCustomer)
+	handler.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+}
+
+func createMockDeleteCustomer() (*sql.DB, sqlmock.Sqlmock, error) {
+	db, mock, err := sqlmock.New()
+
+	result := sqlmock.NewRows([]string{"id", "codeUser", "userName", "pass", "fullName", "identifyFront", "identifyBack",
+		"dateBirth", "address", "role", "sex", "job", "workPlace", "tempReg", "province", "email", "avatar",
+		"phoneNumber", "idOwner", "note"}).
+		AddRow(111, "#1589559118", "null", "null", "Lâm Khắc Duy", "https://vi.api.vinlt.wtf/public/images/avatars/1589559112428-1.PNG",
+			"https://vi.api.vinlt.wtf/public/images/avatars/1589559116076-1.PNG", nil, "null", 1, "male", "Sinh Viên",
+			"TP HCM", 1, "null", "khacduylam@gmail.com", "https://vi.api.vinlt.wtf/public/images/avatars/1589559108990-1.PNG",
+			"03425251111", 69, "e21e21 rewrwerew fwefwe")
+	mock.ExpectQuery(`DELETE FROM CUSTOMERS`).WillReturnRows(result)
+	// mock.ExpectQuery(`SELECT R.nameRoom FROM USER_ROOM UR INNER JOIN ROOMS R ON UR.idRoom = R.id WHERE idUser = \?`).WillReturnRows(result)
+	return db, mock, err
+}
+
+func TestDeleteCustomerPass(t *testing.T) {
+	type Result struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+
+	req, err := http.NewRequest("delete", "/customer/delete/111", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	req = mux.SetURLVars(req, map[string]string{
+		"id": "68",
+	})
+
+	rr := httptest.NewRecorder()
+	db, _, _ := createMockDeleteCustomer()
+	a := &ApiDB{
+		db,
+	}
+	handler := http.HandlerFunc(a.DeleteCustomer)
+	handler.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	var out Result
+	err = json.Unmarshal(rr.Body.Bytes(), &out)
+	if err != nil {
+		t.Errorf("error marshal :%v", err)
+	}
+	if out.Message != "Delete customer success" {
+		t.Errorf("error message(%v)", out.Message)
+	}
+}
+
+func TestDeleteCustomerFail1(t *testing.T) {
+	type Result struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+
+	req, err := http.NewRequest("delete", "/customer/delete/111", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	req = mux.SetURLVars(req, map[string]string{
+		"id": "",
+	})
+
+	rr := httptest.NewRecorder()
+	db, _, _ := createMockDeleteCustomer()
+	a := &ApiDB{
+		db,
+	}
+	handler := http.HandlerFunc(a.DeleteCustomer)
+	handler.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+}
+
+func TestDeleteCustomerFail2(t *testing.T) {
+	type Result struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+
+	req, err := http.NewRequest("delete", "/customer/delete/111", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	req = mux.SetURLVars(req, map[string]string{
+		"id": "111",
+	})
+
+	rr := httptest.NewRecorder()
+	// db, _, _ := createMockDeleteCustomer()
+	a := &ApiDB{
+		nil,
+	}
+	handler := http.HandlerFunc(a.DeleteCustomer)
 	handler.ServeHTTP(rr, req)
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",

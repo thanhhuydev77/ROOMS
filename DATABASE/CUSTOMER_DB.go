@@ -124,16 +124,13 @@ func DeleteCustomer(db *sql.DB, idCustomer int) (bool, error) {
 		log.Print("can not connect to database!")
 		return false, fmt.Errorf("can not connect db")
 	}
-	rs, err := db.Exec(`DELETE FROM CUSTOMERS WHERE id = ?`, idCustomer)
+	rs, err := db.Query(`DELETE FROM CUSTOMERS WHERE id = ?`, idCustomer)
 
 	if err != nil {
 		log.Fatalln(err)
 		return false, err
 	}
-	num, err := rs.RowsAffected()
-	if num == 0 {
-		return false, err
-	}
+	defer rs.Close()
 	return true, nil
 }
 
