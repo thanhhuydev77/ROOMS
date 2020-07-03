@@ -356,15 +356,6 @@ func TestCreateBlockFall1(t *testing.T) {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusOK)
 	}
-
-	// var out Result
-	// err = json.Unmarshal(rr.Body.Bytes(), &out)
-	// if err != nil {
-	// 	t.Errorf("error marshal :%v", err)
-	// }
-	// if out.Message != "Create block success" {
-	// 	t.Errorf("error message(%v)", out.Message)
-	// }
 }
 
 func TestCreateBlockFall2(t *testing.T) {
@@ -393,6 +384,164 @@ func TestCreateBlockFall2(t *testing.T) {
 	}
 	handler := http.HandlerFunc(a.CreateBlock)
 	handler.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+}
+
+func createMockBlockUpdate() (*sql.DB, sqlmock.Sqlmock, error) {
+	db, mock, err := sqlmock.New()
+	result := sqlmock.NewRows([]string{"id", "nameBlock", "address", "description", "idowner"}).
+		AddRow(68, "A3", "KTX Khu A - ĐHQG HCM", "To nhất quả đất", 69).
+		AddRow(69, "A2", "KTX Khu A", "To", 69)
+	mock.ExpectQuery(`update BLOCKS`).WillReturnRows(result)
+
+	return db, mock, err
+}
+
+func TestUpdateBlockPass(t *testing.T) {
+
+	type output struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+	var jsonStr = []byte(`{
+	      	"id": 68,
+			"nameBlock": "abc",
+			"address": "hcm",
+			"description": "to",
+			"idOwner": 69
+	}`)
+
+	req, err := http.NewRequest("PUT", "/block/update/68", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+	req = mux.SetURLVars(req, map[string]string{
+		"id": "68",
+	})
+
+	rr := httptest.NewRecorder()
+	db, _, _ := createMockBlockUpdate()
+	a := &ApiDB{
+		db,
+	}
+
+	handler := http.HandlerFunc(a.UpdateBlock)
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	var out output
+	err = json.Unmarshal(rr.Body.Bytes(), &out)
+	if err != nil {
+		t.Errorf("error marshal :%v", err)
+	}
+	if out.Message != "Update Success" {
+		t.Errorf("error message(%v)", out.Message)
+	}
+}
+
+func TestUpdateBlockFail1(t *testing.T) {
+
+	type output struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+	var jsonStr = []byte(`{
+	      	"id": 68,
+			"nameBlock": "abc",
+			"address": "hcm",
+			"description": "to",
+			"idOwner": 69
+	}`)
+
+	req, err := http.NewRequest("PUT", "/block/update/68", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	db, _, _ := createMockBlockUpdate()
+	a := &ApiDB{
+		db,
+	}
+
+	handler := http.HandlerFunc(a.UpdateBlock)
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+}
+
+func TestUpdateBlockFail2(t *testing.T) {
+
+	type output struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+	var jsonStr = []byte(`{
+		abc
+	}`)
+
+	req, err := http.NewRequest("PUT", "/block/update/68", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+	req = mux.SetURLVars(req, map[string]string{
+		"id": "68",
+	})
+
+	rr := httptest.NewRecorder()
+	db, _, _ := createMockBlockUpdate()
+	a := &ApiDB{
+		db,
+	}
+
+	handler := http.HandlerFunc(a.UpdateBlock)
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+}
+
+func TestUpdateBlockFail3(t *testing.T) {
+
+	type output struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+	var jsonStr = []byte(`{
+			"nameBlock": "abc",
+			"address": "hcm",
+			"description": "to",
+			"idOwner": 69
+	}`)
+
+	req, err := http.NewRequest("PUT", "/block/update/1", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+	req = mux.SetURLVars(req, map[string]string{
+		"id": "1",
+	})
+
+	rr := httptest.NewRecorder()
+	a := &ApiDB{
+		nil,
+	}
+
+	handler := http.HandlerFunc(a.UpdateBlock)
+	handler.ServeHTTP(rr, req)
+
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusOK)

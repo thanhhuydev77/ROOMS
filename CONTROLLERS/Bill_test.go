@@ -5,11 +5,12 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
-	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/gorilla/mux"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/gorilla/mux"
 )
 
 func createMockGetBill() (*sql.DB, sqlmock.Sqlmock, error) {

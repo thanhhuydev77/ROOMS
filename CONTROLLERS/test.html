@@ -58,7 +58,7 @@
 				
 				<option value="file1">ROOMS/CONTROLLERS/BILLCONTROLLER.go (100.0%)</option>
 				
-				<option value="file2">ROOMS/CONTROLLERS/BLOCKCONTROLLER.go (45.7%)</option>
+				<option value="file2">ROOMS/CONTROLLERS/BLOCKCONTROLLER.go (69.1%)</option>
 				
 				<option value="file3">ROOMS/CONTROLLERS/CONTRACTCONTROLLER.go (0.0%)</option>
 				
@@ -378,28 +378,28 @@ func (a *ApiDB) CreateBlock(w http.ResponseWriter, r *http.Request) <span class=
         }</span>
 }
 
-func (a *ApiDB) UpdateBlock(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) UpdateBlock(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         vars := mux.Vars(r)
         idblock, err := strconv.Atoi(vars["id"])
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 //w.WriteHeader(http.StatusBadRequest)
                 io.WriteString(w, `{"message":"can not convert id as int"}`)
                 return
         }</span>
-        <span class="cov0" title="0">p := MODELS.BLOCKS{}
-        err1 := json.NewDecoder(r.Body).Decode(&amp;p)
-        if err1 != nil </span><span class="cov0" title="0">{
-                io.WriteString(w, `{"message": "wrong format!"}`+err.Error())
+        <span class="cov8" title="1">p := MODELS.BLOCKS{}
+        err = json.NewDecoder(r.Body).Decode(&amp;p)
+        if err != nil </span><span class="cov8" title="1">{
+                io.WriteString(w, `{"message": "wrong format!"}`)
                 return
         }</span>
-        <span class="cov0" title="0">p.Id = idblock
+        <span class="cov8" title="1">p.Id = idblock
         hasroweffected, _ := BUSINESS.UpdateBlock(a.Db, p)
-        if hasroweffected == false </span><span class="cov0" title="0">{
+        if hasroweffected == false </span><span class="cov8" title="1">{
                 io.WriteString(w, `{ "message": "Can’t update block" }`)
                 return
         }</span>
-        <span class="cov0" title="0">stringresult := `{  "status": 200,
+        <span class="cov8" title="1">stringresult := `{  "status": 200,
                                             "message": "Update Success",
                                                 "data": {
                                                         "status": 1

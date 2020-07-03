@@ -93,9 +93,9 @@ func (a *ApiDB) UpdateBlock(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	p := MODELS.BLOCKS{}
-	err1 := json.NewDecoder(r.Body).Decode(&p)
-	if err1 != nil {
-		io.WriteString(w, `{"message": "wrong format!"}`+err.Error())
+	err = json.NewDecoder(r.Body).Decode(&p)
+	if err != nil {
+		io.WriteString(w, `{"message": "wrong format!"}`)
 		return
 	}
 	p.Id = idblock

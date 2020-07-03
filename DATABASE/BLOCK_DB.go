@@ -100,13 +100,13 @@ func UpdateBlock(db *sql.DB, b MODELS.BLOCKS) (bool, error) {
 		return false, fmt.Errorf("can not connect db")
 	}
 
-	rows, err := db.Exec("update BLOCKS set nameBlock = ? , address = ? , description = ? where id = ?", b.NameBlock, b.Address, b.Description, b.Id)
-
-	num, err := rows.RowsAffected()
-	m := int64(num)
-	if m == 0 {
+	rows, err := db.Query("update BLOCKS set nameBlock = ? , address = ? , description = ? where id = ?", b.NameBlock, b.Address, b.Description, b.Id)
+	//fmt.Print(err)
+	if err != nil {
 		return false, err
 	}
+	defer rows.Close()
+
 	return true, nil
 }
 
