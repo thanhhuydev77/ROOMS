@@ -62,7 +62,7 @@
 				
 				<option value="file3">ROOMS/CONTROLLERS/CONTRACTCONTROLLER.go (0.0%)</option>
 				
-				<option value="file4">ROOMS/CONTROLLERS/CUSTOMERCONTROLLER.go (56.5%)</option>
+				<option value="file4">ROOMS/CONTROLLERS/CUSTOMERCONTROLLER.go (100.0%)</option>
 				
 				<option value="file5">ROOMS/CONTROLLERS/DEFAULT_SERVICECONTROLLER.go (100.0%)</option>
 				
@@ -716,19 +716,19 @@ func (a *ApiDB) DeleteCustomer(w http.ResponseWriter, r *http.Request) <span cla
         <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t delete customer"}`)</span>
 }
 
-func (a *ApiDB) DeleteManyCustomers(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) DeleteManyCustomers(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
         var p = MODELS.CUSTOMERIDS{}
         err := json.NewDecoder(r.Body).Decode(&amp;p)
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 io.WriteString(w, `{ "message": "Wrong format" }`)
                 return
         }</span>
-        <span class="cov0" title="0">res, _ := BUSINESS.DeleteManyCustomers(a.Db, p.CustomersId)
+        <span class="cov8" title="1">res, _ := BUSINESS.DeleteManyCustomers(a.Db, p.CustomersId)
 
-        if res </span><span class="cov0" title="0">{
+        if res </span><span class="cov8" title="1">{
                 io.WriteString(w, `{
                                                 "status": 200,
                                                 "message": "Delete customers success",
@@ -738,32 +738,32 @@ func (a *ApiDB) DeleteManyCustomers(w http.ResponseWriter, r *http.Request) <spa
                                                 }`)
                 return
         }</span>
-        <span class="cov0" title="0">io.WriteString(w, `{"message" : "Can’t  delete customers"}`)</span>
+        <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t  delete customers"}`)</span>
 }
 
-func (a *ApiDB) UpdateCustomer(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) UpdateCustomer(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
         vars := mux.Vars(r)
         idCustomer, err := strconv.Atoi(vars["id"])
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 io.WriteString(w, `{"message":"can not convert id as int"}`)
                 return
         }</span>
 
-        <span class="cov0" title="0">p := MODELS.CUSTOMER_UPDATE{}
+        <span class="cov8" title="1">p := MODELS.CUSTOMER_UPDATE{}
         err1 := json.NewDecoder(r.Body).Decode(&amp;p)
-        if err1 != nil </span><span class="cov0" title="0">{
+        if err1 != nil </span><span class="cov8" title="1">{
                 io.WriteString(w, `{"message": "wrong format!"}`+err1.Error())
                 return
         }</span>
-        <span class="cov0" title="0">p.Id = idCustomer
+        <span class="cov8" title="1">p.Id = idCustomer
         hasroweffected, _ := BUSINESS.UpdateCustomer(a.Db, p)
-        if hasroweffected == false </span><span class="cov0" title="0">{
+        if hasroweffected == false </span><span class="cov8" title="1">{
                 io.WriteString(w, `{ "message": "Can’t update customer" }`)
                 return
         }</span>
-        <span class="cov0" title="0">stringresult := `{  "status": 200,
+        <span class="cov8" title="1">stringresult := `{  "status": 200,
                                             "message": "Update customer Success",
                                                 "data": {
                                                         "status": 1
