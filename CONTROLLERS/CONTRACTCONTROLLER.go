@@ -27,7 +27,7 @@ func (a *ApiDB) GetContract(w http.ResponseWriter, r *http.Request) {
 	}
 
 	stringresult := `{"status": 200,
-    				"message": "Get contracts success redis",
+    				"message": "Get contracts success",
     				"data": {
         			"contracts":`
 	stringresult += string(jsonCustomers)
@@ -40,7 +40,7 @@ func (a *ApiDB) CreateContract(w http.ResponseWriter, r *http.Request) {
 	p := MODELS.CREATE_UPDATE_CONTRACT_REQUEST{}
 	err := json.NewDecoder(r.Body).Decode(&p)
 	if err != nil {
-		io.WriteString(w, `{"message": "wrong format!"}`+err.Error())
+		io.WriteString(w, `{"message": "wrong format!"}`)
 		return
 	}
 
@@ -96,13 +96,6 @@ func (a *ApiDB) DeleteAllContract(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&p)
 	if err != nil {
 		io.WriteString(w, `{"message": "wrong format!"}`)
-		return
-	}
-
-	if err != nil {
-		//w.WriteHeader(http.StatusBadRequest)
-		io.WriteString(w, `{"message":"can not convert id as int"}`)
-
 		return
 	}
 

@@ -60,7 +60,7 @@
 				
 				<option value="file2">ROOMS/CONTROLLERS/BLOCKCONTROLLER.go (0.0%)</option>
 				
-				<option value="file3">ROOMS/CONTROLLERS/CONTRACTCONTROLLER.go (0.0%)</option>
+				<option value="file3">ROOMS/CONTROLLERS/CONTRACTCONTROLLER.go (100.0%)</option>
 				
 				<option value="file4">ROOMS/CONTROLLERS/CUSTOMERCONTROLLER.go (0.0%)</option>
 				
@@ -479,24 +479,24 @@ import (
         "strconv"
 )
 
-func (a *ApiDB) GetContract(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) GetContract(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         keys, ok := r.URL.Query()["idBlock"]
-        if !ok || len(keys[0]) &lt; 1 </span><span class="cov0" title="0">{
+        if !ok || len(keys[0]) &lt; 1 </span><span class="cov8" title="1">{
                 io.WriteString(w, `{"message":"can not convert idBlock as int"}`)
                 return
         }</span>
-        <span class="cov0" title="0">BlockId, _ := strconv.Atoi(keys[0])
+        <span class="cov8" title="1">BlockId, _ := strconv.Atoi(keys[0])
         listCustomer, _, err := BUSINESS.GetContractByBlockId(a.Db, BlockId)
         jsonCustomers, _ := json.Marshal(listCustomer)
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 io.WriteString(w, `{ "message": "Can’t get contracts" }`)
                 return
         }</span>
 
-        <span class="cov0" title="0">stringresult := `{"status": 200,
-                                    "message": "Get contracts success redis",
+        <span class="cov8" title="1">stringresult := `{"status": 200,
+                                    "message": "Get contracts success",
                                     "data": {
                                 "contracts":`
         stringresult += string(jsonCustomers)
@@ -504,17 +504,17 @@ func (a *ApiDB) GetContract(w http.ResponseWriter, r *http.Request) <span class=
         io.WriteString(w, stringresult)</span>
 }
 
-func (a *ApiDB) CreateContract(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) CreateContract(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         p := MODELS.CREATE_UPDATE_CONTRACT_REQUEST{}
         err := json.NewDecoder(r.Body).Decode(&amp;p)
-        if err != nil </span><span class="cov0" title="0">{
-                io.WriteString(w, `{"message": "wrong format!"}`+err.Error())
+        if err != nil </span><span class="cov8" title="1">{
+                io.WriteString(w, `{"message": "wrong format!"}`)
                 return
         }</span>
 
-        <span class="cov0" title="0">result := BUSINESS.CreateContract(a.Db, p)
-        if result </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">result := BUSINESS.CreateContract(a.Db, p)
+        if result </span><span class="cov8" title="1">{
                 io.WriteString(w, `  { "status": 200,
     "message": "Create contract success",
     "data": {
@@ -522,27 +522,27 @@ func (a *ApiDB) CreateContract(w http.ResponseWriter, r *http.Request) <span cla
     }
 }
 `)
-        }</span> else<span class="cov0" title="0"> {
+        }</span> else<span class="cov8" title="1"> {
                 io.WriteString(w, `{ "message": "Can’t create contract"}`)
         }</span>
 }
 
-func (a *ApiDB) DeleteContract(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) DeleteContract(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
         vars := mux.Vars(r)
         idContract, err := strconv.Atoi(vars["id"])
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 //w.WriteHeader(http.StatusBadRequest)
                 io.WriteString(w, `{"message":"can not convert id as int"}`)
 
                 return
         }</span>
 
-        <span class="cov0" title="0">res, _ := BUSINESS.DeleteContract(a.Db, idContract)
+        <span class="cov8" title="1">res, _ := BUSINESS.DeleteContract(a.Db, idContract)
 
-        if res </span><span class="cov0" title="0">{
+        if res </span><span class="cov8" title="1">{
                 io.WriteString(w, `{
                                                 "status": 200,
                                                 "message": "Delete contract success",
@@ -552,10 +552,10 @@ func (a *ApiDB) DeleteContract(w http.ResponseWriter, r *http.Request) <span cla
                                                 }`)
                 return
         }</span>
-        <span class="cov0" title="0">io.WriteString(w, `{"message" : "Can’t delete contract"}`)</span>
+        <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t delete contract"}`)</span>
 }
 
-func (a *ApiDB) DeleteAllContract(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) DeleteAllContract(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
         type arrcontractId struct {
@@ -563,21 +563,14 @@ func (a *ApiDB) DeleteAllContract(w http.ResponseWriter, r *http.Request) <span 
         }
         p := arrcontractId{}
         err := json.NewDecoder(r.Body).Decode(&amp;p)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 io.WriteString(w, `{"message": "wrong format!"}`)
                 return
         }</span>
 
-        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
-                //w.WriteHeader(http.StatusBadRequest)
-                io.WriteString(w, `{"message":"can not convert id as int"}`)
+        <span class="cov8" title="1">res, _ := BUSINESS.DeleteAllContract(a.Db, p.ContractsId)
 
-                return
-        }</span>
-
-        <span class="cov0" title="0">res, _ := BUSINESS.DeleteAllContract(a.Db, p.ContractsId)
-
-        if res </span><span class="cov0" title="0">{
+        if res </span><span class="cov8" title="1">{
                 io.WriteString(w, `{
                                                 "status": 200,
                                                 "message": "Delete contract success",
@@ -587,10 +580,10 @@ func (a *ApiDB) DeleteAllContract(w http.ResponseWriter, r *http.Request) <span 
                                                 }`)
                 return
         }</span>
-        <span class="cov0" title="0">io.WriteString(w, `{"message" : "Can’t delete contract"}`)</span>
+        <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t delete contract"}`)</span>
 }
 
-func (a *ApiDB) UpdateContract(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) UpdateContract(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
         vars := mux.Vars(r)
@@ -599,15 +592,15 @@ func (a *ApiDB) UpdateContract(w http.ResponseWriter, r *http.Request) <span cla
         var p = MODELS.CREATE_UPDATE_CONTRACT_REQUEST{}
 
         err := json.NewDecoder(r.Body).Decode(&amp;p)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 io.WriteString(w, `{ "message": "Wrong format" }`)
                 return
         }</span>
 
-        <span class="cov0" title="0">p.Id = idContract
+        <span class="cov8" title="1">p.Id = idContract
         res, _ := BUSINESS.UpdateContract(a.Db, p)
 
-        if res </span><span class="cov0" title="0">{
+        if res </span><span class="cov8" title="1">{
                 io.WriteString(w, `{
                                                 "status": 200,
                                                 "message": "Update contracts success",
@@ -617,7 +610,7 @@ func (a *ApiDB) UpdateContract(w http.ResponseWriter, r *http.Request) <span cla
                                                 }`)
                 return
         }</span>
-        <span class="cov0" title="0">io.WriteString(w, `{"message" : "Can’t update contracts"}`)</span>
+        <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t update contracts"}`)</span>
 }
 </pre>
 		
@@ -867,7 +860,9 @@ func (a *ApiDB) GetRoom(w http.ResponseWriter, r *http.Request) <span class="cov
                                                 {"rooms":`
                         if len(result) &gt; 0 </span><span class="cov8" title="1">{
                                 data += string(resultJson)
-                        }</span> else<span class="cov0" title="0"> {data += "[]"}</span>
+                        }</span> else<span class="cov0" title="0"> {
+                                data += "[]"
+                        }</span>
                         <span class="cov8" title="1">data += `}}`
 
                         if bool </span><span class="cov8" title="1">{
@@ -883,7 +878,9 @@ func (a *ApiDB) GetRoom(w http.ResponseWriter, r *http.Request) <span class="cov
                                                 {"rooms":`
                         if len(result) &gt; 0 </span><span class="cov8" title="1">{
                                 data += string(resultJson)
-                        }</span> else<span class="cov0" title="0"> {data += "[]"}</span>
+                        }</span> else<span class="cov0" title="0"> {
+                                data += "[]"
+                        }</span>
                         <span class="cov8" title="1">data += `}}`
 
                         if bool </span><span class="cov8" title="1">{
@@ -1031,7 +1028,7 @@ func (a *ApiDB) GetRoomDB(w http.ResponseWriter, r *http.Request) <span class="c
         resultJson, _ := json.Marshal(result)
         if err != nil </span><span class="cov8" title="1">{
                 io.WriteString(w, `{"message": "Can’t get rooms"}`)
-        }</span>else<span class="cov8" title="1"> {
+        }</span> else<span class="cov8" title="1"> {
                 data := `{                "status": 200,
                                         "message": "Get rooms success",
                                         "data":
