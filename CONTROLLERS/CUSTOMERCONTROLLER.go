@@ -131,7 +131,7 @@ func (a *ApiDB) UpdateCustomer(w http.ResponseWriter, r *http.Request) {
 	p := MODELS.CUSTOMER_UPDATE{}
 	err1 := json.NewDecoder(r.Body).Decode(&p)
 	if err1 != nil {
-		io.WriteString(w, `{"message": "wrong format!"}`+err1.Error())
+		io.WriteString(w, `{"message": "wrong format!"}`)
 		return
 	}
 	p.Id = idCustomer

@@ -47,17 +47,13 @@ func DeleteService(db *sql.DB, id int) (bool, error) {
 		log.Print("can not connect to database!")
 		return false, fmt.Errorf("can not connect to database!")
 	}
-	res, err := db.Exec(`delete from SERVICES where id = ?`, id)
+	res, err := db.Query(`delete from SERVICES where id = ?`, id)
 
 	if err != nil {
-		panic(err)
-	}
-
-	num, err := res.RowsAffected()
-	m := int64(num)
-	if m == 0 {
 		return false, err
 	}
+	defer res.Close()
+
 	return true, nil
 }
 
@@ -83,13 +79,12 @@ func CreateService(db *sql.DB, services []MODELS.SERVICE_INPUT) (bool, error) {
 
 	sqlStr = strings.TrimSuffix(sqlStr, ",")
 
-	stmt, _ := db.Prepare(sqlStr)
-	res, err := stmt.Exec(vals...)
+	rows, err := db.Query(sqlStr, vals...)
 
-	if err != nil || res == nil {
+	if err != nil {
 		return false, err
 	}
-
+	defer rows.Close()
 	return true, nil
 }
 
