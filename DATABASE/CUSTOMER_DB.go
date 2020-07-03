@@ -124,16 +124,13 @@ func DeleteCustomer(db *sql.DB, idCustomer int) (bool, error) {
 		log.Print("can not connect to database!")
 		return false, fmt.Errorf("can not connect db")
 	}
-	rs, err := db.Exec(`DELETE FROM CUSTOMERS WHERE id = ?`, idCustomer)
+	rs, err := db.Query(`DELETE FROM CUSTOMERS WHERE id = ?`, idCustomer)
 
 	if err != nil {
 		log.Fatalln(err)
 		return false, err
 	}
-	num, err := rs.RowsAffected()
-	if num == 0 {
-		return false, err
-	}
+	defer rs.Close()
 	return true, nil
 }
 
@@ -153,13 +150,13 @@ func DeleteManyCustomers(db *sql.DB, ids []int) (bool, error) {
 		args[i] = id
 	}
 	stmt := `DELETE FROM CUSTOMERS WHERE id IN(?` + strings.Repeat(",?", len(args)-1) + `)`
-	rows, err := db.Exec(stmt, args...)
+	rows, err := db.Query(stmt, args...)
 
-	num, err := rows.RowsAffected()
-	m := int64(num)
-	if m == 0 {
+	if err != nil {
+		log.Fatalln(err)
 		return false, err
 	}
+	defer rows.Close()
 	return true, nil
 }
 
@@ -177,16 +174,16 @@ func UpdateCustomer(db *sql.DB, c MODELS.CUSTOMER_UPDATE) (bool, error) {
 		return false, fmt.Errorf("can not connect db")
 	}
 
-	rows, err := db.Exec(`UPDATE CUSTOMERS SET fullName = ?, identifyFront = ?, identifyBack = ?, dateBirth = ?, 
+	rows, err := db.Query(`UPDATE CUSTOMERS SET fullName = ?, identifyFront = ?, identifyBack = ?, dateBirth = ?, 
 address = ?, sex = ?, job = ?, workPlace = ?, tempReg = ?, email = ?, avatar = ?, phoneNumber = ?, note = ? WHERE id = ?`,
 		c.FullName, c.IdentifyFront, c.IdentifyBack, c.DateBirth, c.Address, c.Sex, c.Job,
 		c.WorkPlace, c.TempReg, c.Email, c.Avatar, c.PhoneNumber, c.Note, c.Id)
 
-	num, err := rows.RowsAffected()
-	m := int64(num)
-	if m == 0 {
+	if err != nil {
+		log.Fatalln(err)
 		return false, err
 	}
+	defer rows.Close()
 	return true, nil
 }
 

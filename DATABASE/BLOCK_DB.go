@@ -100,13 +100,13 @@ func UpdateBlock(db *sql.DB, b MODELS.BLOCKS) (bool, error) {
 		return false, fmt.Errorf("can not connect db")
 	}
 
-	rows, err := db.Exec("update BLOCKS set nameBlock = ? , address = ? , description = ? where id = ?", b.NameBlock, b.Address, b.Description, b.Id)
-
-	num, err := rows.RowsAffected()
-	m := int64(num)
-	if m == 0 {
+	rows, err := db.Query("update BLOCKS set nameBlock = ? , address = ? , description = ? where id = ?", b.NameBlock, b.Address, b.Description, b.Id)
+	//fmt.Print(err)
+	if err != nil {
 		return false, err
 	}
+	defer rows.Close()
+
 	return true, nil
 }
 
@@ -123,17 +123,13 @@ func DeleteBlock(db *sql.DB, id int) (bool, error) {
 		return false, fmt.Errorf("can not connect db")
 	}
 
-	res, err := db.Exec(`delete from BLOCKS where id = ?`, id)
+	res, err := db.Query(`delete from BLOCKS where id = ?`, id)
 
 	if err != nil {
-		panic(err)
-	}
-
-	num, err := res.RowsAffected()
-	m := int64(num)
-	if m == 0 {
 		return false, err
 	}
+	defer res.Close()
+
 	return true, nil
 }
 
@@ -154,12 +150,12 @@ func DeleteBlocks(db *sql.DB, ids []int) (bool, error) {
 		args[i] = id
 	}
 	stmt := `delete from BLOCKS where id in (?` + strings.Repeat(",?", len(args)-1) + `)`
-	rows, err := db.Exec(stmt, args...)
+	rows, err := db.Query(stmt, args...)
 
-	num, err := rows.RowsAffected()
-	m := int64(num)
-	if m == 0 {
+	if err != nil {
 		return false, err
 	}
+	defer rows.Close()
+
 	return true, nil
 }

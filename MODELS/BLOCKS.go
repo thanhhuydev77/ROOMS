@@ -9,5 +9,5 @@ type BLOCKS struct {
 }
 
 type IDBLOCKS struct {
-	BlocksId []int
+	BlocksId []int `json:"blocksId"`
 }
