@@ -44,7 +44,7 @@ type CREATE_UPDATE_CONTRACT_REQUEST struct {
 	StartDate string      `json:"startDate"`
 	EndDate   string      `json:"endDate"`
 	CirclePay int         `json:"circlePay"`
-	Deposit   float64     `json :"deposit"`
+	Deposit   float64     `json:"deposit"`
 	DayPay    int         `json:"dayPay"`
 	Note      string      `json:"note"`
 	IdBlock   int         `json:"idBlock"`

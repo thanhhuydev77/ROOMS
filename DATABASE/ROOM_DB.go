@@ -18,12 +18,13 @@ func GetRoom(db *sql.DB, idBlock int) ([]MODELS.ROOMS, bool, error) {
 	//}
 	//defer db.Close()
 	if db == nil {
-		log.Print("can not connect to database!")
+		//log.Print("can not connect to database!")
 		return nil, false, fmt.Errorf("can not connect to database!")
 	}
 	rows, err := db.Query(`SELECT * FROM ROOMS WHERE idBlock = ?`, idBlock)
 	if err != nil {
 		log.Fatal(err)
+		//print(err.Error())
 		return nil, false, err
 	}
 
@@ -36,8 +37,10 @@ func GetRoom(db *sql.DB, idBlock int) ([]MODELS.ROOMS, bool, error) {
 		if err != nil {
 			log.Fatal(err)
 		}
+
 		rooms = append(rooms, room)
 	}
+
 	return rooms, true, nil
 }
 
@@ -60,6 +63,7 @@ func CreateRoom(db *sql.DB, room MODELS.ROOMS) (bool, error) {
 		room.Description, room.IdBlock, room.Status)
 
 	if err != nil {
+		//print(err)
 		return false, err
 	}
 	defer row.Close()
@@ -306,6 +310,7 @@ func GetRoomById(db *sql.DB, id int) (*MODELS.ROOMS, error) {
 	rows, err1 = db.Query(`SELECT * FROM ROOMS WHERE id = ?`, id)
 
 	if err1 != nil {
+		//print(err1.Error())
 		return nil, err1
 	}
 	for rows.Next() {
@@ -317,5 +322,6 @@ func GetRoomById(db *sql.DB, id int) (*MODELS.ROOMS, error) {
 		}
 		return &room, nil
 	}
+
 	return nil, nil
 }
