@@ -496,3 +496,137 @@ func TestDeleteServicesFail2(t *testing.T) {
 		t.Errorf("Can't delete but: (%v)", out.Message)
 	}
 }
+
+func createMockUpdateService() (*sql.DB, sqlmock.Sqlmock, error) {
+	db, mock, err := sqlmock.New()
+
+	result := sqlmock.NewRows([]string{"id", "nameService", "price", "idUnit", "description", "idBlock"}).
+		AddRow(119, "internet", 20000, 5, "tiền internet", 59).
+		AddRow(120, "điện", 2000, 5, "tiền điện", 59)
+	mock.ExpectQuery(`UPDATE SERVICES`).WillReturnRows(result)
+
+	return db, mock, err
+}
+
+func TestUpdateServicePass(t *testing.T) {
+	type Result struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+
+	var jsonStr = []byte(`{
+		"description": "Tiền nước Hahaa",
+		"price": 22000,
+		"idUnit": 5,
+		"id": 88
+	}`)
+
+	req, err := http.NewRequest("PUT", "/service/update/119", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+	req = mux.SetURLVars(req, map[string]string{
+		"id": "119",
+	})
+
+	rr := httptest.NewRecorder()
+	db, _, _ := createMockUpdateService()
+	a := &ApiDB{
+		db,
+	}
+	handler := http.HandlerFunc(a.UpdateService)
+	handler.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	var out Result
+	err = json.Unmarshal(rr.Body.Bytes(), &out)
+	if err != nil {
+		t.Errorf("error marshal :%v", err)
+	}
+	if out.Message != "Update service success" {
+		t.Errorf("error message(%v)", out.Message)
+	}
+}
+
+func TestUpdateServiceFail1(t *testing.T) {
+	type Result struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+
+	var jsonStr = []byte(`{
+		abc
+	}`)
+
+	req, err := http.NewRequest("PUT", "/service/update/119", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+	req = mux.SetURLVars(req, map[string]string{
+		"id": "119",
+	})
+
+	rr := httptest.NewRecorder()
+	db, _, _ := createMockUpdateService()
+	a := &ApiDB{
+		db,
+	}
+	handler := http.HandlerFunc(a.UpdateService)
+	handler.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	var out Result
+	err = json.Unmarshal(rr.Body.Bytes(), &out)
+	if err != nil {
+		t.Errorf("error marshal :%v", err)
+	}
+}
+
+func TestUpdateServiceFail2(t *testing.T) {
+	type Result struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+
+	var jsonStr = []byte(`{
+		"description": "Tiền nước Hahaa",
+		"price": 22000,
+		"idUnit": 5,
+		"id": 88
+	}`)
+
+	req, err := http.NewRequest("PUT", "/service/update/119", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+	req = mux.SetURLVars(req, map[string]string{
+		"id": "119",
+	})
+
+	rr := httptest.NewRecorder()
+	// db, _, _ := createMockUpdateService()
+	a := &ApiDB{
+		nil,
+	}
+	handler := http.HandlerFunc(a.UpdateService)
+	handler.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	var out Result
+	err = json.Unmarshal(rr.Body.Bytes(), &out)
+	if err != nil {
+		t.Errorf("error marshal :%v", err)
+	}
+	if out.Message == "Update service success" {
+		t.Errorf("Can't update but: (%v)", out.Message)
+	}
+}

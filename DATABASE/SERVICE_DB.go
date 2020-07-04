@@ -125,13 +125,12 @@ func UpdateService(db *sql.DB, service MODELS.SERVICE_INPUT) (bool, error) {
 		log.Print("can not connect to database!")
 		return false, fmt.Errorf("can not connect to database!")
 	}
-	rows, err := db.Exec("UPDATE SERVICES SET price = ?, idUnit = ?, description = ? WHERE id = ?",
+	rows, err := db.Query("UPDATE SERVICES SET price = ?, idUnit = ?, description = ? WHERE id = ?",
 		service.Price, service.IdUnit, service.Description, service.Id)
 
-	num, err := rows.RowsAffected()
-	m := int64(num)
-	if m == 0 {
+	if err != nil {
 		return false, err
 	}
+	defer rows.Close()
 	return true, nil
 }
