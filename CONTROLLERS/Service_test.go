@@ -377,3 +377,122 @@ func TestCreateServiceFail2(t *testing.T) {
 			status, http.StatusOK)
 	}
 }
+
+func createMockDeleteServices() (*sql.DB, sqlmock.Sqlmock, error) {
+	db, mock, err := sqlmock.New()
+
+	result := sqlmock.NewRows([]string{"id", "nameService", "price", "idUnit", "description", "idBlock"}).
+		AddRow(119, "internet", 20000, 5, "tiền internet", 59).
+		AddRow(120, "điện", 2000, 5, "tiền điện", 59)
+	mock.ExpectQuery(`delete from SERVICES where`).WillReturnRows(result)
+
+	return db, mock, err
+}
+
+func TestDeleteServicesPass(t *testing.T) {
+	type Result struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+
+	var jsonStr = []byte(`{
+		"servicesId": [119,120]
+	}`)
+
+	req, err := http.NewRequest("POST", "/service/delete-all", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	db, _, _ := createMockDeleteServices()
+	a := &ApiDB{
+		db,
+	}
+	handler := http.HandlerFunc(a.DeleteServices)
+	handler.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	var out Result
+	err = json.Unmarshal(rr.Body.Bytes(), &out)
+	if err != nil {
+		t.Errorf("error marshal :%v", err)
+	}
+	if out.Message != "Delete Services success" {
+		t.Errorf("error message(%v)", out.Message)
+	}
+}
+
+func TestDeleteServicesFail1(t *testing.T) {
+	type Result struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+
+	var jsonStr = []byte(`{
+		"servicesId": "[119,120]"
+	}`)
+
+	req, err := http.NewRequest("POST", "/service/delete-all", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	db, _, _ := createMockDeleteServices()
+	a := &ApiDB{
+		db,
+	}
+	handler := http.HandlerFunc(a.DeleteServices)
+	handler.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	var out Result
+	err = json.Unmarshal(rr.Body.Bytes(), &out)
+	if err != nil {
+		t.Error("Can't run")
+	}
+}
+
+func TestDeleteServicesFail2(t *testing.T) {
+	type Result struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+
+	var jsonStr = []byte(`{
+		"servicesId": [119,120]
+	}`)
+
+	req, err := http.NewRequest("POST", "/service/delete-all", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	// db, _, _ := createMockDeleteServices()
+	a := &ApiDB{
+		nil,
+	}
+	handler := http.HandlerFunc(a.DeleteServices)
+	handler.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	var out Result
+	err = json.Unmarshal(rr.Body.Bytes(), &out)
+	if err != nil {
+		t.Errorf("error marshal :%v", err)
+	}
+	if out.Message == "Delete Services success" {
+		t.Errorf("Can't delete but: (%v)", out.Message)
+	}
+}

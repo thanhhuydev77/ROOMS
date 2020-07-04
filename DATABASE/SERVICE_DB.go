@@ -105,13 +105,12 @@ func DeleteServices(db *sql.DB, servicesId []int) (bool, error) {
 	}
 
 	stmt := `delete from SERVICES where id in (?` + strings.Repeat(",?", len(args)-1) + `)`
-	rows, err := db.Exec(stmt, args...)
+	rows, err := db.Query(stmt, args...)
 
-	num, err := rows.RowsAffected()
-	m := int64(num)
-	if m == 0 {
+	if err != nil {
 		return false, err
 	}
+	defer rows.Close()
 	return true, nil
 }
 
