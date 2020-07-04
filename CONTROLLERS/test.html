@@ -68,7 +68,7 @@
 				
 				<option value="file6">ROOMS/CONTROLLERS/ROOMCONTROLLER.go (97.4%)</option>
 				
-				<option value="file7">ROOMS/CONTROLLERS/SERVICECONTROLLER.go (0.0%)</option>
+				<option value="file7">ROOMS/CONTROLLERS/SERVICECONTROLLER.go (100.0%)</option>
 				
 				<option value="file8">ROOMS/CONTROLLERS/UNITCONTROLLER.go (100.0%)</option>
 				
@@ -1196,7 +1196,7 @@ func (a *ApiDB) CreateService(w http.ResponseWriter, r *http.Request) <span clas
         <span class="cov0" title="0">io.WriteString(w, `{"message" : "Can’t create Services"}`)</span>
 }
 
-func (a *ApiDB) DeleteServices(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) DeleteServices(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
         p := struct {
@@ -1204,13 +1204,13 @@ func (a *ApiDB) DeleteServices(w http.ResponseWriter, r *http.Request) <span cla
         }{}
         err := json.NewDecoder(r.Body).Decode(&amp;p)
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 io.WriteString(w, `{ "message": "Wrong format" }`)
                 return
         }</span>
-        <span class="cov0" title="0">res, _ := BUSINESS.DeleteServices(a.Db, p.ServicesId)
+        <span class="cov8" title="1">res, _ := BUSINESS.DeleteServices(a.Db, p.ServicesId)
 
-        if res </span><span class="cov0" title="0">{
+        if res </span><span class="cov8" title="1">{
                 io.WriteString(w, `{
                                                 "status": 200,
                                                 "message": "Delete Services success",
@@ -1220,10 +1220,10 @@ func (a *ApiDB) DeleteServices(w http.ResponseWriter, r *http.Request) <span cla
                                                 }`)
                 return
         }</span>
-        <span class="cov0" title="0">io.WriteString(w, `{"message" : "Can’t delete services"}`)</span>
+        <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t delete services"}`)</span>
 }
 
-func (a *ApiDB) UpdateService(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (a *ApiDB) UpdateService(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
         vars := mux.Vars(r)
@@ -1232,15 +1232,15 @@ func (a *ApiDB) UpdateService(w http.ResponseWriter, r *http.Request) <span clas
         var p = MODELS.SERVICE_INPUT{}
 
         err := json.NewDecoder(r.Body).Decode(&amp;p)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 io.WriteString(w, `{ "message": "Wrong format" }`)
                 return
         }</span>
 
-        <span class="cov0" title="0">p.Id = idService
+        <span class="cov8" title="1">p.Id = idService
         res, _ := BUSINESS.UpdateService(a.Db, p)
 
-        if res </span><span class="cov0" title="0">{
+        if res </span><span class="cov8" title="1">{
                 io.WriteString(w, `{
                                                 "status": 200,
                                                 "message": "Update service success",
@@ -1250,7 +1250,7 @@ func (a *ApiDB) UpdateService(w http.ResponseWriter, r *http.Request) <span clas
                                                 }`)
                 return
         }</span>
-        <span class="cov0" title="0">io.WriteString(w, `{"message" : "Can’t update services"}`)</span>
+        <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t update services"}`)</span>
 }
 </pre>
 		
