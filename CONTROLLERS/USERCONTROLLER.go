@@ -13,6 +13,7 @@ import (
 	"time"
 )
 
+//login with username and pass from body request
 func (a *ApiDB) UserLogin(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("Content-Type", "application/json")
@@ -51,6 +52,7 @@ func (a *ApiDB) UserLogin(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+//register a new user
 func (a *ApiDB) UserRegister(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	p := MODELS.RequestRegister{}
@@ -68,6 +70,7 @@ func (a *ApiDB) UserRegister(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//get all user names
 func (a *ApiDB) GetallUserName(w http.ResponseWriter, r *http.Request) {
 	// Query()["key"] will return an array of items,
 	// we only want the single item.
@@ -88,6 +91,7 @@ func (a *ApiDB) GetallUserName(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, string(Result))
 }
 
+//get a user with id or all user(id =-1)
 func (a *ApiDB) GetUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	vars := mux.Vars(r)

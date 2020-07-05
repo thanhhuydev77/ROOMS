@@ -9,6 +9,7 @@ import (
 	"strings"
 )
 
+//get contracts by blockid
 func GetContractByBlockId(db *sql.DB, BlockId int) ([]MODELS.GET_CONTRACTS_REQUEST, bool, error) {
 	var listContracts []MODELS.GET_CONTRACTS_REQUEST
 	//db, err := connectdatabase()
@@ -59,6 +60,7 @@ func GetContractByBlockId(db *sql.DB, BlockId int) ([]MODELS.GET_CONTRACTS_REQUE
 	return listContracts, true, nil
 }
 
+//create a new contract
 func CreateContract(db *sql.DB, CCR MODELS.CREATE_UPDATE_CONTRACT_REQUEST) bool {
 	//db, err := connectdatabase()
 	//
@@ -107,6 +109,7 @@ func CreateContract(db *sql.DB, CCR MODELS.CREATE_UPDATE_CONTRACT_REQUEST) bool 
 	return true
 }
 
+//delete a contract
 func DeleteContract(db *sql.DB, idCustomer int) (bool, error) {
 	//db, err := connectdatabase()
 	//if err != nil {
@@ -131,6 +134,7 @@ func DeleteContract(db *sql.DB, idCustomer int) (bool, error) {
 	return true, nil
 }
 
+//delete many contract
 func DeleteAllContract(db *sql.DB, idContract []int) (bool, error) {
 	//db, err := connectdatabase()
 	//
@@ -160,6 +164,7 @@ func DeleteAllContract(db *sql.DB, idContract []int) (bool, error) {
 	return true, nil
 }
 
+//update a contract
 func UpdateContract(db *sql.DB, c MODELS.CREATE_UPDATE_CONTRACT_REQUEST) (bool, error) {
 	//db, err := connectdatabase()
 	//if err != nil {

@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+//get all customer
 func GetCustomers(db *sql.DB, userId int) ([]MODELS.CUSTOMER, bool, error) {
 	var listCustomers []MODELS.CUSTOMER
 	//db, err := connectdatabase()
@@ -46,6 +47,7 @@ func GetCustomers(db *sql.DB, userId int) ([]MODELS.CUSTOMER, bool, error) {
 	return listCustomers, true, nil
 }
 
+//get a customer with userid
 func GetCustomersByUserId(db *sql.DB, userId int) ([]MODELS.CUSTOMER_GET, bool, error) {
 	var listCustomers []MODELS.CUSTOMER_GET
 	//db, err := connectdatabase()
@@ -88,6 +90,7 @@ func GetCustomersByUserId(db *sql.DB, userId int) ([]MODELS.CUSTOMER_GET, bool, 
 	return listCustomers, true, nil
 }
 
+//create a customer
 func CreateCustomer(db *sql.DB, c MODELS.CUSTOMER_INPUT) (bool, error) {
 	//db, err := connectdatabase()
 	//if err != nil {
@@ -113,6 +116,7 @@ func CreateCustomer(db *sql.DB, c MODELS.CUSTOMER_INPUT) (bool, error) {
 	return true, nil
 }
 
+//delete a customer
 func DeleteCustomer(db *sql.DB, idCustomer int) (bool, error) {
 	//db, err := connectdatabase()
 	//if err != nil {
@@ -134,6 +138,7 @@ func DeleteCustomer(db *sql.DB, idCustomer int) (bool, error) {
 	return true, nil
 }
 
+//delete many customers
 func DeleteManyCustomers(db *sql.DB, ids []int) (bool, error) {
 	//db, err := connectdatabase()
 	//if err != nil {
@@ -160,6 +165,7 @@ func DeleteManyCustomers(db *sql.DB, ids []int) (bool, error) {
 	return true, nil
 }
 
+//update a customer
 func UpdateCustomer(db *sql.DB, c MODELS.CUSTOMER_UPDATE) (bool, error) {
 	//db, err := connectdatabase()
 	//
@@ -187,6 +193,7 @@ address = ?, sex = ?, job = ?, workPlace = ?, tempReg = ?, email = ?, avatar = ?
 	return true, nil
 }
 
+//get all room name
 func SelectNameRoom(db *sql.DB, idUser int) ([]string, bool, error) {
 	//db, err := connectdatabase()
 	//

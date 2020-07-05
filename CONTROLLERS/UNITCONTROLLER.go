@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+//get all unit
 func (a *ApiDB) GetAllUnit(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 

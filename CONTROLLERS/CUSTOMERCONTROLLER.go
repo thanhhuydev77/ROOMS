@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+//get customer infoation from iduser from query
 func (a *ApiDB) GetCustomersByUserId(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	keys, ok := r.URL.Query()["userId"]
@@ -36,6 +37,7 @@ func (a *ApiDB) GetCustomersByUserId(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, stringresult)
 }
 
+//create a customer with information from body request
 func (a *ApiDB) CreateCustomer(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
@@ -61,6 +63,7 @@ func (a *ApiDB) CreateCustomer(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//delete a customer with its id from variable
 func (a *ApiDB) DeleteCustomer(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -93,6 +96,7 @@ func (a *ApiDB) DeleteCustomer(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, `{"message" : "Can’t delete customer"}`)
 }
 
+//delete many customer with id from body request
 func (a *ApiDB) DeleteManyCustomers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
@@ -118,6 +122,7 @@ func (a *ApiDB) DeleteManyCustomers(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, `{"message" : "Can’t  delete customers"}`)
 }
 
+//update a customer with information from body request
 func (a *ApiDB) UpdateCustomer(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 

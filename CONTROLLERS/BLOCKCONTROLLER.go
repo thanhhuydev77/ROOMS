@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+//get all block of user with id from query
 func (a *ApiDB) GetBlock(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	keys, ok := r.URL.Query()["userId"]
@@ -37,6 +38,7 @@ func (a *ApiDB) GetBlock(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, stringresult)
 }
 
+//get a block with its id
 func (a *ApiDB) GetBlockById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	vars := mux.Vars(r)
@@ -61,6 +63,7 @@ func (a *ApiDB) GetBlockById(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, stringresult)
 }
 
+//create a block with information from body request
 func (a *ApiDB) CreateBlock(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	p := MODELS.BLOCKS{}
@@ -83,6 +86,7 @@ func (a *ApiDB) CreateBlock(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//update a block with information from body request
 func (a *ApiDB) UpdateBlock(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	vars := mux.Vars(r)
@@ -114,6 +118,7 @@ func (a *ApiDB) UpdateBlock(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+//delete a block with id from variable
 func (a *ApiDB) DeleteBlock(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -146,6 +151,7 @@ func (a *ApiDB) DeleteBlock(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, `{"message" : "Can’t  Delete Block"}`)
 }
 
+//delete many block with id from body request
 func (a *ApiDB) DeleteBlocks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 

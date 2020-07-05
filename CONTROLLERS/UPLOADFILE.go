@@ -7,6 +7,7 @@ import (
 	"strconv"
 )
 
+//upload a image
 func UploadPicture(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	file, handler, err := r.FormFile("file")

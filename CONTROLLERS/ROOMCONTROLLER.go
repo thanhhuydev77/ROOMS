@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+//get room with its id or all room with idblock from variable
 func (a *ApiDB) GetRoom(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	vars := mux.Vars(r)
@@ -94,6 +95,7 @@ func (a *ApiDB) GetRoom(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//create a room with information from body request
 func (a *ApiDB) CreateRoom(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
@@ -119,6 +121,7 @@ func (a *ApiDB) CreateRoom(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//delete a room with its id from variable
 func (a *ApiDB) DeleteRoom(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -148,6 +151,7 @@ func (a *ApiDB) DeleteRoom(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//delete many room with id from body request
 func (a *ApiDB) DeleteRooms(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
@@ -174,6 +178,7 @@ func (a *ApiDB) DeleteRooms(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//create a room with information from body request
 func (a *ApiDB) UpdateRoom(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
@@ -201,6 +206,7 @@ func (a *ApiDB) UpdateRoom(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//get room by userid or block from query
 func (a *ApiDB) GetRoomDB(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	status, ok := r.URL.Query()["status"]
@@ -244,6 +250,7 @@ func (a *ApiDB) GetRoomDB(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//get image of room with id from query
 func (a *ApiDB) GetRoomImage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	codeRoom, ok := r.URL.Query()["codeRoom"]
@@ -251,7 +258,6 @@ func (a *ApiDB) GetRoomImage(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, `{ "message": "Url Param 'idBlock' is missing"}`)
 		return
 	}
-
 	result, bool, _ := BUSINESS.GetRoomImage(a.Db, codeRoom[0])
 	resultJson, _ := json.Marshal(result)
 	var data string
@@ -276,6 +282,7 @@ func (a *ApiDB) GetRoomImage(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//get all user in a room with id from query
 func (a *ApiDB) GetRoomUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	idRooms, ok := r.URL.Query()["idRoom"]

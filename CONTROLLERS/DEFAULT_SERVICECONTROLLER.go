@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+//get a default service
 func (a *ApiDB) Get_default_service(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 

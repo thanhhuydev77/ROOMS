@@ -6,6 +6,7 @@ import (
 	"log"
 )
 
+//get all units
 func GetAllUnits(db *sql.DB) ([]MODELS.UNIT, bool) {
 	var units []MODELS.UNIT
 	//db, err := connectdatabase()

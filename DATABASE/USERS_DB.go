@@ -9,6 +9,7 @@ import (
 	"strconv"
 )
 
+//login
 func Login(db *sql.DB, username string, pass string) (bool, bool, MODELS.USERS) {
 	exsist := false
 	passOK := false
@@ -40,6 +41,7 @@ func Login(db *sql.DB, username string, pass string) (bool, bool, MODELS.USERS) 
 	return exsist, passOK, a
 }
 
+//register a new user
 func Register(db *sql.DB, user MODELS.RequestRegister) (bool, error) {
 
 	if db == nil {
@@ -57,6 +59,7 @@ func Register(db *sql.DB, user MODELS.RequestRegister) (bool, error) {
 	return true, nil
 }
 
+//get all user name
 func GetAllUserName(db *sql.DB) []string {
 	var Allusername []string
 	//db, err := connectdatabase()
@@ -84,16 +87,19 @@ func GetAllUserName(db *sql.DB) []string {
 	return Allusername
 }
 
+//hash password by bycript
 func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 5)
 	return string(bytes), err
 }
 
+//check password hash
 func checkPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
 }
 
+//get a user or all user(id = -1)
 func GetUsers(db *sql.DB, Id int) []MODELS.USERS {
 
 	//db, err := connectdatabase()

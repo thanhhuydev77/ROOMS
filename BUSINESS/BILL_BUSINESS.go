@@ -18,8 +18,9 @@ func GetBillDetailById(db *sql.DB, id int) ([]MODELS.BILL_DETAILS, bool, error) 
 	billDetail, ok, err := DATABASE.GetBillDetailById(db, id)
 	return billDetail, ok, err
 }
+
+//get bill by block id
 func GetBillByIdblock(db *sql.DB, id int) ([]MODELS.BILLS, bool, error) {
-	//get room
 	return DATABASE.GetBillByBlockId(db, id)
 }
 
@@ -33,6 +34,7 @@ func CreateBill(db *sql.DB, CCR MODELS.CREATE_UPDATE_BILL_REQUEST) (int, error) 
 	return DATABASE.CreateBill(db, CCR)
 }
 
+//delete a bill with its id
 func DeleteBill(db *sql.DB, idbill int) (bool, error) {
 	return DATABASE.DeleteBill(db, idbill)
 }
