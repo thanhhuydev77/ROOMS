@@ -1,9 +1,11 @@
 FROM golang:1.14
 
-WORKDIR /go/src/app
+RUN mkdir /app
+ADD . /app
+WORKDIR /app
 COPY . .
 
 RUN go get -d -v ./...
 RUN go install -v ./...
-
-CMD ["app"]
+RUN go build -o main .
+CMD ["/app/main"]
