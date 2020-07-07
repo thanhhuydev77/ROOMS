@@ -16,4 +16,4 @@ RUN go install -v ./...
 EXPOSE 8103
 
 # Run the executable
-CMD ["./go-lang"]
+CMD ["go run main.go"]
