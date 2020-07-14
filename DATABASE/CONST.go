@@ -14,12 +14,15 @@ const (
 
 var Db *sql.DB = nil
 
+//get Database instance
 func GetDbInstance() *sql.DB {
 	if Db == nil {
 		Db, _ = connectdatabase()
 	}
 	return Db
 }
+
+//connect to database
 func connectdatabase() (*sql.DB, error) {
 	db, err := sql.Open(DRIVER_NAME, CONNECTION_STRING)
 	if err != nil {

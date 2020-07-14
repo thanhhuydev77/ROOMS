@@ -10,6 +10,7 @@ import (
 	"strconv"
 )
 
+//get all contract with blockid from query
 func (a *ApiDB) GetContract(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	keys, ok := r.URL.Query()["idBlock"]
@@ -35,6 +36,7 @@ func (a *ApiDB) GetContract(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, stringresult)
 }
 
+//create a contract with information from body request
 func (a *ApiDB) CreateContract(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	p := MODELS.CREATE_UPDATE_CONTRACT_REQUEST{}
@@ -58,6 +60,7 @@ func (a *ApiDB) CreateContract(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//delete a contract with id from variable
 func (a *ApiDB) DeleteContract(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
@@ -86,6 +89,7 @@ func (a *ApiDB) DeleteContract(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, `{"message" : "Can’t delete contract"}`)
 }
 
+//delete many contract with id from body request
 func (a *ApiDB) DeleteAllContract(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
@@ -114,6 +118,7 @@ func (a *ApiDB) DeleteAllContract(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, `{"message" : "Can’t delete contract"}`)
 }
 
+//update a contract with information from body request
 func (a *ApiDB) UpdateContract(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 

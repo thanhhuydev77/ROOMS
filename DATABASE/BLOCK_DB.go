@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+//get a block with id
 func GetBlockById(db *sql.DB, Id int) (MODELS.BLOCKS, bool) {
 	var Block MODELS.BLOCKS
 	//db, err := connectdatabase()
@@ -35,6 +36,7 @@ func GetBlockById(db *sql.DB, Id int) (MODELS.BLOCKS, bool) {
 	return Block, true
 }
 
+//get blocks with id user
 func GetBlockByIdOwner(db *sql.DB, IdOwner int) []MODELS.BLOCKS {
 	var listBlock []MODELS.BLOCKS
 	//db, err := connectdatabase()
@@ -62,6 +64,7 @@ func GetBlockByIdOwner(db *sql.DB, IdOwner int) []MODELS.BLOCKS {
 	return listBlock
 }
 
+//create a new block
 func CreateBlock(db *sql.DB, b MODELS.BLOCKS) (bool, error) {
 
 	//db, err := connectdatabase()
@@ -85,6 +88,7 @@ func CreateBlock(db *sql.DB, b MODELS.BLOCKS) (bool, error) {
 	return true, nil
 }
 
+//update a block
 func UpdateBlock(db *sql.DB, b MODELS.BLOCKS) (bool, error) {
 
 	//db, err := connectdatabase()
@@ -110,6 +114,7 @@ func UpdateBlock(db *sql.DB, b MODELS.BLOCKS) (bool, error) {
 	return true, nil
 }
 
+//delete a block
 func DeleteBlock(db *sql.DB, id int) (bool, error) {
 	//db, err := connectdatabase()
 	//
@@ -133,6 +138,7 @@ func DeleteBlock(db *sql.DB, id int) (bool, error) {
 	return true, nil
 }
 
+//delete many block
 func DeleteBlocks(db *sql.DB, ids []int) (bool, error) {
 	//db, err := connectdatabase()
 	//

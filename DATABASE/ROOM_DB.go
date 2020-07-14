@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+//get rooms by idblock
 func GetRoom(db *sql.DB, idBlock int) ([]MODELS.ROOMS, bool, error) {
 
 	//db, err := connectdatabase()
@@ -44,6 +45,7 @@ func GetRoom(db *sql.DB, idBlock int) ([]MODELS.ROOMS, bool, error) {
 	return rooms, true, nil
 }
 
+//create a new room
 func CreateRoom(db *sql.DB, room MODELS.ROOMS) (bool, error) {
 	//
 	//db, err := connectdatabase()
@@ -71,6 +73,7 @@ func CreateRoom(db *sql.DB, room MODELS.ROOMS) (bool, error) {
 	return true, nil
 }
 
+//delete a room
 func DeleteRoom(db *sql.DB, id int) (bool, error) {
 
 	//db, err := connectdatabase()
@@ -93,6 +96,7 @@ func DeleteRoom(db *sql.DB, id int) (bool, error) {
 	return true, nil
 }
 
+//detele many room
 func DeleteRooms(db *sql.DB, roomsId []int) (bool, error) {
 
 	//db, err := connectdatabase()
@@ -123,6 +127,7 @@ func DeleteRooms(db *sql.DB, roomsId []int) (bool, error) {
 	return true, nil
 }
 
+//update a room
 func UpdateRoom(db *sql.DB, id int, room MODELS.ROOMS) (bool, error) {
 
 	//db, err := connectdatabase()
@@ -148,14 +153,8 @@ func UpdateRoom(db *sql.DB, id int, room MODELS.ROOMS) (bool, error) {
 	return true, nil
 }
 
+//get room with idblock
 func UpdateGetRoom(db *sql.DB, idBlock int) ([]MODELS.ROOMS, bool, error) {
-	//db, err := connectdatabase()
-	//
-	//if err != nil {
-	//	log.Fatal("Can't connect to database")
-	//	return nil, false, err
-	//}
-	//defer db.Close()
 	if db == nil {
 		log.Print("can not connect to database!")
 		return nil, false, fmt.Errorf("can not connect to database!")
@@ -181,6 +180,7 @@ FROM ROOMS R LEFT JOIN USER_ROOM UR ON R.id = UR.idRoom WHERE UR.idRoom IS NULL 
 	return rooms, true, nil
 }
 
+//get room dashboard
 func GetRoomDB(db *sql.DB, idBlock int, status int, userid int) ([]MODELS.GET_ROOMDB_REQUEST, error) {
 	//db, err := connectdatabase()
 	//
@@ -226,6 +226,7 @@ func GetRoomDB(db *sql.DB, idBlock int, status int, userid int) ([]MODELS.GET_RO
 	return rooms, nil
 }
 
+//get room image
 func GetRoomImage(db *sql.DB, codeRoom string) ([]MODELS.ROOM_IMAGE, bool, error) {
 
 	//db, err := connectdatabase()
@@ -259,6 +260,7 @@ func GetRoomImage(db *sql.DB, codeRoom string) ([]MODELS.ROOM_IMAGE, bool, error
 	return rooms, true, nil
 }
 
+//get user renting
 func GetUserRenting(db *sql.DB, codeRoom int) ([]MODELS.ROOM_USER_RENTING_NAME, bool, error) {
 
 	//db, err := connectdatabase()
@@ -292,6 +294,7 @@ func GetUserRenting(db *sql.DB, codeRoom int) ([]MODELS.ROOM_USER_RENTING_NAME, 
 	return rooms, true, nil
 }
 
+//get room by id
 func GetRoomById(db *sql.DB, id int) (*MODELS.ROOMS, error) {
 	//db, err := connectdatabase()
 	//

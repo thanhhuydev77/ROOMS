@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+//get service by id
 func GetServiceById(db *sql.DB, Id int) ([]MODELS.GET_SERVICES_REQUEST, bool) {
 	var Services []MODELS.GET_SERVICES_REQUEST
 	//db, err := connectdatabase()
@@ -35,6 +36,7 @@ func GetServiceById(db *sql.DB, Id int) ([]MODELS.GET_SERVICES_REQUEST, bool) {
 	return Services, true
 }
 
+//delete a service
 func DeleteService(db *sql.DB, id int) (bool, error) {
 	//db, err := connectdatabase()
 	//
@@ -57,6 +59,7 @@ func DeleteService(db *sql.DB, id int) (bool, error) {
 	return true, nil
 }
 
+//create a new service
 func CreateService(db *sql.DB, services []MODELS.SERVICE_INPUT) (bool, error) {
 
 	//db, err := connectdatabase()
@@ -88,6 +91,7 @@ func CreateService(db *sql.DB, services []MODELS.SERVICE_INPUT) (bool, error) {
 	return true, nil
 }
 
+//delete many services
 func DeleteServices(db *sql.DB, servicesId []int) (bool, error) {
 	//db, err := connectdatabase()
 	//if err != nil {
@@ -105,16 +109,16 @@ func DeleteServices(db *sql.DB, servicesId []int) (bool, error) {
 	}
 
 	stmt := `delete from SERVICES where id in (?` + strings.Repeat(",?", len(args)-1) + `)`
-	rows, err := db.Exec(stmt, args...)
+	rows, err := db.Query(stmt, args...)
 
-	num, err := rows.RowsAffected()
-	m := int64(num)
-	if m == 0 {
+	if err != nil {
 		return false, err
 	}
+	defer rows.Close()
 	return true, nil
 }
 
+//update a service
 func UpdateService(db *sql.DB, service MODELS.SERVICE_INPUT) (bool, error) {
 	//db, err := connectdatabase()
 	//if err != nil {
@@ -126,13 +130,12 @@ func UpdateService(db *sql.DB, service MODELS.SERVICE_INPUT) (bool, error) {
 		log.Print("can not connect to database!")
 		return false, fmt.Errorf("can not connect to database!")
 	}
-	rows, err := db.Exec("UPDATE SERVICES SET price = ?, idUnit = ?, description = ? WHERE id = ?",
+	rows, err := db.Query("UPDATE SERVICES SET price = ?, idUnit = ?, description = ? WHERE id = ?",
 		service.Price, service.IdUnit, service.Description, service.Id)
 
-	num, err := rows.RowsAffected()
-	m := int64(num)
-	if m == 0 {
+	if err != nil {
 		return false, err
 	}
+	defer rows.Close()
 	return true, nil
 }

@@ -8,6 +8,7 @@ import (
 	"log"
 )
 
+//get bills by blockid
 func GetBillByBlockId(db *sql.DB, idBlock int) ([]MODELS.BILLS, bool, error) {
 	bills := []MODELS.BILLS{}
 	//db, err := connectdatabase()
@@ -31,6 +32,7 @@ func GetBillByBlockId(db *sql.DB, idBlock int) ([]MODELS.BILLS, bool, error) {
 	return bills, true, nil
 }
 
+//get bill by id
 func GetBillById(db *sql.DB, id int) (MODELS.BILLS, bool, error) {
 	//db, err := connectdatabase()
 	if db == nil {
@@ -55,6 +57,7 @@ func GetBillById(db *sql.DB, id int) (MODELS.BILLS, bool, error) {
 	return MODELS.BILLS{}, false, nil
 }
 
+//get billdetail by id
 func GetBillDetailById(db *sql.DB, id int) ([]MODELS.BILL_DETAILS, bool, error) {
 	listbilldt := []MODELS.BILL_DETAILS{}
 
@@ -81,6 +84,7 @@ func GetBillDetailById(db *sql.DB, id int) ([]MODELS.BILL_DETAILS, bool, error) 
 	return listbilldt, true, nil
 }
 
+//create a bill
 func CreateBill(db *sql.DB, bill MODELS.CREATE_UPDATE_BILL_REQUEST) (int, error) {
 	//db, err := connectdatabase()
 	//if db == nil {
@@ -137,6 +141,7 @@ func CreateBill(db *sql.DB, bill MODELS.CREATE_UPDATE_BILL_REQUEST) (int, error)
 	return 1, nil
 }
 
+//update a bill
 func UpdateBill(db *sql.DB, c MODELS.CREATE_UPDATE_BILL_REQUEST) (bool, error) {
 	//db, err := connectdatabase()
 	//if err != nil {
@@ -183,6 +188,7 @@ func UpdateBill(db *sql.DB, c MODELS.CREATE_UPDATE_BILL_REQUEST) (bool, error) {
 	return true, nil
 }
 
+//detele bill
 func DeleteBill(db *sql.DB, idbill int) (bool, error) {
 	//db, err := connectdatabase()
 	//if err != nil {

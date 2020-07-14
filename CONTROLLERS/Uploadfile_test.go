@@ -66,7 +66,7 @@ func TestApiDB_UploadFilePass(t *testing.T) {
 		"author":      "Matt Aimonetti",
 		"description": "A document with all the Go programming language secrets",
 	}
-	req, err := newfileUploadRequest("/upload/userAvatar", extraParams, "file", `F:\download\bber.jpg`)
+	req, err := newfileUploadRequest("/upload/userAvatar", extraParams, "file", `C:\Users\huy\Desktop\avatar.jpg`)
 	if err != nil {
 		t.Fatal(err)
 	}

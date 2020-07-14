@@ -10,6 +10,7 @@ import (
 	"strconv"
 )
 
+//get service of a bock with id from query
 func (a *ApiDB) GetService(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	keys, ok := r.URL.Query()["idBlock"]
@@ -33,6 +34,7 @@ func (a *ApiDB) GetService(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, stringresult)
 }
 
+//delete a service with its id from variable
 func (a *ApiDB) DeleteService(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
@@ -60,6 +62,7 @@ func (a *ApiDB) DeleteService(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, `{"message" : "Can’t  delete service"}`)
 }
 
+//create a service with information from body request
 func (a *ApiDB) CreateService(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
@@ -86,6 +89,7 @@ func (a *ApiDB) CreateService(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, `{"message" : "Can’t create Services"}`)
 }
 
+//delete many services with id from body request
 func (a *ApiDB) DeleteServices(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
@@ -113,6 +117,7 @@ func (a *ApiDB) DeleteServices(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, `{"message" : "Can’t delete services"}`)
 }
 
+//update a service with information from body request
 func (a *ApiDB) UpdateService(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 

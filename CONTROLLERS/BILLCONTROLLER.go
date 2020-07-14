@@ -10,6 +10,7 @@ import (
 	"strconv"
 )
 
+//get bill by id
 func (a *ApiDB) GetBills(w http.ResponseWriter, r *http.Request) {
 
 	type Data struct {
@@ -51,6 +52,7 @@ func (a *ApiDB) GetBills(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, string(jsonresult))
 }
 
+//create a bill by information from body request
 func (a *ApiDB) CreateBill(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	p := MODELS.CREATE_UPDATE_BILL_REQUEST{}
@@ -76,6 +78,7 @@ func (a *ApiDB) CreateBill(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//update a bill according information for body request
 func (a *ApiDB) UpdateBill(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
@@ -106,6 +109,7 @@ func (a *ApiDB) UpdateBill(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, `{"message" : "Can’t update bill"}`)
 }
 
+//delete a bill with id form variable
 func (a *ApiDB) DeleteBill(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
@@ -134,6 +138,7 @@ func (a *ApiDB) DeleteBill(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, `{"message" : "Can’t delete bill"}`)
 }
 
+//get bills in a block with id from variable
 func (a *ApiDB) GetBillsbyblock(w http.ResponseWriter, r *http.Request) {
 
 	type Data struct {

@@ -6,6 +6,7 @@ import (
 	"log"
 )
 
+//get all default service
 func Get_all_default_service(db *sql.DB) ([]MODELS.GET_DEFAULT_SERVICES_REQUEST, bool) {
 	var default_services []MODELS.GET_DEFAULT_SERVICES_REQUEST
 	//db, err := connectdatabase()

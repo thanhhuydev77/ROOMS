@@ -27,7 +27,6 @@ func createMockCustomer() (*sql.DB, sqlmock.Sqlmock, error) {
 	mock.ExpectQuery(`SELECT R.nameRoom FROM USER_ROOM UR INNER JOIN ROOMS R ON UR.idRoom = R.id WHERE idUser = \?`).WillReturnRows(result)
 	return db, mock, err
 }
-
 func TestGetCustomersPass(t *testing.T) {
 	type data struct {
 		Customers []MODELS.CUSTOMER_GET `json:"customers"`
@@ -70,7 +69,6 @@ func TestGetCustomersPass(t *testing.T) {
 		t.Errorf("error message(%v) or lendata(%v)", out.Message, len(out.Data.Customers))
 	}
 }
-
 func TestGetCustomersFail1(t *testing.T) {
 	type data struct {
 		Customers []MODELS.CUSTOMER_GET `json:"customers"`
@@ -103,7 +101,6 @@ func TestGetCustomersFail1(t *testing.T) {
 			status, http.StatusOK)
 	}
 }
-
 func TestGetCustomersFail2(t *testing.T) {
 	type data struct {
 		Customers []MODELS.CUSTOMER_GET `json:"customers"`
@@ -144,7 +141,6 @@ func createMockCreateCustomer() (*sql.DB, sqlmock.Sqlmock, error) {
 
 	return db, mock, err
 }
-
 func TestCreateCustomerPass(t *testing.T) {
 
 	type Result struct {
@@ -195,7 +191,6 @@ func TestCreateCustomerPass(t *testing.T) {
 		t.Errorf("error message(%v)", out.Message)
 	}
 }
-
 func TestCreateCustomerFail1(t *testing.T) {
 
 	type Result struct {
@@ -224,7 +219,6 @@ func TestCreateCustomerFail1(t *testing.T) {
 			status, http.StatusOK)
 	}
 }
-
 func TestCreateCustomerFail2(t *testing.T) {
 
 	type Result struct {
@@ -280,7 +274,6 @@ func createMockDeleteCustomer() (*sql.DB, sqlmock.Sqlmock, error) {
 	// mock.ExpectQuery(`SELECT R.nameRoom FROM USER_ROOM UR INNER JOIN ROOMS R ON UR.idRoom = R.id WHERE idUser = \?`).WillReturnRows(result)
 	return db, mock, err
 }
-
 func TestDeleteCustomerPass(t *testing.T) {
 	type Result struct {
 		Status  int    `json:"status"`
@@ -316,7 +309,6 @@ func TestDeleteCustomerPass(t *testing.T) {
 		t.Errorf("error message(%v)", out.Message)
 	}
 }
-
 func TestDeleteCustomerFail1(t *testing.T) {
 	type Result struct {
 		Status  int    `json:"status"`
@@ -343,7 +335,6 @@ func TestDeleteCustomerFail1(t *testing.T) {
 			status, http.StatusOK)
 	}
 }
-
 func TestDeleteCustomerFail2(t *testing.T) {
 	type Result struct {
 		Status  int    `json:"status"`
@@ -388,7 +379,6 @@ func createMockDeleteCustomers() (*sql.DB, sqlmock.Sqlmock, error) {
 	mock.ExpectQuery(`DELETE FROM CUSTOMERS WHERE id IN`).WillReturnRows(result)
 	return db, mock, err
 }
-
 func TestDeleteManyCustomerPass(t *testing.T) {
 	type Result struct {
 		Status  int    `json:"status"`
@@ -425,7 +415,6 @@ func TestDeleteManyCustomerPass(t *testing.T) {
 		t.Errorf("error message(%v)", out.Message)
 	}
 }
-
 func TestDeleteManyCustomerFail1(t *testing.T) {
 	type Result struct {
 		Status  int    `json:"status"`
@@ -453,7 +442,6 @@ func TestDeleteManyCustomerFail1(t *testing.T) {
 			status, http.StatusOK)
 	}
 }
-
 func TestDeleteManyCustomerFail2(t *testing.T) {
 	type Result struct {
 		Status  int    `json:"status"`
@@ -499,7 +487,6 @@ func createMockUpdateCustomers() (*sql.DB, sqlmock.Sqlmock, error) {
 	mock.ExpectQuery(`UPDATE CUSTOMERS`).WillReturnRows(result)
 	return db, mock, err
 }
-
 func TestUpdateCustomerPass(t *testing.T) {
 	type Result struct {
 		Status  int    `json:"status"`
@@ -551,7 +538,6 @@ func TestUpdateCustomerPass(t *testing.T) {
 		t.Errorf("error message(%v)", out.Message)
 	}
 }
-
 func TestUpdateCustomerFail1(t *testing.T) {
 	type Result struct {
 		Status  int    `json:"status"`
@@ -594,7 +580,6 @@ func TestUpdateCustomerFail1(t *testing.T) {
 			status, http.StatusOK)
 	}
 }
-
 func TestUpdateCustomerFail2(t *testing.T) {
 	type Result struct {
 		Status  int    `json:"status"`
@@ -625,7 +610,6 @@ func TestUpdateCustomerFail2(t *testing.T) {
 			status, http.StatusOK)
 	}
 }
-
 func TestUpdateCustomerFail3(t *testing.T) {
 	type Result struct {
 		Status  int    `json:"status"`
