@@ -10,7 +10,7 @@ import (
 
 //get rooms by idblock
 func GetRoom(db *sql.DB, idBlock int) ([]MODELS.ROOMS, bool, error) {
-
+	rooms := []MODELS.ROOMS{}
 	//db, err := connectdatabase()
 	//
 	//if err != nil {
@@ -28,8 +28,6 @@ func GetRoom(db *sql.DB, idBlock int) ([]MODELS.ROOMS, bool, error) {
 		//print(err.Error())
 		return nil, false, err
 	}
-
-	var rooms []MODELS.ROOMS
 
 	for rows.Next() {
 		var room MODELS.ROOMS
@@ -182,6 +180,7 @@ FROM ROOMS R LEFT JOIN USER_ROOM UR ON R.id = UR.idRoom WHERE UR.idRoom IS NULL 
 
 //get room dashboard
 func GetRoomDB(db *sql.DB, idBlock int, status int, userid int) ([]MODELS.GET_ROOMDB_REQUEST, error) {
+	rooms := []MODELS.GET_ROOMDB_REQUEST{}
 	//db, err := connectdatabase()
 	//
 	//if err != nil {
@@ -212,8 +211,6 @@ func GetRoomDB(db *sql.DB, idBlock int, status int, userid int) ([]MODELS.GET_RO
 		return nil, err1
 	}
 
-	var rooms []MODELS.GET_ROOMDB_REQUEST
-
 	for rows.Next() {
 		var room MODELS.GET_ROOMDB_REQUEST
 		err := rows.Scan(&room.Id, &room.Name, &room.Floor, &room.Square, &room.Price, &room.Description, &room.IdBlock, &room.MaxPeople, &room.Status, &room.CodeRoom, &room.NameBlock, &room.StartDate)
@@ -228,7 +225,7 @@ func GetRoomDB(db *sql.DB, idBlock int, status int, userid int) ([]MODELS.GET_RO
 
 //get room image
 func GetRoomImage(db *sql.DB, codeRoom string) ([]MODELS.ROOM_IMAGE, bool, error) {
-
+	rooms := []MODELS.ROOM_IMAGE{}
 	//db, err := connectdatabase()
 	//
 	//if err != nil {
@@ -245,8 +242,6 @@ func GetRoomImage(db *sql.DB, codeRoom string) ([]MODELS.ROOM_IMAGE, bool, error
 		log.Fatal(err)
 		return nil, false, err
 	}
-
-	var rooms []MODELS.ROOM_IMAGE
 
 	for rows.Next() {
 		var room MODELS.ROOM_IMAGE

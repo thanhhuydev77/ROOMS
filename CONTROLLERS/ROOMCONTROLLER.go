@@ -63,11 +63,8 @@ func (a *ApiDB) GetRoom(w http.ResponseWriter, r *http.Request) {
 					"message": "Get rooms success",
 					"data":
 						{"rooms":`
-			if len(result) > 0 {
-				data += string(resultJson)
-			} else {
-				data += "[]"
-			}
+			data += string(resultJson)
+
 			data += `}}`
 
 			if bool {
@@ -81,11 +78,8 @@ func (a *ApiDB) GetRoom(w http.ResponseWriter, r *http.Request) {
 					"message": "Get rooms success",
 					"data":
 						{"rooms":`
-			if len(result) > 0 {
-				data += string(resultJson)
-			} else {
-				data += "[]"
-			}
+			data += string(resultJson)
+
 			data += `}}`
 
 			if bool {
@@ -243,11 +237,9 @@ func (a *ApiDB) GetRoomDB(w http.ResponseWriter, r *http.Request) {
 					"message": "Get rooms success",
 					"data":
 						{"rooms":`
-		if len(result) > 0 {
-			data += string(resultJson)
-		} else {
-			data += "[]"
-		}
+
+		data += string(resultJson)
+
 		data += `}}`
 
 		io.WriteString(w, data)
@@ -270,11 +262,8 @@ func (a *ApiDB) GetRoomImage(w http.ResponseWriter, r *http.Request) {
 					"message": "Get images success",
 					"data":
 						{"images":`
-		if len(result) > 0 {
-			data += string(resultJson)
-		} else {
-			data += "[]"
-		}
+
+		data += string(resultJson)
 
 		data += `}}`
 
@@ -307,11 +296,9 @@ func (a *ApiDB) GetRoomUser(w http.ResponseWriter, r *http.Request) {
 					"message": "Get user rent success",
 					"data":
 						{"userRents":`
-		if len(result) > 0 {
-			data += string(resultJson)
-		} else {
-			data += "[]"
-		}
+
+		data += string(resultJson)
+
 		data += `}}`
 
 	} else {

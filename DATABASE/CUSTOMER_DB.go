@@ -49,7 +49,7 @@ func GetCustomers(db *sql.DB, userId int) ([]MODELS.CUSTOMER, bool, error) {
 
 //get a customer with userid
 func GetCustomersByUserId(db *sql.DB, userId int, page int, limit int) ([]MODELS.CUSTOMER_GET, bool, error, int) {
-	var listCustomers []MODELS.CUSTOMER_GET
+	listCustomers := []MODELS.CUSTOMER_GET{}
 	//db, err := connectdatabase()
 	//
 	//if err != nil {
@@ -58,7 +58,7 @@ func GetCustomersByUserId(db *sql.DB, userId int, page int, limit int) ([]MODELS
 	//defer db.Close
 	if db == nil {
 		log.Print("can not connect to database!")
-		return nil, false, fmt.Errorf("can not connect db"), 0
+		return listCustomers, false, fmt.Errorf("can not connect db"), 0
 	}
 	var CountRows int
 	rowcount, err := db.Query("SELECT count(*) FROM CUSTOMERS WHERE idOwner = ? ", userId)
@@ -73,7 +73,7 @@ func GetCustomersByUserId(db *sql.DB, userId int, page int, limit int) ([]MODELS
 	rows, err := db.Query("SELECT * FROM CUSTOMERS WHERE idOwner = ? limit ?,?", userId, page, limit)
 	if err != nil {
 		log.Fatal(err)
-		return nil, false, err, 0
+		return listCustomers, false, err, 0
 	}
 
 	for rows.Next() {
@@ -91,7 +91,7 @@ func GetCustomersByUserId(db *sql.DB, userId int, page int, limit int) ([]MODELS
 
 		if err != nil {
 			log.Fatal(err)
-			return nil, false, err, 0
+			return listCustomers, false, err, 0
 		}
 		listCustomers = append(listCustomers, c)
 	}
