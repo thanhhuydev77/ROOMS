@@ -243,7 +243,11 @@ func (a *ApiDB) GetRoomDB(w http.ResponseWriter, r *http.Request) {
 					"message": "Get rooms success",
 					"data":
 						{"rooms":`
-		data += string(resultJson)
+		if len(result) > 0 {
+			data += string(resultJson)
+		} else {
+			data += "[]"
+		}
 		data += `}}`
 
 		io.WriteString(w, data)
