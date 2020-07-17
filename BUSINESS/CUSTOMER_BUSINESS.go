@@ -12,8 +12,8 @@ func GetCustomers(db *sql.DB, userId int) ([]MODELS.CUSTOMER, bool, error) {
 }
 
 //get a customer with id user
-func GetCustomersByUserId(db *sql.DB, userId int) ([]MODELS.CUSTOMER_GET, bool, error) {
-	return DATABASE.GetCustomersByUserId(db, userId)
+func GetCustomersByUserId(db *sql.DB, userId int, page int, limit int) ([]MODELS.CUSTOMER_GET, bool, error, int) {
+	return DATABASE.GetCustomersByUserId(db, userId, page, limit)
 }
 
 //create a new customer
