@@ -66,7 +66,7 @@
 				
 				<option value="file5">ROOMS/CONTROLLERS/DEFAULT_SERVICECONTROLLER.go (100.0%)</option>
 				
-				<option value="file6">ROOMS/CONTROLLERS/ROOMCONTROLLER.go (97.4%)</option>
+				<option value="file6">ROOMS/CONTROLLERS/ROOMCONTROLLER.go (100.0%)</option>
 				
 				<option value="file7">ROOMS/CONTROLLERS/SERVICECONTROLLER.go (100.0%)</option>
 				
@@ -98,7 +98,8 @@ import (
         "net/http"
 )
 
-func AuthMiddleware(next http.Handler) http.Handler <span class="cov8" title="1">{
+//JWT authorization middleware
+func AuthMW(next http.Handler) http.Handler <span class="cov8" title="1">{
 
         jwtMiddleware := jwtmiddleware.New(jwtmiddleware.Options{
                 Extractor: jwtmiddleware.FromFirst(jwtmiddleware.FromAuthHeader,
@@ -111,6 +112,7 @@ func AuthMiddleware(next http.Handler) http.Handler <span class="cov8" title="1"
         <span class="cov8" title="1">return jwtMiddleware.Handler(next)</span>
 }
 
+//Validate Token
 func ValidateToken(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         stringresult := `{
@@ -137,6 +139,7 @@ import (
         "strconv"
 )
 
+//get bill by id
 func (a *ApiDB) GetBills(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
 
         type Data struct {
@@ -178,6 +181,7 @@ func (a *ApiDB) GetBills(w http.ResponseWriter, r *http.Request) <span class="co
         io.WriteString(w, string(jsonresult))</span>
 }
 
+//create a bill by information from body request
 func (a *ApiDB) CreateBill(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         p := MODELS.CREATE_UPDATE_BILL_REQUEST{}
@@ -203,6 +207,7 @@ func (a *ApiDB) CreateBill(w http.ResponseWriter, r *http.Request) <span class="
         }</span>
 }
 
+//update a bill according information for body request
 func (a *ApiDB) UpdateBill(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
@@ -233,6 +238,7 @@ func (a *ApiDB) UpdateBill(w http.ResponseWriter, r *http.Request) <span class="
         <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t update bill"}`)</span>
 }
 
+//delete a bill with id form variable
 func (a *ApiDB) DeleteBill(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
@@ -261,6 +267,7 @@ func (a *ApiDB) DeleteBill(w http.ResponseWriter, r *http.Request) <span class="
         <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t delete bill"}`)</span>
 }
 
+//get bills in a block with id from variable
 func (a *ApiDB) GetBillsbyblock(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
 
         type Data struct {
@@ -306,6 +313,7 @@ import (
         "github.com/gorilla/mux"
 )
 
+//get all block of user with id from query
 func (a *ApiDB) GetBlock(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         keys, ok := r.URL.Query()["userId"]
@@ -332,6 +340,7 @@ func (a *ApiDB) GetBlock(w http.ResponseWriter, r *http.Request) <span class="co
         io.WriteString(w, stringresult)</span>
 }
 
+//get a block with its id
 func (a *ApiDB) GetBlockById(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         vars := mux.Vars(r)
@@ -356,6 +365,7 @@ func (a *ApiDB) GetBlockById(w http.ResponseWriter, r *http.Request) <span class
         io.WriteString(w, stringresult)</span>
 }
 
+//create a block with information from body request
 func (a *ApiDB) CreateBlock(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         p := MODELS.BLOCKS{}
@@ -378,6 +388,7 @@ func (a *ApiDB) CreateBlock(w http.ResponseWriter, r *http.Request) <span class=
         }</span>
 }
 
+//update a block with information from body request
 func (a *ApiDB) UpdateBlock(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         vars := mux.Vars(r)
@@ -409,6 +420,7 @@ func (a *ApiDB) UpdateBlock(w http.ResponseWriter, r *http.Request) <span class=
         return</span>
 }
 
+//delete a block with id from variable
 func (a *ApiDB) DeleteBlock(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -441,6 +453,7 @@ func (a *ApiDB) DeleteBlock(w http.ResponseWriter, r *http.Request) <span class=
         <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t  Delete Block"}`)</span>
 }
 
+//delete many block with id from body request
 func (a *ApiDB) DeleteBlocks(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
@@ -479,6 +492,7 @@ import (
         "strconv"
 )
 
+//get all contract with blockid from query
 func (a *ApiDB) GetContract(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         keys, ok := r.URL.Query()["idBlock"]
@@ -504,6 +518,7 @@ func (a *ApiDB) GetContract(w http.ResponseWriter, r *http.Request) <span class=
         io.WriteString(w, stringresult)</span>
 }
 
+//create a contract with information from body request
 func (a *ApiDB) CreateContract(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         p := MODELS.CREATE_UPDATE_CONTRACT_REQUEST{}
@@ -527,6 +542,7 @@ func (a *ApiDB) CreateContract(w http.ResponseWriter, r *http.Request) <span cla
         }</span>
 }
 
+//delete a contract with id from variable
 func (a *ApiDB) DeleteContract(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
@@ -555,6 +571,7 @@ func (a *ApiDB) DeleteContract(w http.ResponseWriter, r *http.Request) <span cla
         <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t delete contract"}`)</span>
 }
 
+//delete many contract with id from body request
 func (a *ApiDB) DeleteAllContract(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
@@ -583,6 +600,7 @@ func (a *ApiDB) DeleteAllContract(w http.ResponseWriter, r *http.Request) <span 
         <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t delete contract"}`)</span>
 }
 
+//update a contract with information from body request
 func (a *ApiDB) UpdateContract(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
@@ -627,31 +645,68 @@ import (
         "github.com/gorilla/mux"
 )
 
+//get customer infoation from iduser from query
 func (a *ApiDB) GetCustomersByUserId(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        type paging struct {
+                TotalRows int `json:"_totalRows"`
+        }
+        type Data struct {
+                Page      int                   `json:"page"`
+                Limit     int                   `json:"limit"`
+                TotalRows int                   `json:"totalRows"`
+                Customers []MODELS.CUSTOMER_GET `json:"customers"`
+        }
+        type Respond struct {
+                Status  int    `json:"status"`
+                Message string `json:"message"`
+                Dataa   Data   `json:"data"`
+        }
+
         w.Header().Add("Content-Type", "application/json")
         keys, ok := r.URL.Query()["userId"]
+        pagenum, ok := r.URL.Query()["page"]
+        limits, ok := r.URL.Query()["limit"]
         if !ok || len(keys[0]) &lt; 1 </span><span class="cov8" title="1">{
                 io.WriteString(w, `{"message":"can not convert idowner as int"}`)
                 return
         }</span>
-        <span class="cov8" title="1">userId, _ := strconv.Atoi(keys[0])
-        listCustomer, _, err := BUSINESS.GetCustomersByUserId(a.Db, userId)
-        jsonCustomers, _ := json.Marshal(listCustomer)
+        <span class="cov8" title="1">if !ok || len(pagenum[0]) &lt; 1 </span><span class="cov8" title="1">{
+                io.WriteString(w, `{"message":"can not convert page as int"}`)
+                return
+        }</span>
+        <span class="cov8" title="1">if !ok || len(limits[0]) &lt; 1 </span><span class="cov8" title="1">{
+                io.WriteString(w, `{"message":"can not convert limit as int"}`)
+                return
+        }</span>
+        <span class="cov8" title="1">var Page paging
+
+        userId, _ := strconv.Atoi(keys[0])
+        page, _ := strconv.Atoi(pagenum[0])
+        limit, _ := strconv.Atoi(limits[0])
+        listCustomer, _, err, numrow := BUSINESS.GetCustomersByUserId(a.Db, userId, (page-1)*limit, limit)
+        Page.TotalRows = numrow
+
+        //jsonCustomers, _ := json.Marshal(listCustomer)
 
         if err != nil </span><span class="cov8" title="1">{
                 io.WriteString(w, `{ "message": "Can’t get customers" }`)
                 return
         }</span>
-
-        <span class="cov8" title="1">stringresult := `{"status": 200,
-                                    "message": "Get customers success",
-                                    "data": {
-                                "customers":`
-        stringresult += string(jsonCustomers)
-        stringresult += "}}"
-        io.WriteString(w, stringresult)</span>
+        <span class="cov8" title="1">respond := Respond{
+                Status:  200,
+                Message: "Get customers success",
+                Dataa: Data{
+                        Page:      page,
+                        Limit:     limit,
+                        TotalRows: numrow,
+                        Customers: listCustomer,
+                },
+        }
+        jsonresult, _ := json.Marshal(respond)
+        io.WriteString(w, string(jsonresult))</span>
 }
 
+//create a customer with information from body request
 func (a *ApiDB) CreateCustomer(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
@@ -677,6 +732,7 @@ func (a *ApiDB) CreateCustomer(w http.ResponseWriter, r *http.Request) <span cla
         }</span>
 }
 
+//delete a customer with its id from variable
 func (a *ApiDB) DeleteCustomer(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -709,6 +765,7 @@ func (a *ApiDB) DeleteCustomer(w http.ResponseWriter, r *http.Request) <span cla
         <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t delete customer"}`)</span>
 }
 
+//delete many customer with id from body request
 func (a *ApiDB) DeleteManyCustomers(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
@@ -734,6 +791,7 @@ func (a *ApiDB) DeleteManyCustomers(w http.ResponseWriter, r *http.Request) <spa
         <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t  delete customers"}`)</span>
 }
 
+//update a customer with information from body request
 func (a *ApiDB) UpdateCustomer(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
@@ -776,6 +834,7 @@ import (
         "net/http"
 )
 
+//get a default service
 func (a *ApiDB) Get_default_service(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
@@ -808,6 +867,7 @@ import (
         "github.com/gorilla/mux"
 )
 
+//get room with its id or all room with idblock from variable
 func (a *ApiDB) GetRoom(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         vars := mux.Vars(r)
@@ -859,12 +919,9 @@ func (a *ApiDB) GetRoom(w http.ResponseWriter, r *http.Request) <span class="cov
                                         "message": "Get rooms success",
                                         "data":
                                                 {"rooms":`
-                        if len(result) &gt; 0 </span><span class="cov8" title="1">{
                                 data += string(resultJson)
-                        }</span> else<span class="cov0" title="0"> {
-                                data += "[]"
-                        }</span>
-                        <span class="cov8" title="1">data += `}}`
+
+                        data += `}}`
 
                         if bool </span><span class="cov8" title="1">{
                                 io.WriteString(w, data)
@@ -877,12 +934,9 @@ func (a *ApiDB) GetRoom(w http.ResponseWriter, r *http.Request) <span class="cov
                                         "message": "Get rooms success",
                                         "data":
                                                 {"rooms":`
-                        if len(result) &gt; 0 </span><span class="cov8" title="1">{
                                 data += string(resultJson)
-                        }</span> else<span class="cov0" title="0"> {
-                                data += "[]"
-                        }</span>
-                        <span class="cov8" title="1">data += `}}`
+
+                        data += `}}`
 
                         if bool </span><span class="cov8" title="1">{
                                 io.WriteString(w, data)
@@ -891,6 +945,7 @@ func (a *ApiDB) GetRoom(w http.ResponseWriter, r *http.Request) <span class="cov
         }
 }
 
+//create a room with information from body request
 func (a *ApiDB) CreateRoom(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
@@ -916,6 +971,7 @@ func (a *ApiDB) CreateRoom(w http.ResponseWriter, r *http.Request) <span class="
         }</span>
 }
 
+//delete a room with its id from variable
 func (a *ApiDB) DeleteRoom(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -945,6 +1001,7 @@ func (a *ApiDB) DeleteRoom(w http.ResponseWriter, r *http.Request) <span class="
         }</span>
 }
 
+//delete many room with id from body request
 func (a *ApiDB) DeleteRooms(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
@@ -971,6 +1028,7 @@ func (a *ApiDB) DeleteRooms(w http.ResponseWriter, r *http.Request) <span class=
         }</span>
 }
 
+//create a room with information from body request
 func (a *ApiDB) UpdateRoom(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
@@ -998,6 +1056,7 @@ func (a *ApiDB) UpdateRoom(w http.ResponseWriter, r *http.Request) <span class="
         }</span>
 }
 
+//get room by userid or block from query
 func (a *ApiDB) GetRoomDB(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         status, ok := r.URL.Query()["status"]
@@ -1034,13 +1093,16 @@ func (a *ApiDB) GetRoomDB(w http.ResponseWriter, r *http.Request) <span class="c
                                         "message": "Get rooms success",
                                         "data":
                                                 {"rooms":`
-                data += string(resultJson)
+
+                        data += string(resultJson)
+
                 data += `}}`
 
                 io.WriteString(w, data)
         }</span>
 }
 
+//get image of room with id from query
 func (a *ApiDB) GetRoomImage(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         codeRoom, ok := r.URL.Query()["codeRoom"]
@@ -1048,7 +1110,6 @@ func (a *ApiDB) GetRoomImage(w http.ResponseWriter, r *http.Request) <span class
                 io.WriteString(w, `{ "message": "Url Param 'idBlock' is missing"}`)
                 return
         }</span>
-
         <span class="cov8" title="1">result, bool, _ := BUSINESS.GetRoomImage(a.Db, codeRoom[0])
         resultJson, _ := json.Marshal(result)
         var data string
@@ -1057,15 +1118,13 @@ func (a *ApiDB) GetRoomImage(w http.ResponseWriter, r *http.Request) <span class
                                         "message": "Get images success",
                                         "data":
                                                 {"images":`
-                if len(result) &gt; 0 </span><span class="cov8" title="1">{
+
                         data += string(resultJson)
-                }</span> else<span class="cov0" title="0"> {
-                        data += "[]"
-                }</span>
 
-                <span class="cov8" title="1">data += `}}`</span>
 
-        } else<span class="cov8" title="1"> {
+                data += `}}`
+
+        }</span> else<span class="cov8" title="1"> {
                 data = `{"message": "Can’t get images"}`
 
         }</span>
@@ -1073,6 +1132,7 @@ func (a *ApiDB) GetRoomImage(w http.ResponseWriter, r *http.Request) <span class
 
 }
 
+//get all user in a room with id from query
 func (a *ApiDB) GetRoomUser(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         idRooms, ok := r.URL.Query()["idRoom"]
@@ -1093,14 +1153,12 @@ func (a *ApiDB) GetRoomUser(w http.ResponseWriter, r *http.Request) <span class=
                                         "message": "Get user rent success",
                                         "data":
                                                 {"userRents":`
-                if len(result) &gt; 0 </span><span class="cov8" title="1">{
-                        data += string(resultJson)
-                }</span> else<span class="cov0" title="0"> {
-                        data += "[]"
-                }</span>
-                <span class="cov8" title="1">data += `}}`</span>
 
-        } else<span class="cov8" title="1"> {
+                        data += string(resultJson)
+
+                data += `}}`
+
+        }</span> else<span class="cov8" title="1"> {
                 data = `{    "message": "Can’t get user rent"}`
 
         }</span>
@@ -1121,6 +1179,7 @@ import (
         "strconv"
 )
 
+//get service of a bock with id from query
 func (a *ApiDB) GetService(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         keys, ok := r.URL.Query()["idBlock"]
@@ -1144,6 +1203,7 @@ func (a *ApiDB) GetService(w http.ResponseWriter, r *http.Request) <span class="
         io.WriteString(w, stringresult)</span>
 }
 
+//delete a service with its id from variable
 func (a *ApiDB) DeleteService(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
@@ -1171,6 +1231,7 @@ func (a *ApiDB) DeleteService(w http.ResponseWriter, r *http.Request) <span clas
         <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t  delete service"}`)</span>
 }
 
+//create a service with information from body request
 func (a *ApiDB) CreateService(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
@@ -1197,6 +1258,7 @@ func (a *ApiDB) CreateService(w http.ResponseWriter, r *http.Request) <span clas
         <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t create Services"}`)</span>
 }
 
+//delete many services with id from body request
 func (a *ApiDB) DeleteServices(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
@@ -1224,6 +1286,7 @@ func (a *ApiDB) DeleteServices(w http.ResponseWriter, r *http.Request) <span cla
         <span class="cov8" title="1">io.WriteString(w, `{"message" : "Can’t delete services"}`)</span>
 }
 
+//update a service with information from body request
 func (a *ApiDB) UpdateService(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
@@ -1264,6 +1327,7 @@ import (
         "net/http"
 )
 
+//get all unit
 func (a *ApiDB) GetAllUnit(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
 
@@ -1292,6 +1356,7 @@ import (
         "strconv"
 )
 
+//upload a image
 func UploadPicture(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         file, handler, err := r.FormFile("file")
@@ -1340,6 +1405,7 @@ import (
         "time"
 )
 
+//login with username and pass from body request
 func (a *ApiDB) UserLogin(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
 
         w.Header().Add("Content-Type", "application/json")
@@ -1378,6 +1444,7 @@ func (a *ApiDB) UserLogin(w http.ResponseWriter, r *http.Request) <span class="c
         return</span>
 }
 
+//register a new user
 func (a *ApiDB) UserRegister(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         p := MODELS.RequestRegister{}
@@ -1395,6 +1462,7 @@ func (a *ApiDB) UserRegister(w http.ResponseWriter, r *http.Request) <span class
         }</span>
 }
 
+//get all user names
 func (a *ApiDB) GetallUserName(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         // Query()["key"] will return an array of items,
         // we only want the single item.
@@ -1415,6 +1483,7 @@ func (a *ApiDB) GetallUserName(w http.ResponseWriter, r *http.Request) <span cla
         io.WriteString(w, string(Result))</span>
 }
 
+//get a user with id or all user(id =-1)
 func (a *ApiDB) GetUser(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         w.Header().Add("Content-Type", "application/json")
         vars := mux.Vars(r)

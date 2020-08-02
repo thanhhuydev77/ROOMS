@@ -5,12 +5,13 @@ import (
 	"ROOMS/DATABASE"
 	"ROOMS/MODELS"
 	"encoding/json"
-	"github.com/dgrijalva/jwt-go"
-	"github.com/gorilla/mux"
 	"io"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
+	"github.com/gorilla/mux"
 )
 
 //login with username and pass from body request
@@ -64,7 +65,13 @@ func (a *ApiDB) UserRegister(w http.ResponseWriter, r *http.Request) {
 
 	_, err := BUSINESS.Register(a.Db, p)
 	if err == nil {
-		io.WriteString(w, `{"message":"Register success"}`)
+		io.WriteString(w, `{
+			 	"status": 200,
+				"message":"Register success",
+				"data": {
+					"status": 1
+				}
+			}`)
 	} else {
 		io.WriteString(w, `{"message":"Register fail"}`)
 	}

@@ -13,28 +13,63 @@ import (
 
 //get customer infoation from iduser from query
 func (a *ApiDB) GetCustomersByUserId(w http.ResponseWriter, r *http.Request) {
+	type paging struct {
+		TotalRows int `json:"_totalRows"`
+	}
+	type Data struct {
+		Page      int                   `json:"page"`
+		Limit     int                   `json:"limit"`
+		TotalRows int                   `json:"totalRows"`
+		Customers []MODELS.CUSTOMER_GET `json:"customers"`
+	}
+	type Respond struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+		Dataa   Data   `json:"data"`
+	}
+
 	w.Header().Add("Content-Type", "application/json")
 	keys, ok := r.URL.Query()["userId"]
+	pagenum, ok := r.URL.Query()["page"]
+	limits, ok := r.URL.Query()["limit"]
 	if !ok || len(keys[0]) < 1 {
 		io.WriteString(w, `{"message":"can not convert idowner as int"}`)
 		return
 	}
+	if !ok || len(pagenum[0]) < 1 {
+		io.WriteString(w, `{"message":"can not convert page as int"}`)
+		return
+	}
+	if !ok || len(limits[0]) < 1 {
+		io.WriteString(w, `{"message":"can not convert limit as int"}`)
+		return
+	}
+	var Page paging
+
 	userId, _ := strconv.Atoi(keys[0])
-	listCustomer, _, err := BUSINESS.GetCustomersByUserId(a.Db, userId)
-	jsonCustomers, _ := json.Marshal(listCustomer)
+	page, _ := strconv.Atoi(pagenum[0])
+	limit, _ := strconv.Atoi(limits[0])
+	listCustomer, _, err, numrow := BUSINESS.GetCustomersByUserId(a.Db, userId, (page-1)*limit, limit)
+	Page.TotalRows = numrow
+
+	//jsonCustomers, _ := json.Marshal(listCustomer)
 
 	if err != nil {
 		io.WriteString(w, `{ "message": "Can’t get customers" }`)
 		return
 	}
-
-	stringresult := `{"status": 200,
-    				"message": "Get customers success",
-    				"data": {
-        			"customers":`
-	stringresult += string(jsonCustomers)
-	stringresult += "}}"
-	io.WriteString(w, stringresult)
+	respond := Respond{
+		Status:  200,
+		Message: "Get customers success",
+		Dataa: Data{
+			Page:      page,
+			Limit:     limit,
+			TotalRows: numrow,
+			Customers: listCustomer,
+		},
+	}
+	jsonresult, _ := json.Marshal(respond)
+	io.WriteString(w, string(jsonresult))
 }
 
 //create a customer with information from body request

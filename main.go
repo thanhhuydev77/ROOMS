@@ -5,10 +5,11 @@ import (
 	c "ROOMS/CONTROLLERS/cache"
 	"ROOMS/DATABASE"
 	"fmt"
+	"net/http"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
-	"net/http"
 )
 
 func main() {
@@ -26,6 +27,7 @@ func main() {
 	http.ListenAndServe(":8001", handler)
 
 }
+
 func NewRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 
