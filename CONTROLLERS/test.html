@@ -919,7 +919,7 @@ func (a *ApiDB) GetRoom(w http.ResponseWriter, r *http.Request) <span class="cov
                                         "message": "Get rooms success",
                                         "data":
                                                 {"rooms":`
-                                data += string(resultJson)
+                        data += string(resultJson)
 
                         data += `}}`
 
@@ -934,7 +934,7 @@ func (a *ApiDB) GetRoom(w http.ResponseWriter, r *http.Request) <span class="cov
                                         "message": "Get rooms success",
                                         "data":
                                                 {"rooms":`
-                                data += string(resultJson)
+                        data += string(resultJson)
 
                         data += `}}`
 
@@ -1094,7 +1094,7 @@ func (a *ApiDB) GetRoomDB(w http.ResponseWriter, r *http.Request) <span class="c
                                         "data":
                                                 {"rooms":`
 
-                        data += string(resultJson)
+                data += string(resultJson)
 
                 data += `}}`
 
@@ -1119,8 +1119,7 @@ func (a *ApiDB) GetRoomImage(w http.ResponseWriter, r *http.Request) <span class
                                         "data":
                                                 {"images":`
 
-                        data += string(resultJson)
-
+                data += string(resultJson)
 
                 data += `}}`
 
@@ -1154,7 +1153,7 @@ func (a *ApiDB) GetRoomUser(w http.ResponseWriter, r *http.Request) <span class=
                                         "data":
                                                 {"userRents":`
 
-                        data += string(resultJson)
+                data += string(resultJson)
 
                 data += `}}`
 
