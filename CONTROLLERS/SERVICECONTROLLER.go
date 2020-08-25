@@ -4,10 +4,11 @@ import (
 	"ROOMS/BUSINESS"
 	"ROOMS/MODELS"
 	"encoding/json"
-	"github.com/gorilla/mux"
 	"io"
 	"net/http"
 	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 //get service of a bock with id from query
@@ -19,8 +20,8 @@ func (a *ApiDB) GetService(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	idBlock, _ := strconv.Atoi(keys[0])
-	listBlock, Ok := BUSINESS.GetServiceById(a.Db, idBlock)
-	jsonlist, _ := json.Marshal(listBlock)
+	listService, Ok := BUSINESS.GetServiceById(a.Db, idBlock)
+	jsonlist, _ := json.Marshal(listService)
 	if !Ok {
 		io.WriteString(w, `{ "message": "Can’t get services" }`)
 		return
@@ -28,8 +29,14 @@ func (a *ApiDB) GetService(w http.ResponseWriter, r *http.Request) {
 	stringresult := `{"status": 200,
     				"message": "Get services success",
     				"data": {
-        			"services":`
-	stringresult += string(jsonlist)
+					"services":`
+	if len(listService) > 0 {
+		stringresult += string(jsonlist)
+	} else {
+		stringresult += "[]"
+	}
+
+	// stringresult += string(jsonlist)
 	stringresult += "}}"
 	io.WriteString(w, stringresult)
 }
